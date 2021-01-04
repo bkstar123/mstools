@@ -18,13 +18,13 @@ Route::get('/cms/dashboard', function () {
 })->name('dashboard.index')
   ->middleware('bkscms-auth:admins');
 
-// Verify domain certificate
+// Verify SSL certificate for domains
 Route::get('/cms/check-domain-ssl', function () {
     return view('cms.checkdomainssl');
 })->name('checkdomainssl')
   ->middleware('bkscms-auth:admins');
 
-Route::post('/cms/check-domain-ssl', 'GeneralSSLToolController@verifyDomainSSL')
+Route::post('/cms/check-domain-ssl', 'GeneralSSLToolController@verifyDomainSSLData')
   ->name('checkdomainssl')
   ->middleware('bkscms-auth:admins');
 

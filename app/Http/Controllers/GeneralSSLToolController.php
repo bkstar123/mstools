@@ -5,17 +5,17 @@ namespace App\Http\Controllers;
 use Exception;
 use League\Csv\Writer;
 use Illuminate\Http\Request;
-use App\Jobs\VerifyCFZoneSSL;
+use App\Jobs\VerifyCFZoneCustomSSL;
 use Spatie\SslCertificate\SslCertificate;
 
 class GeneralSSLToolController extends Controller
 {
     /**
-     * Verify SSL certificate for domains
+     * Verify SSL certificate data for domains
      *
      * @param \Illuminate\Http\Request $request
      */
-    public function verifyDomainSSL(Request $request)
+    public function verifyDomainSSLData(Request $request)
     {
         $request->validate([
             'domains' => 'required'
@@ -86,8 +86,8 @@ class GeneralSSLToolController extends Controller
             'zones' => 'required'
         ]);
         $zones = explode(',', $request->zones);
-        VerifyCFZoneSSL::dispatch($zones, auth()->user());
-        flashing('MSTool will email you the result')
+        VerifyCFZoneCustomSSL::dispatch($zones, auth()->user());
+        flashing('MSTool will send you the result via email')
             ->flash();
         return back();
     }

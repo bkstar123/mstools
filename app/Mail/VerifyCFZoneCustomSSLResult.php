@@ -7,7 +7,7 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
-class VerifyCFZoneSSLResult extends Mailable
+class VerifyCFZoneCustomSSLResult extends Mailable
 {
     use Queueable, SerializesModels;
 

@@ -1,10 +1,10 @@
 @extends('cms.layouts.master')
-@section('title', 'Verify domain certificate')
+@section('title', 'Verify SSL certificate data for domains')
 
 @section('content')
-<div class="card card-primary">
+<div class="card card-info">
 	<div class="card-header">
-		<h3 class="card-title">Verify certificate for domains</h3>
+		<h3 class="card-title">Provide the list of domains which are to be checked for SSL certificate data</h3>
 	</div>
 	<form role="form" action="{{ route('checkdomainssl') }}" method="post">
 		@csrf
@@ -22,7 +22,7 @@
 			</div>
 		</div>
 		<div class="card-footer">
-			<button type="submit" class="btn btn-primary">Proceed</button>
+			<button type="submit" class="btn btn-success">Proceed</button>
 		</div>
 	</form>
 </div>

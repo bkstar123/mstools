@@ -3,14 +3,14 @@
 namespace App\Jobs;
 
 use Illuminate\Bus\Queueable;
-use App\Mail\VerifyCFZoneSSLResult;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
+use App\Mail\VerifyCFZoneCustomSSLResult;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 
-class VerifyCFZoneSSL implements ShouldQueue
+class VerifyCFZoneCustomSSL implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -58,28 +58,31 @@ class VerifyCFZoneSSL implements ShouldQueue
         ]);
         $zoneMgmt = resolve('zoneMgmt');
         $customSSL = resolve('customSSL');
-        foreach ($this->zones as $index => $zone) {
+        foreach ($this->zones as $zone) {
             $zone = idn_to_ascii(trim($zone), IDNA_DEFAULT, INTL_IDNA_VARIANT_UTS46);
             $zoneID = $zoneMgmt->getZoneID($zone);
-            if ($zoneID === null || $zoneID === false) {
+            if ($zoneID === null) {
                 fputcsv($fh, [$zone, 'false', '', '', '', '', '', '', '']);
+                continue;
+            } elseif ($zoneID === false) {
+                fputcsv($fh, [$zone, 'Unknown', '', '', '', '', '', '', 'Something is unusual, please manually double check in the Cloudflare portal']);
                 continue;
             }
             $currentCertID = $customSSL->getCurrentCustomCertID($zoneID);
             if ($currentCertID === false) {
-                fputcsv($fh, [$zone, 'true', '', '', '', '', '', '', 'Something is unusual, pls manually verify yourself on Cloudflare portal']);
+                fputcsv($fh, [$zone, 'true', '', '', '', '', '', '', 'Something is unusual, please manually double check in the Cloudflare portal']);
                 continue;
             } elseif ($currentCertID === null) {
                 fputcsv($fh, [$zone, 'true', '', '', '', '', '', '', '']);
             } else {
                 $data = $customSSL->fetchCertData($zoneID, $currentCertID);
                 if (!$data) {
-                    fputcsv($fh, [$zone, 'true', '', '', '', '', '', '', 'Something is unusual, pls manually verify yourself on Cloudflare portal']);
+                    fputcsv($fh, [$zone, 'true', '', '', '', '', '', '', 'Something is unusual, please manually double check in the Cloudflare portal']);
                     continue;
                 } else {
                     fputcsv($fh, [
-                        $zone, 
-                        'true', 
+                        $zone,
+                        'true',
                         $data['issuer'],
                         $data['tls_mode'],
                         $data['uploaded_on'],
@@ -92,7 +95,7 @@ class VerifyCFZoneSSL implements ShouldQueue
         }
         rewind($fh);
         Mail::to($this->user)
-            ->send(new VerifyCFZoneSSLResult(stream_get_contents($fh), $this->zones));
+            ->send(new VerifyCFZoneCustomSSLResult(stream_get_contents($fh), $this->zones));
         fclose($fh);
     }
 }
