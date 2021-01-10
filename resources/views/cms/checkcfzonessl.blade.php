@@ -27,3 +27,15 @@
 	</form>
 </div>
 @endsection
+
+@push('scriptBottom')
+<script type="text/javascript">
+    Echo.private('user-' + {{ auth()->user()->id }})
+        .listen('.verify-cfzone-custonssl.completed', (data) => {
+        	$.notify(`MSTool has already emailed the check result of ${data.number_of_zones} zones to ${data.requestor}`, {
+        		position: "right bottom",
+        		className: "success"
+        	})
+    });	
+</script>
+@endpush

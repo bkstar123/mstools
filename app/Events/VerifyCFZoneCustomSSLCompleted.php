@@ -53,6 +53,29 @@ class VerifyCFZoneCustomSSLCompleted implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('channel-name');
+        return new PrivateChannel('user-'. $this->user->id);
+    }
+
+    /**
+     * Give an alias name to the event
+     *
+     * @return Channel|array
+     */
+    public function broadcastAs()
+    {
+        return 'verify-cfzone-custonssl.completed';
+    }
+
+    /**
+     * Get the data to broadcast.
+     *
+     * @return array
+     */
+    public function broadcastWith()
+    {
+        return [
+            'requestor' => $this->user->email,
+            'number_of_zones' => count($this->zones)
+        ];
     }
 }

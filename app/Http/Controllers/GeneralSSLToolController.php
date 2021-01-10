@@ -87,7 +87,7 @@ class GeneralSSLToolController extends Controller
         ]);
         $zones = explode(',', $request->zones);
         VerifyCFZoneCustomSSL::dispatch($zones, auth()->user());
-        flashing('MSTool will send you the result via email')
+        flashing('MSTool is processing the request')
             ->flash();
         return back();
     }
