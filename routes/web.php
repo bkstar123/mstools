@@ -34,6 +34,6 @@ Route::get('/cms/check-cfzone-ssl', function () {
 })->name('checkcfzonessl')
   ->middleware('bkscms-auth:admins');
 
-Route::post('/cms/check-cfzone-ssl', 'GeneralSSLToolController@verifyCustomSSLForCFZones')
+Route::post('/cms/check-cfzone-ssl', 'GeneralSSLToolController@verifyCFZoneCustomSSL')
   ->name('checkcfzonessl')
   ->middleware('bkscms-auth:admins');

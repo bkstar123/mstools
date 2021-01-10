@@ -1,14 +1,18 @@
 <?php
-
+/**
+ * VerifyCFZoneCustomSSL job
+ *
+ * @author: tuanha
+ * @last-mod: 10-Jan-2021
+ */
 namespace App\Jobs;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
-use App\Mail\VerifyCFZoneCustomSSLResult;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use App\Events\VerifyCFZoneCustomSSLCompleted;
 
 class VerifyCFZoneCustomSSL implements ShouldQueue
 {
@@ -94,8 +98,7 @@ class VerifyCFZoneCustomSSL implements ShouldQueue
             }
         }
         rewind($fh);
-        Mail::to($this->user)
-            ->send(new VerifyCFZoneCustomSSLResult(stream_get_contents($fh), $this->zones));
+        VerifyCFZoneCustomSSLCompleted::dispatch(stream_get_contents($fh), $this->zones, $this->user);
         fclose($fh);
     }
 }

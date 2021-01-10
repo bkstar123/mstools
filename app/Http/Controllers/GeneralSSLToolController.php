@@ -80,7 +80,7 @@ class GeneralSSLToolController extends Controller
      *
      * @param \Illuminate\Http\Request $request
      */
-    public function verifyCustomSSLForCFZones(Request $request)
+    public function verifyCFZoneCustomSSL(Request $request)
     {
         $request->validate([
             'zones' => 'required'

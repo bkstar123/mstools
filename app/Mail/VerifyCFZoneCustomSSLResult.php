@@ -28,7 +28,7 @@ class VerifyCFZoneCustomSSLResult extends Mailable
      */
     public function __construct($attachment, $zones)
     {
-        $this->attachment = base64_encode($attachment);
+        $this->attachment = $attachment;
         $this->zones = $zones;
     }
 
