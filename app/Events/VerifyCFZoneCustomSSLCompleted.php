@@ -63,7 +63,7 @@ class VerifyCFZoneCustomSSLCompleted implements ShouldBroadcast
      */
     public function broadcastAs()
     {
-        return 'verify-cfzone-custonssl.completed';
+        return 'verify-cfzone-customssl.completed';
     }
 
     /**
