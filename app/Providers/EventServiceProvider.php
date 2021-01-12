@@ -4,7 +4,9 @@ namespace App\Providers;
 
 use Illuminate\Support\Facades\Event;
 use Illuminate\Auth\Events\Registered;
+use App\Events\VerifyDomainSSLDataCompleted;
 use App\Events\VerifyCFZoneCustomSSLCompleted;
+use App\Listeners\SendNotificationDomainSSLDataCompletion;
 use App\Listeners\SendNotificationCFZoneCustomSSLCompletion;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -22,6 +24,9 @@ class EventServiceProvider extends ServiceProvider
         ],
         VerifyCFZoneCustomSSLCompleted::class => [
             SendNotificationCFZoneCustomSSLCompletion::class
+        ],
+        VerifyDomainSSLDataCompleted::class => [
+            SendNotificationDomainSSLDataCompletion::class
         ],
     ];
 

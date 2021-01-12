@@ -3,17 +3,17 @@
 namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
-use App\Mail\VerifyCFZoneCustomSSLResult;
+use App\Mail\VerifyDomainSSLDataResult;
 use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\SlackMessage;
 
-class VerifyCFZoneCustomSSLNotification extends Notification implements ShouldQueue
+class VerifyDomainSSLDataNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
     /**
-     * @var \App\Events\VerifyCFZoneCustomSSLCompleted
+     * @var \App\Events\VerifyDomainSSLDataCompleted
      */
     protected $payload;
 
@@ -42,11 +42,11 @@ class VerifyCFZoneCustomSSLNotification extends Notification implements ShouldQu
      * Get the mail representation of the notification.
      *
      * @param  mixed  $notifiable
-     * @return \App\Mail\VerifyCFZoneCustomSSLResult
+     * @return \App\Mail\VerifyDomainSSLDataResult
      */
     public function toMail($notifiable)
     {
-        return (new VerifyCFZoneCustomSSLResult($this->payload->attachment, $this->payload->zones))
+        return (new VerifyDomainSSLDataResult($this->payload->attachment, $this->payload->domains))
                ->to($notifiable->email);
     }
 
@@ -64,7 +64,7 @@ class VerifyCFZoneCustomSSLNotification extends Notification implements ShouldQu
             ->content('A task from MSTool has been completed')
             ->attachment(function ($attachment) {
                 $attachment->fields([
-                               'Task' => 'Verify Cloudflare zones\' custom SSL setting',
+                               'Task' => 'Verify Domains\' SSL Data',
                                'Initiated By' => $this->payload->user->email,
                            ]);
             });

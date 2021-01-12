@@ -34,7 +34,7 @@
         .listen('.verify-cfzone-customssl.completed', (data) => {
         	$.notify(`MSTool has already emailed the check result of ${data.number_of_zones} zones to ${data.requestor}`, {
         		position: "right bottom",
-        		className: "success",
+        		className: "info",
         		clickToHide: true,
         		autoHide: false,
         	})

@@ -23,7 +23,6 @@
         "laravel/framework": "5.8.*",
         "laravel/slack-notification-channel": "^2.3",
         "laravel/tinker": "^1.0",
-        "league/csv": "^9.6",
         "pusher/pusher-php-server": "~4.0",
         "spatie/ssl-certificate": "^1.21"
     },
