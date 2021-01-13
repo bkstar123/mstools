@@ -17,7 +17,7 @@
 				<textarea class="form-control"
 				          name="zones"
 				          required
-				          row="5" 
+				          rows="5" 
 				          placeholder="Paste the comma-seperated zones here"></textarea>
 			</div>
 		</div>

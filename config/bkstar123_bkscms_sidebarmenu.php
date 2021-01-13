@@ -75,6 +75,11 @@ return [
                 'path' => '/cms/check-cfzone-ssl',
                 'icon' => 'fa fa-book',
             ],
+            [
+                'name' => 'Decode Certificate Data',
+                'path' => '/cms/check-cert-data',
+                'icon' => 'fa fa-lock',
+            ],
         ]
     ],
 ];

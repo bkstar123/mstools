@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use Exception;
 use Illuminate\Http\Request;
 use App\Jobs\VerifyDomainSSLData;
 use App\Jobs\VerifyCFZoneCustomSSL;
+use Spatie\SslCertificate\SslCertificate;
 
 class GeneralSSLToolController extends Controller
 {
@@ -40,5 +42,26 @@ class GeneralSSLToolController extends Controller
         flashing('MSTool is processing the request')
             ->flash();
         return back();
+    }
+
+    /**
+     * Decode a certificate
+     *
+     * @param \Illuminate\Http\Request $request
+     */
+    public function verifyCertData(Request $request)
+    {
+        $request->validate([
+            'cert' => 'required'
+        ]);
+        try {
+            $ssl = SslCertificate::createFromString($request->cert);
+            return view('cms.checkcertdata', compact('ssl'));
+        } catch (Exception $e) {
+            flashing('Cannot parse the content of the certificate')
+            ->error()
+            ->flash();
+            return back();
+        }
     }
 }

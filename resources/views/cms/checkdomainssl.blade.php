@@ -17,7 +17,7 @@
 				<textarea class="form-control"
 				          name="domains"
 				          required
-				          row="5" 
+				          rows="5" 
 				          placeholder="Paste the comma-seperated domains here"></textarea>
 			</div>
 		</div>

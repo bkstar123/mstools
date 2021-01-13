@@ -37,3 +37,13 @@ Route::get('/cms/check-cfzone-ssl', function () {
 Route::post('/cms/check-cfzone-ssl', 'GeneralSSLToolController@verifyCFZoneCustomSSL')
   ->name('checkcfzonessl')
   ->middleware('bkscms-auth:admins');
+
+// Verify a certificate's data
+Route::get('/cms/check-cert-data', function () {
+    return view('cms.checkcertdata');
+})->name('checkcertdata')
+  ->middleware('bkscms-auth:admins');
+
+Route::post('/cms/check-cert-data', 'GeneralSSLToolController@verifyCertData')
+  ->name('checkcertdata')
+  ->middleware('bkscms-auth:admins');
