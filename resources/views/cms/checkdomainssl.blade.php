@@ -10,7 +10,7 @@
 		@csrf
 		<div class="card-body">
 			<div class="form-group">
-				<label>Domain List (comma-seperated)</label>
+				<label>Domain List <span style="color:red">&midast;</span></label>
 				@error('domains')
 				    <div class="alert alert-danger">{{ $message }}</div>
 				@enderror
@@ -18,7 +18,7 @@
 				          name="domains"
 				          required
 				          rows="5" 
-				          placeholder="Paste the comma-seperated domains here"></textarea>
+				          placeholder="Paste the comma-seperated domains here">{{ old('domains') }}</textarea>
 			</div>
 		</div>
 		<div class="card-footer">

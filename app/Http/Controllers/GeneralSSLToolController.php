@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use Exception;
+use App\Rules\SslKeyMatch;
+use App\Rules\SslCertValid;
+use Illuminate\Support\Arr;
 use Illuminate\Http\Request;
 use App\Jobs\VerifyDomainSSLData;
 use App\Jobs\VerifyCFZoneCustomSSL;
@@ -63,5 +66,58 @@ class GeneralSSLToolController extends Controller
             ->flash();
             return back();
         }
+    }
+
+    /**
+     * Upload certificate to Cloudflare
+     *
+     * @param \Illuminate\Http\Request $request
+     */
+    public function uploadCertCFZone(Request $request)
+    {
+        $request->validate([
+            'cert' => ['required', new SslCertValid],
+            'privateKey' => ['required', new SslKeyMatch($request->cert)]
+        ]);
+        $zones = $this->getZonesForCertUpload($request);
+        if (empty($zones)) {
+            flashing('No zones have been specified or identified yet')
+            ->error()
+            ->flash();
+        } else {
+            dd($zones);
+        }
+    }
+
+    /**
+     * Get zones for certificate upload
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return array
+     */
+    protected function getZonesForCertUpload(Request $request)
+    {
+        if (empty($request->zones)) {
+            $ssl = SslCertificate::createFromString($request->cert);
+            $domains = $ssl->getAdditionalDomains();
+            $zones = [];
+            if (count($domains) > 0) {
+                $TLDs = explode(',', file_get_contents(asset('/sources/tlds.txt')));
+                foreach ($domains as $domain) {
+                    $domainParts = explode('.', trim($domain));
+                    $i = count($domainParts) - 1;
+                    $zone = $domainParts[$i];
+                    while ($i >= 0 && in_array($zone, $TLDs)) {
+                        --$i;
+                        $zone = $domainParts[$i].'.'.$zone;
+                    }
+                    $zones[] = $zone;
+                }
+                $zones = array_merge([], array_unique($zones));
+            }
+        } else {
+            $zones = array_unique(explode(',', $request->zones));
+        }
+        return $zones;
     }
 }

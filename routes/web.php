@@ -47,3 +47,13 @@ Route::get('/cms/check-cert-data', function () {
 Route::post('/cms/check-cert-data', 'GeneralSSLToolController@verifyCertData')
   ->name('checkcertdata')
   ->middleware('bkscms-auth:admins');
+
+// Upload/update certificate for Cloudlare zones
+Route::get('/cms/cfzone-cert-upload', function () {
+    return view('cms.cfzonecertupload');
+})->name('cfzonecertupload')
+  ->middleware('bkscms-auth:admins');
+
+Route::post('/cms/cfzone-cert-upload', 'GeneralSSLToolController@uploadCertCFZone')
+  ->name('cfzonecertupload')
+  ->middleware('bkscms-auth:admins');

@@ -10,7 +10,7 @@
 		@csrf
 		<div class="card-body">
 			<div class="form-group">
-				<label>Zone List (comma-seperated)</label>
+				<label>Zone List <span style="color:red">&midast;</span></label>
 				@error('zones')
 				    <div class="alert alert-danger">{{ $message }}</div>
 				@enderror
@@ -18,7 +18,7 @@
 				          name="zones"
 				          required
 				          rows="5" 
-				          placeholder="Paste the comma-seperated zones here"></textarea>
+				          placeholder="Paste the comma-seperated zones here">{{ old('zones') }}</textarea>
 			</div>
 		</div>
 		<div class="card-footer">

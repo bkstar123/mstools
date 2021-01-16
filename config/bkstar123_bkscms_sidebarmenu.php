@@ -80,6 +80,11 @@ return [
                 'path' => '/cms/check-cert-data',
                 'icon' => 'fa fa-lock',
             ],
+            [
+                'name' => 'Upload Certificate to Cloudflare',
+                'path' => '/cms/cfzone-cert-upload',
+                'icon' => 'fa fa-upload',
+            ],
         ]
     ],
 ];

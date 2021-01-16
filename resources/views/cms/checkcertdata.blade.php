@@ -11,7 +11,7 @@
 		@csrf
 		<div class="card-body">
 			<div class="form-group">
-				<label>Certificate content</label>
+				<label>Certificate <span style="color:red">&midast;</span></label>
 				@error('cert')
 				    <div class="alert alert-danger">{{ $message }}</div>
 				@enderror
@@ -19,7 +19,7 @@
 				          name="cert"
 				          required
 				          rows="15" 
-				          placeholder="Paste the content of the certificate here"></textarea>
+				          placeholder="Paste the content of the certificate here">{{ old('cert') }}</textarea>
 			</div>
 		</div>
 		<div class="card-footer">
