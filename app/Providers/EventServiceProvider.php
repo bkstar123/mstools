@@ -7,6 +7,8 @@ use Illuminate\Auth\Events\Registered;
 use App\Events\VerifyDomainSSLDataCompleted;
 use App\Events\VerifyCFZoneCustomSSLCompleted;
 use App\Listeners\SendNotificationDomainSSLDataCompletion;
+use App\Listeners\SendNotificationCFZoneSSLUploadCompleted;
+use App\Events\UploadCustomCertificateToCloudflareCompleted;
 use App\Listeners\SendNotificationCFZoneCustomSSLCompletion;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -27,6 +29,9 @@ class EventServiceProvider extends ServiceProvider
         ],
         VerifyDomainSSLDataCompleted::class => [
             SendNotificationDomainSSLDataCompletion::class
+        ],
+        UploadCustomCertificateToCloudflareCompleted::class => [
+            SendNotificationCFZoneSSLUploadCompleted::class
         ],
     ];
 

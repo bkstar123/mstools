@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use App\Jobs\VerifyDomainSSLData;
 use App\Jobs\VerifyCFZoneCustomSSL;
 use Spatie\SslCertificate\SslCertificate;
+use App\Jobs\UploadCustomCertificateToCloudflare;
 
 class GeneralSSLToolController extends Controller
 {
@@ -85,7 +86,10 @@ class GeneralSSLToolController extends Controller
             ->error()
             ->flash();
         } else {
-            dd($zones);
+            UploadCustomCertificateToCloudflare::dispatch($zones, $request->cert, $request->privateKey, auth()->user());
+            flashing('MSTool is processing the request')
+            ->flash();
+            return back();
         }
     }
 

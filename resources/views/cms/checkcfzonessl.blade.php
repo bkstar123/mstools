@@ -32,7 +32,7 @@
 <script type="text/javascript">
     Echo.private('user-' + {{ auth()->user()->id }})
         .listen('.verify-cfzone-customssl.completed', (data) => {
-        	$.notify(`MSTool has already emailed the check result of ${data.number_of_zones} zones to ${data.requestor}`, {
+        	$.notify(`MSTool has already emailed the check result of ${data.number_of_zones} Cloudflare zones to ${data.requestor}`, {
         		position: "right bottom",
         		className: "info",
         		clickToHide: true,

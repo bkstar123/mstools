@@ -58,7 +58,7 @@ class VerifyCFZoneCustomSSL implements ShouldQueue
     {
         $fh = fopen('php://temp', 'w');
         fputcsv($fh, [
-            'URL', 'Found on Cloudflare', 'Issuer', 'SSL mode', 'SSL uploaded on', 'SSL modified on', 'Expired_at', 'Hosts', 'Note'
+            'Zone', 'Found on Cloudflare', 'Issuer', 'SSL mode', 'SSL uploaded on', 'SSL modified on', 'Expired_at', 'Hosts', 'Note'
         ]);
         $zoneMgmt = resolve('zoneMgmt');
         $customSSL = resolve('customSSL');

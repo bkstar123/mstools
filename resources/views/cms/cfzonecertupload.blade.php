@@ -52,3 +52,17 @@
 	</form>
 </div>
 @endsection
+
+@push('scriptBottom')
+<script type="text/javascript">
+    Echo.private('user-' + {{ auth()->user()->id }})
+        .listen('.upload-certificate-cfzone.completed', (data) => {
+          $.notify(`MSTool has already emailed the report of SSL replace/install for ${data.number_of_zones} Cloudflare zones to ${data.requestor}`, {
+            position: "right bottom",
+            className: "info",
+            clickToHide: true,
+            autoHide: false,
+          })
+    }); 
+</script>
+@endpush
