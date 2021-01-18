@@ -2,8 +2,8 @@
 /public/hot
 /public/storage
 /public/cms-assets
-/public/fonts
-/public/images
+#/public/fonts
+#/public/images
 /storage/*.key
 /vendor
 .env
