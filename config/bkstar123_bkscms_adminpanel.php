@@ -78,5 +78,30 @@ return [
             'alias' => 'admins.deactivate',
             'description' => 'This permission allows for disabling an admin'
         ],
+
+        // SSL section
+        [
+            'permission' => 'Check SSL data for domains',
+            'alias' => 'domains.ssl.check',
+            'description' => 'This permission allows for checking SSL data for domains'
+        ],
+
+        [
+            'permission' => 'Check custom SSL configuration for Cloudflare zones',
+            'alias' => 'cfzones.customssl.check',
+            'description' => 'This permission allows for checking custom SSL configuration for Cloudflare zones'
+        ],
+
+        [
+            'permission' => 'Decode certificate data',
+            'alias' => 'certificate.decode',
+            'description' => 'This permission allows for decoding a certificate data'
+        ],
+
+        [
+            'permission' => 'Install/replace custom certificate for Cloudflare zones',
+            'alias' => 'cfzone.certificate.update',
+            'description' => 'This permission allows for decoding a certificate data'
+        ],
     ]
 ];
