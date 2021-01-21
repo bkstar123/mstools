@@ -87,4 +87,10 @@ return [
             ],
         ]
     ],
+
+    [
+        'name' => 'Website',
+        'path' => env('APP_WEBSITE'),
+        'icon' => 'fa fa-globe',
+    ],
 ];
