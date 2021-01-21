@@ -14,7 +14,7 @@ use Spatie\SslCertificate\SslCertificate;
 use App\Jobs\UploadCustomCertificateToCloudflare;
 
 class GeneralSSLToolController extends Controller
-{   
+{
     /**
      * Verify SSL certificate data for domains
      *
@@ -22,18 +22,14 @@ class GeneralSSLToolController extends Controller
      */
     public function verifyDomainSSLData(Request $request)
     {
-        if (Gate::allows('domains.ssl.check')) {
-            $request->validate([
+        $request->validate([
                 'domains' => 'required'
             ]);
-            $domains = explode(',', $request->domains);
-            VerifyDomainSSLData::dispatch($domains, auth()->user());
-            flashing('MSTool is processing the request')
+        $domains = explode(',', $request->domains);
+        VerifyDomainSSLData::dispatch($domains, auth()->user());
+        flashing('MSTool is processing the request')
             ->flash();
-            return back();
-        } else {
-            abort('403');
-        }
+        return back();
     }
 
     /**
@@ -43,18 +39,14 @@ class GeneralSSLToolController extends Controller
      */
     public function verifyCFZoneCustomSSL(Request $request)
     {
-        if (Gate::allows('cfzones.customssl.check')) {
-            $request->validate([
+        $request->validate([
                 'zones' => 'required'
             ]);
-            $zones = explode(',', $request->zones);
-            VerifyCFZoneCustomSSL::dispatch($zones, auth()->user());
-            flashing('MSTool is processing the request')
+        $zones = explode(',', $request->zones);
+        VerifyCFZoneCustomSSL::dispatch($zones, auth()->user());
+        flashing('MSTool is processing the request')
             ->flash();
-            return back();
-        } else {
-            abort('403');
-        }
+        return back();
     }
 
     /**
@@ -64,21 +56,17 @@ class GeneralSSLToolController extends Controller
      */
     public function verifyCertData(Request $request)
     {
-        if (Gate::allows('certificate.decode')) {
-            $request->validate([
+        $request->validate([
                 'cert' => 'required'
             ]);
-            try {
-                $ssl = SslCertificate::createFromString($request->cert);
-                return view('cms.checkcertdata', compact('ssl'));
-            } catch (Exception $e) {
-                flashing('Cannot parse the content of the certificate')
+        try {
+            $ssl = SslCertificate::createFromString($request->cert);
+            return view('cms.checkcertdata', compact('ssl'));
+        } catch (Exception $e) {
+            flashing('Cannot parse the content of the certificate')
                 ->error()
                 ->flash();
-                return back();
-            }
-        } else {
-            abort('403');
+            return back();
         }
     }
 
@@ -89,24 +77,20 @@ class GeneralSSLToolController extends Controller
      */
     public function uploadCertCFZone(Request $request)
     {
-        if (Gate::allows('cfzone.certificate.update')) {
-            $request->validate([
+        $request->validate([
                 'cert' => ['required', new SslCertValid],
                 'privateKey' => ['required', new SslKeyMatch($request->cert)]
             ]);
-            $zones = $this->getZonesForCertUpload($request);
-            if (empty($zones)) {
-                flashing('No zones have been specified or identified yet')
+        $zones = $this->getZonesForCertUpload($request);
+        if (empty($zones)) {
+            flashing('No zones have been specified or identified yet')
                 ->error()
                 ->flash();
-            } else {
-                UploadCustomCertificateToCloudflare::dispatch($zones, $request->cert, $request->privateKey, auth()->user());
-                flashing('MSTool is processing the request')
-                ->flash();
-                return back();
-            }
         } else {
-            abort('403');
+            UploadCustomCertificateToCloudflare::dispatch($zones, $request->cert, $request->privateKey, auth()->user());
+            flashing('MSTool is processing the request')
+                ->flash();
+            return back();
         }
     }
 
