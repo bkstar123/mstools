@@ -1,5 +1,10 @@
 <?php
-
+/**
+ * VerifyDomainSSLData Job 
+ *
+ * @author: tuanha
+ * @last-mod: 23-Jan-2021
+ */
 namespace App\Jobs;
 
 use Exception;

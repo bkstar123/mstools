@@ -1,15 +1,18 @@
 <?php
-
+/**
+ * GeneralSSLToolController 
+ *
+ * @author: tuanha
+ * @last-mod: 23-Jan-2021
+ */
 namespace App\Http\Controllers;
 
 use Exception;
 use App\Rules\SslKeyMatch;
 use App\Rules\SslCertValid;
-use Illuminate\Support\Arr;
 use Illuminate\Http\Request;
 use App\Jobs\VerifyDomainSSLData;
 use App\Jobs\VerifyCFZoneCustomSSL;
-use Illuminate\Support\Facades\Gate;
 use Spatie\SslCertificate\SslCertificate;
 use App\Jobs\UploadCustomCertificateToCloudflare;
 
