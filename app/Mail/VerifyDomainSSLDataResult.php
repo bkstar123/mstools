@@ -41,6 +41,6 @@ class VerifyDomainSSLDataResult extends Mailable
     {
         return $this->view('emails.ssl.domainssldata')
                     ->subject('Domain SSL Data')
-                    ->attachData(base64_decode($this->attachment), 'domain_ssl_data_check_result.csv');
+                    ->attachData(base64_decode($this->attachment), 'domain_ssl_data_check_result.xlsx');
     }
 }

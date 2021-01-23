@@ -8,7 +8,9 @@
 namespace App\Jobs;
 
 use Exception;
+use App\Exports\ExcelExport;
 use Illuminate\Bus\Queueable;
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Spatie\SslCertificate\SslCertificate;
@@ -58,8 +60,7 @@ class VerifyDomainSSLData implements ShouldQueue
      */
     public function handle()
     {
-        $fh = fopen('php://temp', 'w');
-        fputcsv($fh, ['URL', 'Issuer', 'Valid_from', 'Expired_at', 'CN', 'Fingerprint', 'Remaining_days', 'Point_to_IP', 'Alias_to', 'SAN']);
+        $data = [];
         foreach ($this->domains as $domain) {
             $domain = idn_to_ascii(trim($domain), IDNA_DEFAULT, INTL_IDNA_VARIANT_UTS46);
             $IPs = [];
@@ -86,24 +87,45 @@ class VerifyDomainSSLData implements ShouldQueue
             }
             try {
                 $cert = SslCertificate::createForHostName($domain);
-                fputcsv($fh, [
-                    $domain,
-                    $cert->getIssuer(),
-                    $cert->validFromDate(),
-                    $cert->expirationDate(),
-                    $cert->getDomain(),
-                    $cert->getFingerprint(),
-                    $cert->daysUntilExpirationDate(),
-                    json_encode($IPs),
-                    json_encode($Aliases),
-                    json_encode($cert->getAdditionalDomains()),
+                array_push($data, [
+                    'URL' => $domain,
+                    'Issuer' => $cert->getIssuer(),
+                    'Valid_from' => $cert->validFromDate(),
+                    'Expired_at' => $cert->expirationDate(),
+                    'CN' => $cert->getDomain(),
+                    'Fingerprint' => $cert->getFingerprint(),
+                    'Remaining_days' => $cert->daysUntilExpirationDate(),
+                    'A' => json_encode($IPs),
+                    'CNAME' => json_encode($Aliases),
+                    'SAN' => json_encode($cert->getAdditionalDomains()),
                 ]);
             } catch (Exception $e) {
-                fputcsv($fh, [$domain, '', '', '', '', '', '', json_encode($IPs), json_encode($Aliases), '']);
+                array_push($data, [
+                    'URL' => $domain,
+                    'Issuer' => '',
+                    'Valid_from' => '',
+                    'Expired_at' => '',
+                    'CN' => '',
+                    'Fingerprint' => '',
+                    'Remaining_days' => '',
+                    'A' => json_encode($IPs),
+                    'CNAME' => json_encode($Aliases),
+                    'SAN' => '',
+                ]);
             }
         }
-        rewind($fh);
-        VerifyDomainSSLDataCompleted::dispatch(stream_get_contents($fh), $this->domains, $this->user);
-        fclose($fh);
+        $headings = [
+            'URL', 
+            'Issuer', 
+            'Valid_from', 
+            'Expired_at', 
+            'CN', 
+            'Fingerprint', 
+            'Remaining_days', 
+            'A', 
+            'CNAME', 
+            'SAN'
+        ];
+        VerifyDomainSSLDataCompleted::dispatch(Excel::raw(new ExcelExport($data, $headings), 'Xlsx'), $this->domains, $this->user);
     }
 }
