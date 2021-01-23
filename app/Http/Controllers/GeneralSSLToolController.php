@@ -1,6 +1,6 @@
 <?php
 /**
- * GeneralSSLToolController 
+ * GeneralSSLToolController
  *
  * @author: tuanha
  * @last-mod: 23-Jan-2021

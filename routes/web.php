@@ -33,7 +33,7 @@ Route::group(
         })->name('checkdomainssl');
 
         Route::post('check-domain-ssl', 'GeneralSSLToolController@verifyDomainSSLData')
-        ->name('checkdomainssl');        
+        ->name('checkdomainssl');
     }
 );
 
@@ -52,7 +52,7 @@ Route::group(
         })->name('checkcfzonessl');
 
         Route::post('check-cfzone-ssl', 'GeneralSSLToolController@verifyCFZoneCustomSSL')
-        ->name('checkcfzonessl');        
+        ->name('checkcfzonessl');
     }
 );
 
@@ -71,7 +71,7 @@ Route::group(
         })->name('checkcertdata');
 
         Route::post('check-cert-data', 'GeneralSSLToolController@verifyCertData')
-        ->name('checkcertdata');        
+        ->name('checkcertdata');
     }
 );
 
@@ -91,6 +91,6 @@ Route::group(
         })->name('cfzonecertupload');
 
         Route::post('cfzone-cert-upload', 'GeneralSSLToolController@uploadCertCFZone')
-        ->name('cfzonecertupload');        
+        ->name('cfzonecertupload');
     }
 );

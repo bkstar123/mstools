@@ -69,11 +69,11 @@ class VerifyCFZoneCustomSSL implements ShouldQueue
                     'Zone' => $zone,
                     'Found on Cloudflare' => 'false',
                     'Issuer' => '',
-                    'SSL mode' => '', 
-                    'SSL uploaded on' => '', 
-                    'SSL modified on' => '', 
-                    'Expired_at' => '', 
-                    'Hosts' => '', 
+                    'SSL mode' => '',
+                    'SSL uploaded on' => '',
+                    'SSL modified on' => '',
+                    'Expired_at' => '',
+                    'Hosts' => '',
                     'Note' => ''
                 ]);
                 continue;
@@ -82,11 +82,11 @@ class VerifyCFZoneCustomSSL implements ShouldQueue
                     'Zone' => $zone,
                     'Found on Cloudflare' => 'Unknown',
                     'Issuer' => '',
-                    'SSL mode' => '', 
-                    'SSL uploaded on' => '', 
-                    'SSL modified on' => '', 
-                    'Expired_at' => '', 
-                    'Hosts' => '', 
+                    'SSL mode' => '',
+                    'SSL uploaded on' => '',
+                    'SSL modified on' => '',
+                    'Expired_at' => '',
+                    'Hosts' => '',
                     'Note' => 'Something is unusual, please manually double check in the Cloudflare portal'
                 ]);
                 continue;
@@ -97,11 +97,11 @@ class VerifyCFZoneCustomSSL implements ShouldQueue
                     'Zone' => $zone,
                     'Found on Cloudflare' => 'true',
                     'Issuer' => '',
-                    'SSL mode' => '', 
-                    'SSL uploaded on' => '', 
-                    'SSL modified on' => '', 
-                    'Expired_at' => '', 
-                    'Hosts' => '', 
+                    'SSL mode' => '',
+                    'SSL uploaded on' => '',
+                    'SSL modified on' => '',
+                    'Expired_at' => '',
+                    'Hosts' => '',
                     'Note' => 'Something is unusual, please manually double check in the Cloudflare portal'
                 ]);
                 continue;
@@ -110,11 +110,11 @@ class VerifyCFZoneCustomSSL implements ShouldQueue
                     'Zone' => $zone,
                     'Found on Cloudflare' => 'true',
                     'Issuer' => '',
-                    'SSL mode' => '', 
-                    'SSL uploaded on' => '', 
-                    'SSL modified on' => '', 
-                    'Expired_at' => '', 
-                    'Hosts' => '', 
+                    'SSL mode' => '',
+                    'SSL uploaded on' => '',
+                    'SSL modified on' => '',
+                    'Expired_at' => '',
+                    'Hosts' => '',
                     'Note' => ''
                 ]);
             } else {
@@ -124,11 +124,11 @@ class VerifyCFZoneCustomSSL implements ShouldQueue
                         'Zone' => $zone,
                         'Found on Cloudflare' => 'true',
                         'Issuer' => '',
-                        'SSL mode' => '', 
-                        'SSL uploaded on' => '', 
-                        'SSL modified on' => '', 
-                        'Expired_at' => '', 
-                        'Hosts' => '', 
+                        'SSL mode' => '',
+                        'SSL uploaded on' => '',
+                        'SSL modified on' => '',
+                        'Expired_at' => '',
+                        'Hosts' => '',
                         'Note' => 'Something is unusual, please manually double check in the Cloudflare portal'
                     ]);
                     continue;
@@ -137,25 +137,25 @@ class VerifyCFZoneCustomSSL implements ShouldQueue
                         'Zone' => $zone,
                         'Found on Cloudflare' => 'true',
                         'Issuer' => $res['issuer'],
-                        'SSL mode' => $res['tls_mode'], 
-                        'SSL uploaded on' => $res['uploaded_on'], 
-                        'SSL modified on' => $res['modified_on'], 
-                        'Expired_at' => $res['expires_on'], 
-                        'Hosts' => $res['hosts'], 
+                        'SSL mode' => $res['tls_mode'],
+                        'SSL uploaded on' => $res['uploaded_on'],
+                        'SSL modified on' => $res['modified_on'],
+                        'Expired_at' => $res['expires_on'],
+                        'Hosts' => $res['hosts'],
                         'Note' => ''
                     ]);
                 }
             }
         }
         $headings = [
-            'Zone', 
-            'Found on Cloudflare', 
-            'Issuer', 
-            'SSL mode', 
-            'SSL uploaded on', 
-            'SSL modified on', 
-            'Expired_at', 
-            'Hosts', 
+            'Zone',
+            'Found on Cloudflare',
+            'Issuer',
+            'SSL mode',
+            'SSL uploaded on',
+            'SSL modified on',
+            'Expired_at',
+            'Hosts',
             'Note'
         ];
         VerifyCFZoneCustomSSLCompleted::dispatch(Excel::raw(new ExcelExport($data, $headings), 'Xlsx'), $this->zones, $this->user);

@@ -41,6 +41,6 @@ class UploadCustomCertificateToCloudflareResult extends Mailable
     {
         return $this->view('emails.ssl.updatecertcfzone')
                     ->subject('Cloudflare zone - update custom SSL configuration')
-                    ->attachData(base64_decode($this->attachment), 'cf_zone_custom_ssl_update_report.csv');
+                    ->attachData(base64_decode($this->attachment), 'cf_zone_custom_ssl_update_report.xlsx');
     }
 }

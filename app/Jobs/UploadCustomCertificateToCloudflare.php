@@ -7,7 +7,9 @@
  */
 namespace App\Jobs;
 
+use App\Exports\ExcelExport;
 use Illuminate\Bus\Queueable;
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -66,41 +68,67 @@ class UploadCustomCertificateToCloudflare implements ShouldQueue
      */
     public function handle()
     {
-        $fh = fopen('php://temp', 'w');
-        fputcsv($fh, [
-            'Zone', 'isCompleted', 'isSSLReplacement', 'Comment'
-        ]);
+        $data = [];
         $zoneMgmt = resolve('zoneMgmt');
         $customSSL = resolve('customSSL');
         foreach ($this->zones as $zone) {
             $zone = idn_to_ascii(trim($zone), IDNA_DEFAULT, INTL_IDNA_VARIANT_UTS46);
             $zoneID = $zoneMgmt->getZoneID($zone);
             if (empty($zoneID)) {
-                fputcsv($fh, [$zone, 'No', 'Unknown', "Failed to check this zone's data on Cloudflare" ]);
+                array_push($data, [
+                    'Zone' => $zone,
+                    'isCompleted' => 'No',
+                    'isSSLReplacement' => 'Unknown',
+                    'Comment' => "Failed to check this zone's data on Cloudflare"
+                ]);
                 continue;
             }
             $currentCertID = $customSSL->getCurrentCustomCertID($zoneID);
             if ($currentCertID === false) {
-                fputcsv($fh, [$zone, 'No', 'Unknown', "Failed to check the zone's custom SSL settings, or the configuration is unusal" ]);
+                array_push($data, [
+                    'Zone' => $zone,
+                    'isCompleted' => 'No',
+                    'isSSLReplacement' => 'Unknown',
+                    'Comment' => "Failed to check the zone's custom SSL settings, or the configuration is unusal"
+                ]);
                 continue;
             } elseif ($currentCertID === null) {
                 if (!$customSSL->uploadNewCustomCert($zoneID, $this->cert, $this->key)) {
-                    fputcsv($fh, [$zone, 'No', 'No', "No existing certificate was found, the new certificate failed to be installed" ]);
+                    array_push($data, [
+                        'Zone' => $zone,
+                        'isCompleted' => 'No',
+                        'isSSLReplacement' => 'No',
+                        'Comment' => "No existing certificate was found, the new certificate failed to be installed"
+                    ]);
                     continue;
                 } else {
-                    fputcsv($fh, [$zone, 'Yes', 'No', "No existing certificate was found, the new certificate has been successfully installed" ]);
+                    array_push($data, [
+                        'Zone' => $zone,
+                        'isCompleted' => 'Yes',
+                        'isSSLReplacement' => 'No',
+                        'Comment' => "No existing certificate was found, the new certificate has been successfully installed"
+                    ]);
                 }
             } else {
                 if (!$customSSL->updateCustomCert($zoneID, $currentCertID, $this->cert, $this->key)) {
-                    fputcsv($fh, [$zone, 'No', 'Yes', "An existing certificate was found, the SSL replacement failed" ]);
+                    array_push($data, [
+                        'Zone' => $zone,
+                        'isCompleted' => 'No',
+                        'isSSLReplacement' => 'Yes',
+                        'Comment' => "An existing certificate was found, the SSL replacement failed"
+                    ]);
                     continue;
                 } else {
-                    fputcsv($fh, [$zone, 'Yes', 'Yes', "An existing certificate was found, the SSL replacement has been succeeded" ]);
+                    array_push($data, [
+                        'Zone' => $zone,
+                        'isCompleted' => 'Yes',
+                        'isSSLReplacement' => 'Yes',
+                        'Comment' => "An existing certificate was found, the SSL replacement has been succeeded"
+                    ]);
                 }
             }
         }
-        rewind($fh);
-        UploadCustomCertificateToCloudflareCompleted::dispatch(stream_get_contents($fh), $this->zones, $this->user);
-        fclose($fh);
+        $headings = ['Zone', 'isCompleted', 'isSSLReplacement', 'Comment'];
+        UploadCustomCertificateToCloudflareCompleted::dispatch(Excel::raw(new ExcelExport($data, $headings), 'Xlsx'), $this->zones, $this->user);
     }
 }

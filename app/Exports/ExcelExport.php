@@ -1,6 +1,6 @@
 <?php
 /**
- * ExcelExport Export 
+ * ExcelExport Export
  *
  * @author: tuanha
  * @last-mod: 23-Jan-2021
@@ -15,28 +15,28 @@ use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 
 class ExcelExport implements FromCollection, WithHeadings, ShouldAutoSize
 {
-	use Exportable;
+    use Exportable;
 
-	/**
-	 * @var array
-	 */
-	protected $data;
+    /**
+     * @var array
+     */
+    protected $data;
 
     /**
      * @var array
      */
     protected $headinga;
 
-	/**
-	 * Create instance
-	 *
-	 * @param $data $array
-	 */
-	public function __construct($data, $headings)
-	{
-		$this->data = $data;
+    /**
+     * Create instance
+     *
+     * @param $data $array
+     */
+    public function __construct($data, $headings)
+    {
+        $this->data = $data;
         $this->headings = $headings;
-	}
+    }
     
     /**
     * @return \Illuminate\Support\Collection
@@ -51,7 +51,7 @@ class ExcelExport implements FromCollection, WithHeadings, ShouldAutoSize
      */
     public function headings(): array
     {
-    	return $this->headings;
+        return $this->headings;
     }
 
     /**
@@ -60,7 +60,7 @@ class ExcelExport implements FromCollection, WithHeadings, ShouldAutoSize
     public function registerEvents(): array
     {
         return [
-            AfterSheet::class => function(AfterSheet $event) {
+            AfterSheet::class => function (AfterSheet $event) {
                 $cellRange = 'A1:J1'; // All headers
                 $event->sheet->getDelegate()->getStyle($cellRange)->getFont()->setSize(11);
             },

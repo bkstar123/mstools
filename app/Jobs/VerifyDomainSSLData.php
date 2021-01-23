@@ -1,6 +1,6 @@
 <?php
 /**
- * VerifyDomainSSLData Job 
+ * VerifyDomainSSLData Job
  *
  * @author: tuanha
  * @last-mod: 23-Jan-2021
@@ -115,15 +115,15 @@ class VerifyDomainSSLData implements ShouldQueue
             }
         }
         $headings = [
-            'URL', 
-            'Issuer', 
-            'Valid_from', 
-            'Expired_at', 
-            'CN', 
-            'Fingerprint', 
-            'Remaining_days', 
-            'A', 
-            'CNAME', 
+            'URL',
+            'Issuer',
+            'Valid_from',
+            'Expired_at',
+            'CN',
+            'Fingerprint',
+            'Remaining_days',
+            'A',
+            'CNAME',
             'SAN'
         ];
         VerifyDomainSSLDataCompleted::dispatch(Excel::raw(new ExcelExport($data, $headings), 'Xlsx'), $this->domains, $this->user);
