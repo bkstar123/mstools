@@ -19,49 +19,78 @@ Route::get('/cms/dashboard', function () {
   ->middleware('bkscms-auth:admins');
 
 // Verify SSL certificate for domains
-Route::get('/cms/check-domain-ssl', function () {
-    return view('cms.checkdomainssl');
-})->name('checkdomainssl')
-  ->middleware('bkscms-auth:admins')
-  ->middleware('can:domains.ssl.check');
+Route::group(
+    [
+        'prefix' => 'cms',
+        'middleware' => [
+            'bkscms-auth:admins',
+            'can:domains.ssl.check'
+        ],
+    ],
+    function () {
+        Route::get('check-domain-ssl', function () {
+            return view('cms.checkdomainssl');
+        })->name('checkdomainssl');
 
-Route::post('/cms/check-domain-ssl', 'GeneralSSLToolController@verifyDomainSSLData')
-  ->name('checkdomainssl')
-  ->middleware('bkscms-auth:admins')
-  ->middleware('can:domains.ssl.check');
+        Route::post('check-domain-ssl', 'GeneralSSLToolController@verifyDomainSSLData')
+        ->name('checkdomainssl');        
+    }
+);
 
 // Verify custom SSL configuration for Cloudflare zones
-Route::get('/cms/check-cfzone-ssl', function () {
-    return view('cms.checkcfzonessl');
-})->name('checkcfzonessl')
-  ->middleware('bkscms-auth:admins')
-  ->middleware('can:cfzones.customssl.check');
+Route::group(
+    [
+        'prefix' => 'cms',
+        'middleware' => [
+            'bkscms-auth:admins',
+            'can:cfzones.customssl.check'
+        ],
+    ],
+    function () {
+        Route::get('check-cfzone-ssl', function () {
+            return view('cms.checkcfzonessl');
+        })->name('checkcfzonessl');
 
-Route::post('/cms/check-cfzone-ssl', 'GeneralSSLToolController@verifyCFZoneCustomSSL')
-  ->name('checkcfzonessl')
-  ->middleware('bkscms-auth:admins')
-  ->middleware('can:cfzones.customssl.check');
+        Route::post('check-cfzone-ssl', 'GeneralSSLToolController@verifyCFZoneCustomSSL')
+        ->name('checkcfzonessl');        
+    }
+);
 
 // Verify a certificate's data
-Route::get('/cms/check-cert-data', function () {
-    return view('cms.checkcertdata');
-})->name('checkcertdata')
-  ->middleware('bkscms-auth:admins')
-  ->middleware('can:certificate.decode');
+Route::group(
+    [
+        'prefix' => 'cms',
+        'middleware' => [
+            'bkscms-auth:admins',
+            'can:certificate.decode'
+        ],
+    ],
+    function () {
+        Route::get('check-cert-data', function () {
+            return view('cms.checkcertdata');
+        })->name('checkcertdata');
 
-Route::post('/cms/check-cert-data', 'GeneralSSLToolController@verifyCertData')
-  ->name('checkcertdata')
-  ->middleware('bkscms-auth:admins')
-  ->middleware('can:certificate.decode');
+        Route::post('check-cert-data', 'GeneralSSLToolController@verifyCertData')
+        ->name('checkcertdata');        
+    }
+);
+
 
 // Upload/update certificate for Cloudlare zones
-Route::get('/cms/cfzone-cert-upload', function () {
-    return view('cms.cfzonecertupload');
-})->name('cfzonecertupload')
-  ->middleware('bkscms-auth:admins')
-  ->middleware('can:cfzone.certificate.update');
+Route::group(
+    [
+        'prefix' => 'cms',
+        'middleware' => [
+            'bkscms-auth:admins',
+            'can:cfzone.certificate.update'
+        ],
+    ],
+    function () {
+        Route::get('cfzone-cert-upload', function () {
+            return view('cms.cfzonecertupload');
+        })->name('cfzonecertupload');
 
-Route::post('/cms/cfzone-cert-upload', 'GeneralSSLToolController@uploadCertCFZone')
-  ->name('cfzonecertupload')
-  ->middleware('bkscms-auth:admins')
-  ->middleware('can:cfzone.certificate.update');
+        Route::post('cfzone-cert-upload', 'GeneralSSLToolController@uploadCertCFZone')
+        ->name('cfzonecertupload');        
+    }
+);
