@@ -41,6 +41,6 @@ class VerifyCFZoneCustomSSLResult extends Mailable
     {
         return $this->view('emails.ssl.cfzonessl')
                     ->subject('Cloudflare zone - custom SSL configuration')
-                    ->attachData(base64_decode($this->attachment), 'cf_zone_custom_ssl_check_result.csv');
+                    ->attachData(base64_decode($this->attachment), 'cf_zone_custom_ssl_check_result.xlsx');
     }
 }

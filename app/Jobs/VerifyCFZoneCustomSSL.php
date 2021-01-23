@@ -3,11 +3,13 @@
  * VerifyCFZoneCustomSSL job
  *
  * @author: tuanha
- * @last-mod: 10-Jan-2021
+ * @last-mod: 23-Jan-2021
  */
 namespace App\Jobs;
 
+use App\Exports\ExcelExport;
 use Illuminate\Bus\Queueable;
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -56,49 +58,106 @@ class VerifyCFZoneCustomSSL implements ShouldQueue
      */
     public function handle()
     {
-        $fh = fopen('php://temp', 'w');
-        fputcsv($fh, [
-            'Zone', 'Found on Cloudflare', 'Issuer', 'SSL mode', 'SSL uploaded on', 'SSL modified on', 'Expired_at', 'Hosts', 'Note'
-        ]);
+        $data = [];
         $zoneMgmt = resolve('zoneMgmt');
         $customSSL = resolve('customSSL');
         foreach ($this->zones as $zone) {
             $zone = idn_to_ascii(trim($zone), IDNA_DEFAULT, INTL_IDNA_VARIANT_UTS46);
             $zoneID = $zoneMgmt->getZoneID($zone);
             if ($zoneID === null) {
-                fputcsv($fh, [$zone, 'false', '', '', '', '', '', '', '']);
+                array_push($data, [
+                    'Zone' => $zone,
+                    'Found on Cloudflare' => 'false',
+                    'Issuer' => '',
+                    'SSL mode' => '', 
+                    'SSL uploaded on' => '', 
+                    'SSL modified on' => '', 
+                    'Expired_at' => '', 
+                    'Hosts' => '', 
+                    'Note' => ''
+                ]);
                 continue;
             } elseif ($zoneID === false) {
-                fputcsv($fh, [$zone, 'Unknown', '', '', '', '', '', '', 'Something is unusual, please manually double check in the Cloudflare portal']);
+                array_push($data, [
+                    'Zone' => $zone,
+                    'Found on Cloudflare' => 'Unknown',
+                    'Issuer' => '',
+                    'SSL mode' => '', 
+                    'SSL uploaded on' => '', 
+                    'SSL modified on' => '', 
+                    'Expired_at' => '', 
+                    'Hosts' => '', 
+                    'Note' => 'Something is unusual, please manually double check in the Cloudflare portal'
+                ]);
                 continue;
             }
             $currentCertID = $customSSL->getCurrentCustomCertID($zoneID);
             if ($currentCertID === false) {
-                fputcsv($fh, [$zone, 'true', '', '', '', '', '', '', 'Something is unusual, please manually double check in the Cloudflare portal']);
+                array_push($data, [
+                    'Zone' => $zone,
+                    'Found on Cloudflare' => 'true',
+                    'Issuer' => '',
+                    'SSL mode' => '', 
+                    'SSL uploaded on' => '', 
+                    'SSL modified on' => '', 
+                    'Expired_at' => '', 
+                    'Hosts' => '', 
+                    'Note' => 'Something is unusual, please manually double check in the Cloudflare portal'
+                ]);
                 continue;
             } elseif ($currentCertID === null) {
-                fputcsv($fh, [$zone, 'true', '', '', '', '', '', '', '']);
+                array_push($data, [
+                    'Zone' => $zone,
+                    'Found on Cloudflare' => 'true',
+                    'Issuer' => '',
+                    'SSL mode' => '', 
+                    'SSL uploaded on' => '', 
+                    'SSL modified on' => '', 
+                    'Expired_at' => '', 
+                    'Hosts' => '', 
+                    'Note' => ''
+                ]);
             } else {
-                $data = $customSSL->fetchCertData($zoneID, $currentCertID);
-                if (!$data) {
-                    fputcsv($fh, [$zone, 'true', '', '', '', '', '', '', 'Something is unusual, please manually double check in the Cloudflare portal']);
+                $res = $customSSL->fetchCertData($zoneID, $currentCertID);
+                if (!$res) {
+                    array_push($data, [
+                        'Zone' => $zone,
+                        'Found on Cloudflare' => 'true',
+                        'Issuer' => '',
+                        'SSL mode' => '', 
+                        'SSL uploaded on' => '', 
+                        'SSL modified on' => '', 
+                        'Expired_at' => '', 
+                        'Hosts' => '', 
+                        'Note' => 'Something is unusual, please manually double check in the Cloudflare portal'
+                    ]);
                     continue;
                 } else {
-                    fputcsv($fh, [
-                        $zone,
-                        'true',
-                        $data['issuer'],
-                        $data['tls_mode'],
-                        $data['uploaded_on'],
-                        $data['modified_on'],
-                        $data['expires_on'],
-                        $data['hosts']
+                    array_push($data, [
+                        'Zone' => $zone,
+                        'Found on Cloudflare' => 'true',
+                        'Issuer' => $res['issuer'],
+                        'SSL mode' => $res['tls_mode'], 
+                        'SSL uploaded on' => $res['uploaded_on'], 
+                        'SSL modified on' => $res['modified_on'], 
+                        'Expired_at' => $res['expires_on'], 
+                        'Hosts' => $res['hosts'], 
+                        'Note' => ''
                     ]);
                 }
             }
         }
-        rewind($fh);
-        VerifyCFZoneCustomSSLCompleted::dispatch(stream_get_contents($fh), $this->zones, $this->user);
-        fclose($fh);
+        $headings = [
+            'Zone', 
+            'Found on Cloudflare', 
+            'Issuer', 
+            'SSL mode', 
+            'SSL uploaded on', 
+            'SSL modified on', 
+            'Expired_at', 
+            'Hosts', 
+            'Note'
+        ];
+        VerifyCFZoneCustomSSLCompleted::dispatch(Excel::raw(new ExcelExport($data, $headings), 'Xlsx'), $this->zones, $this->user);
     }
 }
