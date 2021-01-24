@@ -28,5 +28,8 @@
         "vue": "^2.5.17",
         "vue-template-compiler": "^2.6.10"
     },
-    "dependencies": {}
+    "dependencies": {
+        "browserslist": "^4.16.1",
+        "caniuse-lite": "^1.0.30001179"
+    }
 }
