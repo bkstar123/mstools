@@ -32,9 +32,9 @@
 <script type="text/javascript">
     Echo.private('user-' + {{ auth()->user()->id }})
         .listen('.verify-domain-ssldata.completed', (data) => {
-        	$.notify(`MSTool has already emailed the check result of ${data.number_of_domains} domains to ${data.requestor}`, {
+        	$.notify(`MSTool has completed the request for ${data.number_of_domains} domains, and will email the result to ${data.requestor}`, {
         		position: "right bottom",
-        		className: "info",
+        		className: "success",
         		clickToHide: true,
         		autoHide: false,
         	})

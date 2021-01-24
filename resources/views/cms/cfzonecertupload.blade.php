@@ -57,9 +57,9 @@
 <script type="text/javascript">
     Echo.private('user-' + {{ auth()->user()->id }})
         .listen('.upload-certificate-cfzone.completed', (data) => {
-          $.notify(`MSTool has already emailed the report of SSL replace/install for ${data.number_of_zones} Cloudflare zones to ${data.requestor}`, {
+          $.notify(`MSTool has completed the request for ${data.number_of_zones} Cloudflare zones, and will email the report to ${data.requestor}`, {
             position: "right bottom",
-            className: "info",
+            className: "success",
             clickToHide: true,
             autoHide: false,
           })
