@@ -94,3 +94,21 @@ Route::group(
         ->name('cfzonecertupload');
     }
 );
+
+// Key-Cert Matching
+Route::group(
+    [
+        'prefix' => 'cms',
+        'middleware' => [
+            'bkscms-auth:admins',
+        ],
+    ],
+    function () {
+        Route::get('key-cert-matching', function () {
+            return view('cms.keycertmatching');
+        })->name('keycertmatching');
+
+        Route::post('key-cert-matchin', 'GeneralSSLToolController@keyCertMatching')
+        ->name('keycertmatching');
+    }
+);

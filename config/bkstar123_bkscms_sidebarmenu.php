@@ -85,6 +85,11 @@ return [
                 'path' => '/cms/cfzone-cert-upload',
                 'icon' => 'fa fa-upload',
             ],
+            [
+                'name' => 'Private Key/Certificate Matching',
+                'path' => '/cms/key-cert-matching',
+                'icon' => 'fa fa-certificate',
+            ],
         ]
     ],
 

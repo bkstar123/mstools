@@ -98,6 +98,23 @@ class GeneralSSLToolController extends Controller
     }
 
     /**
+     * Matching private key / certificate
+     *
+     * @param \Illuminate\Http\Request $request
+     */
+    public function keyCertMatching(Request $request)
+    {
+        $request->validate([
+                'cert' => ['required', new SslCertValid],
+                'privateKey' => ['required', new SslKeyMatch($request->cert)]
+            ]);
+        flashing('The private key matches with the certificate')
+            ->success()
+            ->flash();
+        return back();
+    }
+
+    /**
      * Get zones for certificate upload
      *
      * @param \Illuminate\Http\Request $request

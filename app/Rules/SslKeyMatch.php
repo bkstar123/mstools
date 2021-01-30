@@ -7,6 +7,8 @@
 */
 namespace App\Rules;
 
+use Exception;
+use Illuminate\Support\Str;
 use Illuminate\Contracts\Validation\Rule;
 
 class SslKeyMatch implements Rule
@@ -36,7 +38,16 @@ class SslKeyMatch implements Rule
      */
     public function passes($attribute, $value)
     {
-        return openssl_x509_check_private_key($this->certificate, $value);
+        try {
+            $pubKey = openssl_pkey_get_public($this->certificate);
+            $originPayload = Str::random(40);
+            openssl_public_encrypt($originPayload, $cryptedPayload, $pubKey);
+            openssl_private_decrypt($cryptedPayload, $decryptedPayload, $value);
+            return openssl_x509_check_private_key($this->certificate, $value) && $originPayload === $decryptedPayload;
+        } catch (Exception $e) {
+            return false;
+        }
+        
     }
 
     /**
