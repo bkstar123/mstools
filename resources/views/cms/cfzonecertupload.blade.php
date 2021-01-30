@@ -6,7 +6,7 @@
 	<div class="card-header">
 		<h3 class="card-title">Paste certificate/private key</h3>
 	</div>
-	<form role="form" action="{{ route('cfzonecertupload') }}" method="post">
+	<form id="uploadCertCFForm" role="form" action="{{ route('cfzonecertupload') }}" method="post">
 		@csrf
         <div class="card-body">
             <div class="form-group">
@@ -47,9 +47,31 @@
             </div>
         </div>
 		<div class="card-footer">
-			<button type="submit" class="btn btn-success">Proceed</button>
+			<button type="button" class="btn btn-success" data-toggle="modal" data-target="#uploadCertCFModal">Proceed</button>
 		</div>
 	</form>
+    <!-- uploadCertCFModal -->
+    <div class="modal fade" id="uploadCertCFModal" tabindex="-1" role="dialog" aria-labelledby="uploadCertCFTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-info">
+                    <h5 class="modal-title" id="uploadCertCFLongTitle">
+                        <i class="fas fa-exclamation-triangle"></i> Confirm your action
+                    </h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Are you sure to upload the given pair of certificate/key to Cloudflare?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="sendToCloudflare()">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 @endsection
 
@@ -64,5 +86,14 @@
             autoHide: false,
           })
     }); 
+    function sendToCloudflare() {
+        let cert = $('textarea[name="cert"]').val();
+        let key = $('textarea[name="privateKey"]').val();
+        if (!cert.trim() || !key.trim()) {
+            alert('The certificate and private key are required');
+            return;
+        }
+        $('#uploadCertCFForm').submit();
+    };
 </script>
 @endpush
