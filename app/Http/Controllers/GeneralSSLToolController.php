@@ -3,7 +3,7 @@
  * GeneralSSLToolController
  *
  * @author: tuanha
- * @last-mod: 23-Jan-2021
+ * @last-mod: 10-Feb-2021
  */
 namespace App\Http\Controllers;
 
@@ -89,6 +89,7 @@ class GeneralSSLToolController extends Controller
             flashing('No zones have been specified or identified yet')
                 ->error()
                 ->flash();
+            return back();
         } else {
             UploadCustomCertificateToCloudflare::dispatch($zones, $request->cert, $request->privateKey, auth()->user());
             flashing('MSTool is processing the request')
@@ -123,9 +124,13 @@ class GeneralSSLToolController extends Controller
     protected function getZonesForCertUpload(Request $request)
     {
         if (empty($request->zones)) {
-            $ssl = SslCertificate::createFromString($request->cert);
-            $domains = $ssl->getAdditionalDomains();
             $zones = [];
+            try {
+                $ssl = SslCertificate::createFromString($request->cert);
+            } catch (Exception $e) {
+                return $zones;
+            }
+            $domains = $ssl->getAdditionalDomains();
             if (count($domains) > 0) {
                 $TLDs = explode(',', file_get_contents(asset('/sources/tlds.txt')));
                 foreach ($domains as $domain) {
@@ -140,9 +145,9 @@ class GeneralSSLToolController extends Controller
                 }
                 $zones = array_merge([], array_unique($zones));
             }
+            return $zones;
         } else {
-            $zones = array_unique(explode(',', $request->zones));
+            return array_unique(explode(',', $request->zones));
         }
-        return $zones;
     }
 }

@@ -70,6 +70,8 @@ class UploadCustomCertificateToCloudflareNotification extends Notification imple
             ->attachment(function ($attachment) {
                 $attachment->fields([
                                'Task' => 'Upload certificate for Cloudflare zones',
+                               'Number of zones' => count($this->payload->zones),
+                               'First zone in the list' => head($this->payload->zones),
                                'Initiated By' => $this->payload->user->email,
                            ]);
             });
