@@ -47,7 +47,6 @@ class SslKeyMatch implements Rule
         } catch (Exception $e) {
             return false;
         }
-        
     }
 
     /**
