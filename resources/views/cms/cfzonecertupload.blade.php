@@ -77,15 +77,6 @@
 
 @push('scriptBottom')
 <script type="text/javascript">
-    Echo.private('user-' + {{ auth()->user()->id }})
-        .listen('.upload-certificate-cfzone.completed', (data) => {
-          $.notify(`MSTool has completed the request for ${data.number_of_zones} Cloudflare zones, and will email the report to ${data.requestor}`, {
-            position: "right bottom",
-            className: "success",
-            clickToHide: true,
-            autoHide: false,
-          })
-    }); 
     function sendToCloudflare() {
         let cert = $('textarea[name="cert"]').val();
         let key = $('textarea[name="privateKey"]').val();

@@ -57,6 +57,35 @@
         </div><!-- ./wrapper -->
         <!-- flashing message -->
         @include('bkstar123_flashing::flashing')
+        <script type="text/javascript">
+            Echo.private('user-' + {{ auth()->user()->id }})
+                .listen('.upload-certificate-cfzone.completed', (data) => {
+                    $.notify(`MSTool has completed the SSL cert uploading request for ${data.number_of_zones} Cloudflare zones, and will send the report to ${data.requestor}`, {
+                        position: "right bottom",
+                        className: "success",
+                        clickToHide: true,
+                        autoHide: false,
+                    })
+                });
+            Echo.private('user-' + {{ auth()->user()->id }})
+                .listen('.verify-cfzone-customssl.completed', (data) => {
+                    $.notify(`MSTool has completed checking custom SSL settings for ${data.number_of_zones} Cloudflare zones, and will send the result to ${data.requestor}`, {
+                        position: "right bottom",
+                        className: "success",
+                        clickToHide: true,
+                        autoHide: false,
+                    })
+                });
+            Echo.private('user-' + {{ auth()->user()->id }})
+                .listen('.verify-domain-ssldata.completed', (data) => {
+                    $.notify(`MSTool has completed checking SSL data for ${data.number_of_domains} domains, and will send the result to ${data.requestor}`, {
+                        position: "right bottom",
+                        className: "success",
+                        clickToHide: true,
+                        autoHide: false,
+                    })
+                }); 
+        </script>
         @stack('scriptBottom')
     </body>
 @endguest

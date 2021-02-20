@@ -27,17 +27,3 @@
 	</form>
 </div>
 @endsection
-
-@push('scriptBottom')
-<script type="text/javascript">
-    Echo.private('user-' + {{ auth()->user()->id }})
-        .listen('.verify-domain-ssldata.completed', (data) => {
-        	$.notify(`MSTool has completed the request for ${data.number_of_domains} domains, and will email the result to ${data.requestor}`, {
-        		position: "right bottom",
-        		className: "success",
-        		clickToHide: true,
-        		autoHide: false,
-        	})
-    });	
-</script>
-@endpush

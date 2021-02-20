@@ -9,6 +9,7 @@ namespace App\Jobs;
 
 use App\Exports\ExcelExport;
 use Illuminate\Bus\Queueable;
+use App\Jobs\VerifyCFZoneCustomSSL;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
@@ -130,5 +131,6 @@ class UploadCustomCertificateToCloudflare implements ShouldQueue
         }
         $headings = ['Zone', 'isCompleted', 'isSSLReplacement', 'Comment'];
         UploadCustomCertificateToCloudflareCompleted::dispatch(Excel::raw(new ExcelExport($data, $headings), 'Xlsx'), $this->zones, $this->user);
+        VerifyCFZoneCustomSSL::dispatch($this->zones, $this->user);
     }
 }
