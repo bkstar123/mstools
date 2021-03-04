@@ -85,7 +85,6 @@ class GeneralSSLToolController extends Controller
                 'privateKey' => ['required', new SslKeyMatch($request->cert)]
             ]);
         $zones = $this->getZonesForCertUpload($request);
-        dd($zones);
         if (empty($zones)) {
             flashing('No zones have been specified or identified yet')
                 ->error()
