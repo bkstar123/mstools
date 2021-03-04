@@ -150,12 +150,10 @@ class GeneralSSLToolController extends Controller
             }
             return $zones;
         } else {
-            $zones = explode(',', $request->zones);
             $zones = array_map(function ($zone) {
                 return strtolower(trim($zone));
-            }, $zones);
-            $zones = array_unique($zones);
-            return $zones;
+            }, explode(',', $request->zones));
+            return array_unique($zones);
         }
     }
 }
