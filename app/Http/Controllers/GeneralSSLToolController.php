@@ -14,10 +14,13 @@ use Illuminate\Http\Request;
 use App\Jobs\VerifyDomainSSLData;
 use App\Jobs\VerifyCFZoneCustomSSL;
 use Spatie\SslCertificate\SslCertificate;
+use App\Http\Components\RequestByUserThrottling;
 use App\Jobs\UploadCustomCertificateToCloudflare;
 
 class GeneralSSLToolController extends Controller
 {
+    use RequestByUserThrottling;
+
     /**
      * Verify SSL certificate data for domains
      *
@@ -25,13 +28,17 @@ class GeneralSSLToolController extends Controller
      */
     public function verifyDomainSSLData(Request $request)
     {
-        $request->validate([
+        if (!$this->isThrottled()) {
+            $this->setRequestThrottling();
+            $request->validate([
                 'domains' => 'required'
             ]);
-        $domains = explode(',', $request->domains);
-        VerifyDomainSSLData::dispatch($domains, auth()->user());
-        flashing('MSTool is processing the request')
-            ->flash();
+            $domains = explode(',', $request->domains);
+            VerifyDomainSSLData::dispatch($domains, auth()->user());
+            flashing('MSTool is processing the request')->flash();
+        } else {
+            flashing('MSTool is busy processing your first request, please wait for 10 seconds before sending another one')->flash();
+        }
         return back();
     }
 
@@ -42,13 +49,17 @@ class GeneralSSLToolController extends Controller
      */
     public function verifyCFZoneCustomSSL(Request $request)
     {
-        $request->validate([
+        if (!$this->isThrottled()) {
+            $this->setRequestThrottling();
+            $request->validate([
                 'zones' => 'required'
             ]);
-        $zones = explode(',', $request->zones);
-        VerifyCFZoneCustomSSL::dispatch($zones, auth()->user());
-        flashing('MSTool is processing the request')
-            ->flash();
+            $zones = explode(',', $request->zones);
+            VerifyCFZoneCustomSSL::dispatch($zones, auth()->user());
+            flashing('MSTool is processing the request')->flash();
+        } else {
+            flashing('MSTool is busy processing your first request, please wait for 10 seconds before sending another one')->flash();
+        }
         return back();
     }
 
@@ -60,15 +71,15 @@ class GeneralSSLToolController extends Controller
     public function verifyCertData(Request $request)
     {
         $request->validate([
-                'cert' => 'required'
-            ]);
+            'cert' => 'required'
+        ]);
         try {
             $ssl = SslCertificate::createFromString($request->cert);
             return view('cms.checkcertdata', compact('ssl'));
         } catch (Exception $e) {
             flashing('Cannot parse the content of the certificate')
-                ->error()
-                ->flash();
+            ->error()
+            ->flash();
             return back();
         }
     }
@@ -80,22 +91,26 @@ class GeneralSSLToolController extends Controller
      */
     public function uploadCertCFZone(Request $request)
     {
-        $request->validate([
+        if (!$this->isThrottled()) {
+            $this->setRequestThrottling();
+            $request->validate([
                 'cert' => ['required', new SslCertValid],
                 'privateKey' => ['required', new SslKeyMatch($request->cert)]
             ]);
-        $zones = $this->getZonesForCertUpload($request);
-        if (empty($zones)) {
-            flashing('No zones have been specified or identified yet')
+            $zones = $this->getZonesForCertUpload($request);
+            if (empty($zones)) {
+                flashing('No zones have been specified or identified yet')
                 ->error()
                 ->flash();
-            return back();
-        } else {
-            UploadCustomCertificateToCloudflare::dispatch($zones, $request->cert, $request->privateKey, auth()->user());
-            flashing('MSTool is processing the request')
+            } else {
+                UploadCustomCertificateToCloudflare::dispatch($zones, $request->cert, $request->privateKey, auth()->user());
+                flashing('MSTool is processing the request')
                 ->flash();
-            return back();
+            }
+        } else {
+            flashing('MSTool is busy processing your first request, please wait for 10 seconds before sending another one')->flash();
         }
+        return back();
     }
 
     /**
