@@ -28,11 +28,11 @@ class GeneralSSLToolController extends Controller
      */
     public function verifyDomainSSLData(Request $request)
     {
+        $request->validate([
+            'domains' => 'required'
+        ]);
         if (!$this->isThrottled()) {
             $this->setRequestThrottling();
-            $request->validate([
-                'domains' => 'required'
-            ]);
             $domains = explode(',', $request->domains);
             VerifyDomainSSLData::dispatch($domains, auth()->user());
             flashing('MSTool is processing the request')->flash();
@@ -49,11 +49,11 @@ class GeneralSSLToolController extends Controller
      */
     public function verifyCFZoneCustomSSL(Request $request)
     {
+        $request->validate([
+            'zones' => 'required'
+        ]);
         if (!$this->isThrottled()) {
             $this->setRequestThrottling();
-            $request->validate([
-                'zones' => 'required'
-            ]);
             $zones = explode(',', $request->zones);
             VerifyCFZoneCustomSSL::dispatch($zones, auth()->user());
             flashing('MSTool is processing the request')->flash();
@@ -91,12 +91,12 @@ class GeneralSSLToolController extends Controller
      */
     public function uploadCertCFZone(Request $request)
     {
+        $request->validate([
+            'cert' => ['required', new SslCertValid],
+            'privateKey' => ['required', new SslKeyMatch($request->cert)]
+        ]);
         if (!$this->isThrottled()) {
             $this->setRequestThrottling();
-            $request->validate([
-                'cert' => ['required', new SslCertValid],
-                'privateKey' => ['required', new SslKeyMatch($request->cert)]
-            ]);
             $zones = $this->getZonesForCertUpload($request);
             if (empty($zones)) {
                 flashing('No zones have been specified or identified yet')
@@ -121,9 +121,9 @@ class GeneralSSLToolController extends Controller
     public function keyCertMatching(Request $request)
     {
         $request->validate([
-                'cert' => ['required', new SslCertValid],
-                'privateKey' => ['required', new SslKeyMatch($request->cert)]
-            ]);
+            'cert' => ['required', new SslCertValid],
+            'privateKey' => ['required', new SslKeyMatch($request->cert)]
+        ]);
         flashing('The private key matches with the certificate')
             ->success()
             ->flash();

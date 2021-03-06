@@ -92,12 +92,13 @@ class VerifyCFZoneCustomSSL implements ShouldQueue
                 continue;
             }
             $currentCertID = $customSSL->getCurrentCustomCertID($zoneID);
+            $sslMode = $zoneMgmt->getZoneSSLMode($zoneID);
             if ($currentCertID === false) {
                 array_push($data, [
                     'Zone' => $zone,
                     'Found on Cloudflare' => 'true',
                     'Issuer' => '',
-                    'SSL mode' => '',
+                    'SSL mode' => !empty($sslMode) ? $sslMode : null,
                     'SSL uploaded on' => '',
                     'SSL modified on' => '',
                     'Expired_at' => '',
@@ -110,7 +111,7 @@ class VerifyCFZoneCustomSSL implements ShouldQueue
                     'Zone' => $zone,
                     'Found on Cloudflare' => 'true',
                     'Issuer' => '',
-                    'SSL mode' => '',
+                    'SSL mode' => !empty($sslMode) ? $sslMode : null,
                     'SSL uploaded on' => '',
                     'SSL modified on' => '',
                     'Expired_at' => '',
@@ -124,7 +125,7 @@ class VerifyCFZoneCustomSSL implements ShouldQueue
                         'Zone' => $zone,
                         'Found on Cloudflare' => 'true',
                         'Issuer' => '',
-                        'SSL mode' => '',
+                        'SSL mode' => !empty($sslMode) ? $sslMode : null,
                         'SSL uploaded on' => '',
                         'SSL modified on' => '',
                         'Expired_at' => '',
@@ -137,7 +138,7 @@ class VerifyCFZoneCustomSSL implements ShouldQueue
                         'Zone' => $zone,
                         'Found on Cloudflare' => 'true',
                         'Issuer' => $res['issuer'],
-                        'SSL mode' => $res['tls_mode'],
+                        'SSL mode' => !empty($sslMode) ? $sslMode : null,
                         'SSL uploaded on' => $res['uploaded_on'],
                         'SSL modified on' => $res['modified_on'],
                         'Expired_at' => $res['expires_on'],
