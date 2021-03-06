@@ -6,7 +6,7 @@
 	<div class="card-header">
 		<h3 class="card-title">Provide the list of Cloudflare zones which are to be verified</h3>
 	</div>
-	<form role="form" action="{{ route('checkcfzonessl') }}" method="post">
+	<form id="form" role="form" action="{{ route('checkcfzonessl') }}" method="post">
 		@csrf
 		<div class="card-body">
 			<div class="form-group">
@@ -22,8 +22,18 @@
 			</div>
 		</div>
 		<div class="card-footer">
-			<button type="submit" class="btn btn-success">Proceed</button>
+			<button id="submitBtn" type="submit" class="btn btn-success">Proceed</button>
 		</div>
 	</form>
 </div>
 @endsection
+
+@push('scriptBottom')
+<script type="text/javascript">
+	$(document).ready(function () {
+		$("#form").submit(function () {
+			$("#submitBtn").attr('disabled', true);
+		});
+	});
+</script>
+@endpush

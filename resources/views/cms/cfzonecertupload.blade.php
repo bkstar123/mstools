@@ -67,7 +67,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary" onclick="sendToCloudflare()">OK</button>
+                    <button id="submitBtn" type="button" class="btn btn-primary" onclick="sendToCloudflare()">OK</button>
                 </div>
             </div>
         </div>
@@ -86,5 +86,10 @@
         }
         $('#uploadCertCFForm').submit();
     };
+    $(document).ready(function () {
+        $("#uploadCertCFForm").submit(function () {
+            $("#submitBtn").attr('disabled', true);
+        });
+    });
 </script>
 @endpush
