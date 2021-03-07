@@ -4,8 +4,58 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d8d258c58379bf856cba9d1ced41cfd6",
+    "content-hash": "0db7a009ec5293cccd12fadb29d39be0",
     "packages": [
+        {
+            "name": "arifhp86/laravel-clear-expired-cache-file",
+            "version": "v0.0.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/arifhp86/laravel-clear-expired-cache-file.git",
+                "reference": "263167d6596db92a472e18782f8b4434fcf1a09f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/arifhp86/laravel-clear-expired-cache-file/zipball/263167d6596db92a472e18782f8b4434fcf1a09f",
+                "reference": "263167d6596db92a472e18782f8b4434fcf1a09f",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/support": ">=5.4.0",
+                "php": ">=5.4.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Arifhp86\\ClearExpiredCacheFile\\Providers\\CacheClearServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Arifhp86\\ClearExpiredCacheFile\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Arifur Rahman",
+                    "email": "arifhp86@gmail.com"
+                }
+            ],
+            "description": "Remove laravel expired cache file/folder",
+            "keywords": [
+                "cache",
+                "clear",
+                "expired",
+                "laravel"
+            ],
+            "time": "2020-04-18T05:02:06+00:00"
+        },
         {
             "name": "bkstar123/bkscms-admin-panel",
             "version": "1.0.8",
