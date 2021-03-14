@@ -101,6 +101,7 @@ Route::group(
         'prefix' => 'cms',
         'middleware' => [
             'bkscms-auth:admins',
+            'can:key.certificate.matching'
         ],
     ],
     function () {
@@ -108,7 +109,7 @@ Route::group(
             return view('cms.keycertmatching');
         })->name('keycertmatching');
 
-        Route::post('key-cert-matchin', 'GeneralSSLToolController@keyCertMatching')
+        Route::post('key-cert-matching', 'GeneralSSLToolController@keyCertMatching')
         ->name('keycertmatching');
     }
 );

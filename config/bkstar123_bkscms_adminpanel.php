@@ -103,5 +103,11 @@ return [
             'alias' => 'cfzone.certificate.update',
             'description' => 'This permission allows for decoding a certificate data'
         ],
+
+        [
+            'permission' => 'Verify private key/certificate matching',
+            'alias' => 'key.certificate.matching',
+            'description' => 'This permission allows for matching a private key to a certificate'
+        ],
     ]
 ];

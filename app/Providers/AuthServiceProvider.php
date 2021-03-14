@@ -45,5 +45,9 @@ class AuthServiceProvider extends ServiceProvider
         Gate::define('cfzone.certificate.update', function ($user) {
             return $user->hasPermission('cfzone.certificate.update');
         });
+
+        Gate::define('key.certificate.matching', function ($user) {
+            return $user->hasPermission('key.certificate.matching');
+        });
     }
 }
