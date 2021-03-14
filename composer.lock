@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0db7a009ec5293cccd12fadb29d39be0",
+    "content-hash": "59bc2062913cca6070fc9df9711a671b",
     "packages": [
         {
             "name": "arifhp86/laravel-clear-expired-cache-file",
@@ -219,16 +219,16 @@
         },
         {
             "name": "bkstar123/laravel-cloudflare-buddy",
-            "version": "0.0.4",
+            "version": "0.0.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/bkstar123/laravel-cloudflare-buddy.git",
-                "reference": "ac78af9189a313dd8e332523b1fdcba6dae61d3e"
+                "reference": "ae7c2b170e2d1cd9f85d79ed1d7937ebc9e4fa54"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/bkstar123/laravel-cloudflare-buddy/zipball/ac78af9189a313dd8e332523b1fdcba6dae61d3e",
-                "reference": "ac78af9189a313dd8e332523b1fdcba6dae61d3e",
+                "url": "https://api.github.com/repos/bkstar123/laravel-cloudflare-buddy/zipball/ae7c2b170e2d1cd9f85d79ed1d7937ebc9e4fa54",
+                "reference": "ae7c2b170e2d1cd9f85d79ed1d7937ebc9e4fa54",
                 "shasum": ""
             },
             "require": {
@@ -266,7 +266,7 @@
                 "cloudflare api v4",
                 "laravel"
             ],
-            "time": "2021-03-06T11:30:29+00:00"
+            "time": "2021-03-14T06:58:30+00:00"
         },
         {
             "name": "bkstar123/laravel-recaptcha",
@@ -961,16 +961,16 @@
         },
         {
             "name": "guzzlehttp/promises",
-            "version": "1.4.0",
+            "version": "1.4.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/promises.git",
-                "reference": "60d379c243457e073cff02bc323a2a86cb355631"
+                "reference": "8e7d04f1f6450fef59366c399cfad4b9383aa30d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/guzzle/promises/zipball/60d379c243457e073cff02bc323a2a86cb355631",
-                "reference": "60d379c243457e073cff02bc323a2a86cb355631",
+                "url": "https://api.github.com/repos/guzzle/promises/zipball/8e7d04f1f6450fef59366c399cfad4b9383aa30d",
+                "reference": "8e7d04f1f6450fef59366c399cfad4b9383aa30d",
                 "shasum": ""
             },
             "require": {
@@ -1008,7 +1008,7 @@
             "keywords": [
                 "promise"
             ],
-            "time": "2020-09-30T07:37:28+00:00"
+            "time": "2021-03-07T09:25:29+00:00"
         },
         {
             "name": "guzzlehttp/psr7",
