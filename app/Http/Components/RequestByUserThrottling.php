@@ -39,8 +39,8 @@ trait RequestByUserThrottling
      * @param $seconds int
      * @return bool
      */
-    protected function setRequestThrottling(int $seconts = 10)
+    protected function setRequestThrottling(int $seconds = 10)
     {
-        return Cache::put($this->requestThrottlingKey(), true, $seconts);
+        return Cache::put($this->requestThrottlingKey(), true, $seconds);
     }
 }
