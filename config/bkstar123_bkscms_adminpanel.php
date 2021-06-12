@@ -109,5 +109,11 @@ return [
             'alias' => 'key.certificate.matching',
             'description' => 'This permission allows for matching a private key to a certificate'
         ],
+
+        [
+            'permission' => 'Bypass pre-replacement validation',
+            'alias' => 'certificate.pre.replacement.validation.bypass',
+            'description' => 'This permission allows for by-passing the certificate pre-replacement validation check'
+        ],
     ]
 ];

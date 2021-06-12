@@ -13,6 +13,7 @@ use App\Jobs\VerifyCFZoneCustomSSL;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
+use Spatie\SslCertificate\SslCertificate;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use App\Events\UploadCustomCertificateToCloudflareCompleted;
@@ -111,26 +112,85 @@ class UploadCustomCertificateToCloudflare implements ShouldQueue
                     ]);
                 }
             } else {
-                if (!$customSSL->updateCustomCert($zoneID, $currentCertID, $this->cert, $this->key)) {
+                $validate = $this->preReplaceValidate($zoneID, $currentCertID, $this->cert, $customSSL);
+                if ($validate['isOK']) {
+                    if (!$customSSL->updateCustomCert($zoneID, $currentCertID, $this->cert, $this->key)) {
+                        array_push($data, [
+                            'Zone' => $zone,
+                            'isCompleted' => 'No',
+                            'isSSLReplacement' => 'Yes',
+                            'Comment' => "An existing certificate was found, the SSL replacement failed"
+                        ]);
+                        continue;
+                    } else {
+                        array_push($data, [
+                            'Zone' => $zone,
+                            'isCompleted' => 'Yes',
+                            'isSSLReplacement' => 'Yes',
+                            'Comment' => "An existing certificate was found, the SSL replacement has been succeeded"
+                        ]);
+                    }
+                } else {
                     array_push($data, [
                         'Zone' => $zone,
                         'isCompleted' => 'No',
                         'isSSLReplacement' => 'Yes',
-                        'Comment' => "An existing certificate was found, the SSL replacement failed"
+                        'Comment' => empty($validate['diff']) ? 
+                            "Cannot validate the new certificate's domains with those of the existing certificate" : 
+                            "Not being proceeded yet. The existing certificate differs from the new one on the following domains: " . 
+                            json_encode($validate['diff']) .
+                            ". Please contact the super admin if you are sure to replace SSL for this zone"
                     ]);
                     continue;
-                } else {
-                    array_push($data, [
-                        'Zone' => $zone,
-                        'isCompleted' => 'Yes',
-                        'isSSLReplacement' => 'Yes',
-                        'Comment' => "An existing certificate was found, the SSL replacement has been succeeded"
-                    ]);
-                }
+                }   
             }
         }
         $headings = ['Zone', 'isCompleted', 'isSSLReplacement', 'Comment'];
         UploadCustomCertificateToCloudflareCompleted::dispatch(Excel::raw(new ExcelExport($data, $headings), 'Xlsx'), $this->zones, $this->user);
         VerifyCFZoneCustomSSL::dispatch($this->zones, $this->user);
+    }
+
+    /**
+     * @param string $cert
+     * @return array
+     */
+    protected function getCertificateDomains($cert)
+    {
+        try {
+            return SslCertificate::createFromString($cert)->getAdditionalDomains();
+        } catch (Exception $e) {
+            return [];
+        }
+    }
+
+    /** 
+     * @param string $zoneID
+     * @param string $certID
+     * @param string $cert
+     * @param \Bkstar123\CFBuddy\Services\CustomSSL $customSSL
+     * @return array
+     */
+    protected function preReplaceValidate($zoneID, $certID, $cert, $customSSL)
+    {
+        if ($this->user->can('certificate.pre.replacement.validation.bypass')) {
+            return [
+                'isOK' => true,
+                'diff' => []
+            ];
+        }
+        $data = $customSSL->fetchCertData($zoneID, $certID);
+        if (!$data) {
+            return [
+                'isOK' => false,
+                'diff' => []
+            ];
+        }
+        $existingCertDomains = json_decode($data['hosts'], true);
+        $newCertDomains = $this->getCertificateDomains($cert);
+        $diff = array_merge([], array_diff($existingCertDomains, $newCertDomains));
+        return [
+            'isOK' => empty($diff),
+            'diff' => $diff
+        ];
     }
 }

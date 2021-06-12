@@ -26,10 +26,6 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
-        Gate::before(function ($user, $ability) {
-            return ($user->hasRole(Role::SUPERADMINS) || $user->hasRole(Role::SUPERADMINS)) ? true : null;
-        });
-
         Gate::define('domains.ssl.check', function ($user) {
             return $user->hasPermission('domains.ssl.check');
         });
@@ -48,6 +44,10 @@ class AuthServiceProvider extends ServiceProvider
 
         Gate::define('key.certificate.matching', function ($user) {
             return $user->hasPermission('key.certificate.matching');
+        });
+
+        Gate::define('certificate.pre.replacement.validation.bypass', function ($user) {
+            return $user->hasPermission('certificate.pre.replacement.validation.bypass');
         });
     }
 }
