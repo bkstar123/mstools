@@ -4,12 +4,14 @@ namespace App\Providers;
 
 use Illuminate\Support\Facades\Event;
 use Illuminate\Auth\Events\Registered;
+use App\Events\ExportPingdomChecksCompleted;
 use App\Events\VerifyDomainSSLDataCompleted;
 use App\Events\VerifyCFZoneCustomSSLCompleted;
 use App\Listeners\SendNotificationDomainSSLDataCompletion;
 use App\Listeners\SendNotificationCFZoneSSLUploadCompleted;
 use App\Events\UploadCustomCertificateToCloudflareCompleted;
 use App\Listeners\SendNotificationCFZoneCustomSSLCompletion;
+use App\Listeners\SendNotificationPingdomCheckExportCompletion;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 
@@ -33,6 +35,9 @@ class EventServiceProvider extends ServiceProvider
         UploadCustomCertificateToCloudflareCompleted::class => [
             SendNotificationCFZoneSSLUploadCompleted::class
         ],
+        ExportPingdomChecksCompleted::class => [
+            SendNotificationPingdomCheckExportCompletion::class
+        ]
     ];
 
     /**

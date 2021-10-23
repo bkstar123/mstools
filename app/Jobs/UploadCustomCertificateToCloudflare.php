@@ -135,14 +135,14 @@ class UploadCustomCertificateToCloudflare implements ShouldQueue
                         'Zone' => $zone,
                         'isCompleted' => 'No',
                         'isSSLReplacement' => 'Yes',
-                        'Comment' => empty($validate['diff']) ? 
-                            "Cannot validate the new certificate's domains with those of the existing certificate" : 
-                            "Not being proceeded yet. The existing certificate differs from the new one on the following domains: " . 
+                        'Comment' => empty($validate['diff']) ?
+                            "Cannot validate the new certificate's domains with those of the existing certificate" :
+                            "Not being proceeded yet. The existing certificate differs from the new one on the following domains: " .
                             json_encode($validate['diff']) .
                             ". Please contact the super admin if you are sure to replace SSL for this zone"
                     ]);
                     continue;
-                }   
+                }
             }
         }
         $headings = ['Zone', 'isCompleted', 'isSSLReplacement', 'Comment'];
@@ -163,7 +163,7 @@ class UploadCustomCertificateToCloudflare implements ShouldQueue
         }
     }
 
-    /** 
+    /**
      * @param string $zoneID
      * @param string $certID
      * @param string $cert

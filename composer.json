@@ -20,6 +20,7 @@
         "arifhp86/laravel-clear-expired-cache-file": "^0.0.4",
         "bkstar123/bkscms-admin-panel": "^1.0",
         "bkstar123/laravel-cloudflare-buddy": "^1.0",
+        "bkstar123/laravel-pingdom-buddy": "^1.1",
         "fideloper/proxy": "^4.0",
         "laravel/framework": "5.8.*",
         "laravel/slack-notification-channel": "^2.3",

@@ -85,6 +85,15 @@
                         autoHide: false,
                     })
                 }); 
+            Echo.private('user-' + {{ auth()->user()->id }})
+                .listen('.export-pingdom-check.completed', (data) => {
+                    $.notify(`MSTool has completed exporting all Pingdom checks, and will send the result to ${data.requestor}`, {
+                        position: "right bottom",
+                        className: "success",
+                        clickToHide: true,
+                        autoHide: false,
+                    })
+                }); 
         </script>
         @stack('scriptBottom')
     </body>

@@ -2,5 +2,10 @@
 @section('title', 'Dashboard')
 
 @section('content')
-Welcome to the dashboard page
+<form id="export-pingdom-check" 
+    action="{{ route('exportpingdomchecks') }}"
+    method="GET"></form>
+<button id="btn-export" onclick="event.preventDefault(); $('#export-pingdom-check').submit(); $('#btn-export').prop('disabled', true)"
+    type="button"
+    class="btn btn-primary">Export Pingdom Checks</button>
 @endsection

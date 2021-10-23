@@ -18,6 +18,20 @@ Route::get('/cms/dashboard', function () {
 })->name('dashboard.index')
   ->middleware('bkscms-auth:admins');
 
+// Pingdom routes
+Route::group(
+    [
+        'prefix' => 'cms',
+        'middleware' => [
+            'bkscms-auth:admins',
+        ]
+    ],
+    function () {
+        Route::get('export-pingdom-checks', 'PingdomController@exportChecks')
+        ->name('exportpingdomchecks');
+    }
+);
+
 // Verify SSL certificate for domains
 Route::group(
     [
