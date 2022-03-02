@@ -127,3 +127,21 @@ Route::group(
         ->name('keycertmatching');
     }
 );
+
+// Create Cloudflare Firewall Rule
+Route::group(
+    [
+        'prefix' => 'cms',
+        'middleware' => [
+            'bkscms-auth:admins',
+        ],
+    ],
+    function () {
+        Route::get('create-firewall-rule', function () {
+            return view('cms.createfwrule');
+        })->name('createfwrule');
+        
+        Route::post('create-firewall-rule', 'CFFirewallController@createFWRule')
+        ->name('createfwrule');
+    }
+);

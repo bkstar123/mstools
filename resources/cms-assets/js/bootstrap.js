@@ -11,7 +11,6 @@ try {
     window.$ = window.jQuery = require('jquery');
 
     require('bootstrap');
-    require('jquery-ui-dist/jquery-ui.js');
 
     window.moment = require('moment');
     require('jquery-datetimepicker');

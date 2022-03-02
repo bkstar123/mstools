@@ -94,6 +94,29 @@ return [
     ],
 
     [
+        'name' => 'Cloudflare Firewall',
+        'path' => '#',
+        'icon' => 'fa fa-building',
+        'children' => [
+            [
+                'name' => 'Create firewall rule for zones',
+                'path' => '/cms/create-firewall-rule',
+                'icon' => 'fa fa-wrench',
+            ],
+            [
+                'name' => 'Update firewall rule for zones',
+                'path' => '/cms/update-firewall-rule',
+                'icon' => 'fa fa-terminal',
+            ],
+            [
+                'name' => 'Remove firewall rule for zones',
+                'path' => '/cms/remove-firewall-rule',
+                'icon' => 'fa fa-trash',
+            ],
+        ]
+    ],
+
+    [
         'name' => 'Website',
         'path' => env('APP_WEBSITE'),
         'icon' => 'fa fa-globe',

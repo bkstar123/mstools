@@ -15,7 +15,7 @@ mix.js('resources/cms-assets/js/app.js', 'public/cms-assets/js')
     .js('resources/cms-assets/js/vue-app.js', 'public/cms-assets/js')
     .scripts([
         'resources/cms-assets/js/plugins/multiselect/multiselect.min.js',
-        'resources/cms-assets/js/plugins/notifyjs/notify.min.js' // using notifyJS from https://notifyjs.jpillora.com
+        'resources/cms-assets/js/plugins/notifyjs/notify.min.js', // using notifyJS from https://notifyjs.jpillora.com
     ], 'public/cms-assets/js/plugins.js')
     .sourceMaps()
     .sass('resources/cms-assets/sass/app.scss', 'public/cms-assets/css')
