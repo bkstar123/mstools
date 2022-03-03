@@ -58,16 +58,16 @@
         },
         {
             "name": "bkstar123/bkscms-admin-panel",
-            "version": "1.0.10",
+            "version": "1.0.11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/bkstar123/bkscms-admin-panel.git",
-                "reference": "084741ba8a2953f7e814e8bbc21863b48dd153b3"
+                "reference": "d937956f9aa38af501034e16077a0d5ecfb9b5d2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/bkstar123/bkscms-admin-panel/zipball/084741ba8a2953f7e814e8bbc21863b48dd153b3",
-                "reference": "084741ba8a2953f7e814e8bbc21863b48dd153b3",
+                "url": "https://api.github.com/repos/bkstar123/bkscms-admin-panel/zipball/d937956f9aa38af501034e16077a0d5ecfb9b5d2",
+                "reference": "d937956f9aa38af501034e16077a0d5ecfb9b5d2",
                 "shasum": ""
             },
             "require": {
@@ -115,7 +115,11 @@
                 "authorization",
                 "laravel"
             ],
-            "time": "2021-10-23T06:14:39+00:00"
+            "support": {
+                "issues": "https://github.com/bkstar123/bkscms-admin-panel/issues",
+                "source": "https://github.com/bkstar123/bkscms-admin-panel/tree/1.0.11"
+            },
+            "time": "2022-03-03T08:22:39+00:00"
         },
         {
             "name": "bkstar123/bkscms-utilities",

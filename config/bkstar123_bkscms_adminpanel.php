@@ -115,5 +115,25 @@ return [
             'alias' => 'certificate.pre.replacement.validation.bypass',
             'description' => 'This permission allows for by-passing the certificate pre-replacement validation check'
         ],
+
+        // Cloudflare Firewall
+
+        [
+            'permission' => 'Create a Cloudflare firewall rule',
+            'alias' => 'cffwrule.create',
+            'description' => 'This permission allows for creating a Cloudflare firewall rule'
+        ],
+
+        [
+            'permission' => 'Update a Cloudflare firewall rule',
+            'alias' => 'cffwrule.update',
+            'description' => 'This permission allows for updating a Cloudflare firewall rule'
+        ],
+
+        [
+            'permission' => 'Delete a Cloudflare firewall rule',
+            'alias' => 'cffwrule.delete',
+            'description' => 'This permission allows for deleting a Cloudflare firewall rule'
+        ],
     ]
 ];

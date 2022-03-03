@@ -49,5 +49,17 @@ class AuthServiceProvider extends ServiceProvider
         Gate::define('certificate.pre.replacement.validation.bypass', function ($user) {
             return $user->hasPermission('certificate.pre.replacement.validation.bypass');
         });
+
+        Gate::define('cffwrule.create', function ($user) {
+            return $user->hasPermission('cffwrule.create');
+        });
+
+        Gate::define('cffwrule.update', function ($user) {
+            return $user->hasPermission('cffwrule.update');
+        });
+
+        Gate::define('cffwrule.delete', function ($user) {
+            return $user->hasPermission('cffwrule.delete');
+        });
     }
 }

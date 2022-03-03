@@ -1,12 +1,12 @@
 @extends('cms.layouts.master')
-@section('title', 'Create firewall rule for Cloudflare zones')
+@section('title', 'Update a firewall rule for Cloudflare zones')
 
 @section('content')
 <div class="card card-info">
 	<div class="card-header">
 		<h3 class="card-title">Provide list of zones and rule expression</h3>
 	</div>
-	<form id="createCFFWRuleForm" role="form" action="{{ route('createfwrule') }}" method="post">
+	<form id="updateCFFWRuleForm" role="form" action="{{ route('updatefwrule') }}" method="post">
 		@csrf
         <div class="card-body" id="zones">
             <div class="form-group">
@@ -22,7 +22,7 @@
         </div>
         <div class="card-body" id="description">
             <div class="form-group">
-                <label>Description <span style="color:red">&midast;</span></label>
+                <label>The description to find the rule <span style="color:red">&midast;</span></label>
                 @error('description')
                     <div class="alert alert-danger">{{ $message }}</div>
                 @enderror
@@ -31,52 +31,64 @@
                           name="description"
                           required
                           value="{{ old('description') }}" 
-                          placeholder="Describe the rule here, template: YourZendeskTicketNumber-yourAlias-RulePurpose" />
+                          placeholder="Enter the description to identidy the rule that is to be updated" />
             </div>
         </div>
-        <div class="card-body" id="action">
+        <div class="card-body" id="new_action">
             <div class="form-group">
-                <label>Action <span style="color:red">&midast;</span></label>
-                @error('action')
-                    <div class="alert alert-danger">{{ $message }}</div>
-                @enderror
+                <label>New Action </label>
                 <select class="form-control"
-                        name="action"
-                        required>
+                        name="new_action">
                     <option value="" disabled selected>Select one of the following actions</option>
-                    <option value="block" {{ old('action') == 'block' ? 'selected' : '' }}>Block</option>
-                    <option value="allow" {{ old('action') == 'allow' ? 'selected' : '' }}>Allow</option> 
-                    <option value="bypass" {{ old('action') == 'bypass' ? 'selected' : '' }}>Bypass</option>   
-                    <option value="js_challenge" {{ old('action') == 'js_challenge' ? 'selected' : '' }}>JS Challenge</option>
-                    <option value="challenge" {{ old('action') == 'challenge' ? 'selected' : '' }}>Legacy CAPTCHA</option>
-                    <option value="managed_challenge" {{ old('action') == 'managed_challenge' ? 'selected' : '' }}>Managed Challenge</option>
-                    <option value="log" {{ old('action') == 'log' ? 'selected' : '' }}>Log</option>    
+                    <option value="block" {{ old('new_action') == 'block' ? 'selected' : '' }}>Block</option>
+                    <option value="allow" {{ old('new_action') == 'allow' ? 'selected' : '' }}>Allow</option> 
+                    <option value="bypass" {{ old('new_action') == 'bypass' ? 'selected' : '' }}>Bypass</option>   
+                    <option value="js_challenge" {{ old('new_action') == 'js_challenge' ? 'selected' : '' }}>JS Challenge</option>
+                    <option value="challenge" {{ old('new_action') == 'challenge' ? 'selected' : '' }}>Legacy CAPTCHA</option>
+                    <option value="managed_challenge" {{ old('new_action') == 'managed_challenge' ? 'selected' : '' }}>Managed Challenge</option>
+                    <option value="log" {{ old('new_action') == 'log' ? 'selected' : '' }}>Log</option>    
                 </select>
             </div>
         </div>
-        <div class="card-body" id="expression">
+        <div class="card-body" id="new_expression">
             <div class="form-group">
-                <label>Rule Expression <span style="color:red">&midast;</span></label>
-                @error('expression')
-                    <div class="alert alert-danger">{{ $message }}</div>
-                @enderror
+                <label>New Rule Expression </label>
                 <textarea class="form-control"
-                          name="expression"
-                          required
+                          name="new_expression"
                           rows="15" 
-                          placeholder="Paste the rule expression here">{{ old('expression') }}</textarea>
+                          placeholder="Paste the new rule expression here"></textarea>
+            </div>
+        </div>
+        <div class="card-body" id="new_description">
+            <div class="form-group">
+                <label>New description for the rule </label>
+                <input class="form-control"
+                          type="text"
+                          name="new_description"
+                          placeholder="Enter the new description for the rule" />
+            </div>
+        </div>
+        <div class="card-body" id="paused">
+            <div class="form-group">
+                <label>Paused </label>
+                <select class="form-control"
+                        name="paused">
+                    <option value="" disabled selected>Specify the new status for the rule </option>
+                    <option value="true">TRUE</option>
+                    <option value="false">FALSE</option>   
+                </select>
             </div>
         </div>
 		<div class="card-footer">
-			<button type="button" class="btn btn-success" data-toggle="modal" data-target="#createCFFWRuleModal">Proceed</button>
+			<button type="button" class="btn btn-success" data-toggle="modal" data-target="#updateCFFWRuleModal">Proceed</button>
 		</div>
 	</form>
-    <!-- createCFFWRuleModal -->
-    <div class="modal fade" id="createCFFWRuleModal" tabindex="-1" role="dialog" aria-labelledby="createCFFWRuleTitle" aria-hidden="true">
+    <!-- updateCFFWRuleModal -->
+    <div class="modal fade" id="updateCFFWRuleModal" tabindex="-1" role="dialog" aria-labelledby="updateCFFWRuleTitle" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header bg-info">
-                    <h5 class="modal-title" id="createCFFWRuleLongTitle">
+                    <h5 class="modal-title" id="updateCFFWRuleLongTitle">
                         <i class="fas fa-exclamation-triangle"></i> Confirm your action
                     </h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -84,7 +96,7 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    Are you sure to send the given firewall rule settings to Cloudflare?
+                    Are you sure to send the given updated settings to Cloudflare?
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
@@ -99,22 +111,21 @@
 @push('scriptBottom')
 <script type="text/javascript">
     function sendToCloudflare() {
-        let action = $('[name="action"]').val();
         let zones = $('[name="zones"]').val();
         let description = $('[name="description"]').val();
-        let expression = $('[name="expression"]').val();
-        if (!zones || !description || !action.length || !expression) {
-            alert('You must fill all required inputs');
+        let new_action =  $('[name="new_action"]').val();
+        if (!zones || !description) {
+            alert('You must fill the zones and description fields');
             return;
-        } else if (action == 'bypass' && $('[name="products[]"]').val().length == 0) {
+        } else if (new_action == 'bypass' && $('[name="products[]"]').val().length == 0) {
             alert('You must specify at least one feature for Bypass action');
             return;
         } else {
-            $('#createCFFWRuleForm').submit();
+            $('#updateCFFWRuleForm').submit();
         }
     };
     function toggleFeatureToBypassElement() {
-        if ($("[name='action'").val() == 'bypass') {
+        if ($("[name='new_action'").val() == 'bypass') {
             let element = '<div class="card-body" id="products">' + 
                 '<div class="form-group">' +
                     '<label>Features to Bypass (required for Bypass action) <span style="color:red">&midast;</span></label>' +
@@ -133,19 +144,19 @@
                     '</select>' +
                 '</div>' +
             '</div>';
-            $('#action').after(element);   
+            $('#new_action').after(element);   
         } else {
             $('#products').remove();
         }
     }
     $(document).ready(function () {
-        $("#createCFFWRuleForm").submit(function () {
+        $("#updateCFFWRuleForm").submit(function () {
             $("#submitBtn").attr('disabled', true);
         });
-        $("[name='action']").on('change', function () {
+        $("[name='new_action']").on('change', function () {
             toggleFeatureToBypassElement();
         });
-        if ($("[name='action']").val() == 'bypass') {
+        if ($("[name='new_action']").val() == 'bypass') {
             toggleFeatureToBypassElement();
         }
     });

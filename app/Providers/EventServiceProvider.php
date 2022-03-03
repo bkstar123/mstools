@@ -5,11 +5,13 @@ namespace App\Providers;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Auth\Events\Registered;
 use App\Events\CreateCFFWRuleCompleted;
+use App\Events\UpdateCFFWRuleCompleted;
 use App\Events\ExportPingdomChecksCompleted;
 use App\Events\VerifyDomainSSLDataCompleted;
 use App\Events\VerifyCFZoneCustomSSLCompleted;
 use App\Listeners\SendNotificationCreateCFFWRuleCompleted;
 use App\Listeners\SendNotificationDomainSSLDataCompletion;
+use App\Listeners\SendNotificationUpdateCFFWRuleCompleted;
 use App\Listeners\SendNotificationCFZoneSSLUploadCompleted;
 use App\Events\UploadCustomCertificateToCloudflareCompleted;
 use App\Listeners\SendNotificationCFZoneCustomSSLCompletion;
@@ -43,6 +45,9 @@ class EventServiceProvider extends ServiceProvider
         CreateCFFWRuleCompleted::class => [
             SendNotificationCreateCFFWRuleCompleted::class
         ],
+        UpdateCFFWRuleCompleted::class => [
+            SendNotificationUpdateCFFWRuleCompleted::class
+        ]
     ];
 
     /**

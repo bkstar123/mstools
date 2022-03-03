@@ -103,6 +103,15 @@
                         autoHide: false,
                     })
                 });
+            Echo.private('user-' + {{ auth()->user()->id }})
+                .listen('.update-cf-fwrule.completed', (data) => {
+                    $.notify(`MSTool has completed updating the given Cloudflare firewall rule for multiple zones, and will send the result to ${data.requestor}`, {
+                        position: "right bottom",
+                        className: "success",
+                        clickToHide: true,
+                        autoHide: false,
+                    })
+                });
         </script>
         @stack('scriptBottom')
     </body>

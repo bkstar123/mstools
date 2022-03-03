@@ -134,6 +134,7 @@ Route::group(
         'prefix' => 'cms',
         'middleware' => [
             'bkscms-auth:admins',
+            'can:cffwrule.create'
         ],
     ],
     function () {
@@ -143,5 +144,24 @@ Route::group(
         
         Route::post('create-firewall-rule', 'CFFirewallController@createFWRule')
         ->name('createfwrule');
+    }
+);
+
+// Update Cloudflare Firewall Rule
+Route::group(
+    [
+        'prefix' => 'cms',
+        'middleware' => [
+            'bkscms-auth:admins',
+            'can:cffwrule.update'
+        ],
+    ],
+    function () {
+        Route::get('update-firewall-rule', function () {
+            return view('cms.updatefwrule');
+        })->name('updatefwrule');
+        
+        Route::post('update-firewall-rule', 'CFFirewallController@updateFWRule')
+        ->name('updatefwrule');
     }
 );

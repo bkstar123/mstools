@@ -37,7 +37,7 @@ class GeneralSSLToolController extends Controller
             VerifyDomainSSLData::dispatch($domains, auth()->user());
             flashing('MSTool is processing the request')->flash();
         } else {
-            flashing('MSTool is busy processing your first request, please wait for 10 seconds before sending another one')->flash();
+            flashing('MSTool is busy processing your first request, please wait for 10 seconds before sending another one')->warning()->flash();
         }
         return back();
     }
