@@ -3,8 +3,8 @@
 
 @section('content')
 <div class="card card-info">
-	<div class="card-header">
-		<h3 class="card-title">Provide list of zones and rule expression</h3>
+	<div class="card-header bg-success">
+		<h3 class="card-title">CREATE FIREWALL RULE</h3>
 	</div>
 	<form id="createCFFWRuleForm" role="form" action="{{ route('createfwrule') }}" method="post">
 		@csrf

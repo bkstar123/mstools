@@ -165,3 +165,22 @@ Route::group(
         ->name('updatefwrule');
     }
 );
+
+// Delete Cloudflare Firewall Rule
+Route::group(
+    [
+        'prefix' => 'cms',
+        'middleware' => [
+            'bkscms-auth:admins',
+            'can:cffwrule.delete'
+        ],
+    ],
+    function () {
+        Route::get('delete-firewall-rule', function () {
+            return view('cms.deletefwrule');
+        })->name('deletefwrule');
+        
+        Route::post('delete-firewall-rule', 'CFFirewallController@deleteFWRule')
+        ->name('deletefwrule');
+    }
+);

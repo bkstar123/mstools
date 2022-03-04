@@ -50,7 +50,10 @@ class UpdateCFFWRule implements ShouldQueue
     public function handle()
     {
         $data = [];
-        $filter_update_status = '';
+        $filter_update_status = [
+            'msg' => '. No change made for the rule filter expression',
+            'status' => true
+        ];
         $zoneMgmt = resolve('zoneMgmt');
         $zoneFW = resolve('cfZoneFW');
         foreach ($this->zones as $zone) {
@@ -95,29 +98,31 @@ class UpdateCFFWRule implements ShouldQueue
             if (\Arr::has($this->request, 'new_expression') && !empty($this->request['new_expression'])) {
                 $rule->filter->expression = $this->request['new_expression'];
                 if (!$zoneFW->updateFWRuleFilterForZone($zoneID, $rule->filter)) {
-                    $filter_update_status = ", Failed to update the rule filter";
+                    $filter_update_status['msg'] = ". Failed to update the rule filter, please check if the same filter expression already exists for the zone";
+                    $filter_update_status['status'] = false;
                 } else {
-                    $filter_update_status = ", the rule filter was succeesfully updated";
+                    $filter_update_status['msg'] = ". The rule filter was succeesfully updated";
+                    $filter_update_status['status'] = true;
                 }
             }
             if (\Arr::has($this->request, 'new_description') && !empty($this->request['new_description'])) {
                 $rule->description = $this->request['new_description'];
             }
             if (\Arr::has($this->request, 'paused') && !empty($this->request['paused'])) {
-                $rule->paused = $this->request['paused'] == 'true' ? true : false;
+                $rule->paused = ($this->request['paused'] == 'true') ? true : false;
             }
             if (!$zoneFW->updateFWRuleForZone($zoneID, $rule)) {
                 array_push($data, [
                     'Zone' => $zone,
-                    'isCompleted' => 'No',
-                    'Comment' => 'Failed to update the given firewall rule on this zone' . $filter_update_status
+                    'isCompleted' => $filter_update_status['status'] ? 'Partially Done' : 'No',
+                    'Comment' => 'Failed to update the given firewall rule on this zone' . $filter_update_status['msg']
                 ]);
                 continue;
             } else {
                 array_push($data, [
                     'Zone' => $zone,
-                    'isCompleted' => 'Yes',
-                    'Comment' => 'The given firewall rule has been successfully updated for this zone' . $filter_update_status
+                    'isCompleted' => $filter_update_status['status'] ? 'Yes' : 'Partially Done',
+                    'Comment' => 'The given firewall rule has been successfully updated for this zone' . $filter_update_status['msg']
                 ]);
             }
         }

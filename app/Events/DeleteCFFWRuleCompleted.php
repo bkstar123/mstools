@@ -1,9 +1,9 @@
 <?php
 /**
- * UpdateCFFWRuleCompleted Event
+ * DeleteCFFWRuleCompleted Event
  *
  * @author: tuanha
- * @last-mod: 03-Mar-2022
+ * @last-mod: 04-Mar-2022
  */
 namespace App\Events;
 
@@ -15,7 +15,7 @@ use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 
-class UpdateCFFWRuleCompleted implements ShouldBroadcast
+class DeleteCFFWRuleCompleted implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -69,7 +69,7 @@ class UpdateCFFWRuleCompleted implements ShouldBroadcast
      */
     public function broadcastAs()
     {
-        return 'update-cf-fwrule.completed';
+        return 'delete-cf-fwrule.completed';
     }
 
     /**

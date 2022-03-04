@@ -110,7 +110,7 @@ return [
             ],
             [
                 'name' => 'Remove firewall rule for zones',
-                'path' => '/cms/remove-firewall-rule',
+                'path' => '/cms/delete-firewall-rule',
                 'icon' => 'fa fa-trash',
             ],
         ]

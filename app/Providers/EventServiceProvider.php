@@ -5,11 +5,13 @@ namespace App\Providers;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Auth\Events\Registered;
 use App\Events\CreateCFFWRuleCompleted;
+use App\Events\DeleteCFFWRuleCompleted;
 use App\Events\UpdateCFFWRuleCompleted;
 use App\Events\ExportPingdomChecksCompleted;
 use App\Events\VerifyDomainSSLDataCompleted;
 use App\Events\VerifyCFZoneCustomSSLCompleted;
 use App\Listeners\SendNotificationCreateCFFWRuleCompleted;
+use App\Listeners\SendNotificationDeleteCFFWRuleCompleted;
 use App\Listeners\SendNotificationDomainSSLDataCompletion;
 use App\Listeners\SendNotificationUpdateCFFWRuleCompleted;
 use App\Listeners\SendNotificationCFZoneSSLUploadCompleted;
@@ -47,6 +49,9 @@ class EventServiceProvider extends ServiceProvider
         ],
         UpdateCFFWRuleCompleted::class => [
             SendNotificationUpdateCFFWRuleCompleted::class
+        ],
+        DeleteCFFWRuleCompleted::class => [
+            SendNotificationDeleteCFFWRuleCompleted::class
         ]
     ];
 
