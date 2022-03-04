@@ -103,7 +103,8 @@
         let zones = $('[name="zones"]').val();
         let description = $('[name="description"]').val();
         let expression = $('[name="expression"]').val();
-        if (!zones || !description || !action.length || !expression) {
+        console.log(action)
+        if (!zones || !description || !action || !expression) {
             alert('You must fill all required inputs');
             return;
         } else if (action == 'bypass' && $('[name="products[]"]').val().length == 0) {
