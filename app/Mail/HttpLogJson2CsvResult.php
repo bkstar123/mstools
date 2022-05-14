@@ -51,7 +51,7 @@ class HttpLogJson2CsvResult extends Mailable
     public function build()
     {
         return $this->view('emails.miscellaneous.httplogjson2csv')
-                    ->subject('Convert .NET Coew HTTP Log From JSON To CSV')
+                    ->subject('Convert .NET Core HTTP Log From JSON To CSV')
                     ->attach(Storage::disk($this->outputTempLocation['disk'])->path($this->outputTempLocation['path']), [
                         'as' => 'http_log.csv',
                         'mime' => 'text/csv'
