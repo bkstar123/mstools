@@ -9,6 +9,7 @@ use App\Events\DeleteCFFWRuleCompleted;
 use App\Events\UpdateCFFWRuleCompleted;
 use App\Events\ExportPingdomChecksCompleted;
 use App\Events\VerifyDomainSSLDataCompleted;
+use App\Events\HttpLogJson2CsvConversionDone;
 use App\Events\VerifyCFZoneCustomSSLCompleted;
 use App\Listeners\SendNotificationCreateCFFWRuleCompleted;
 use App\Listeners\SendNotificationDeleteCFFWRuleCompleted;
@@ -18,6 +19,7 @@ use App\Listeners\SendNotificationCFZoneSSLUploadCompleted;
 use App\Events\UploadCustomCertificateToCloudflareCompleted;
 use App\Listeners\SendNotificationCFZoneCustomSSLCompletion;
 use App\Listeners\SendNotificationPingdomCheckExportCompletion;
+use App\Listeners\SendNotificationHttpLogJson2CsvConversionDone;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 
@@ -52,6 +54,9 @@ class EventServiceProvider extends ServiceProvider
         ],
         DeleteCFFWRuleCompleted::class => [
             SendNotificationDeleteCFFWRuleCompleted::class
+        ],
+        HttpLogJson2CsvConversionDone::class => [
+            SendNotificationHttpLogJson2CsvConversionDone::class
         ]
     ];
 

@@ -112,6 +112,15 @@
                         autoHide: false,
                     })
                 });
+            Echo.private('user-' + {{ auth()->user()->id }})
+                .listen('.convert-httplog-json-to-csv.completed', (data) => {
+                    $.notify(`MSTool has completed converting the given .NET Core HTTP Log JSON file to CSV, and will send the result to ${data.requestor}`, {
+                        position: "right bottom",
+                        className: "success",
+                        clickToHide: true,
+                        autoHide: false,
+                    })
+                });
         </script>
         @stack('scriptBottom')
     </body>

@@ -61,7 +61,7 @@ return [
     ],
 
     [
-        'name' => 'General SSL Tools',
+        'name' => 'SSL Tools',
         'path' => '#',
         'icon' => 'fa fa-lock',
         'children' => [
@@ -94,7 +94,7 @@ return [
     ],
 
     [
-        'name' => 'Cloudflare Firewall',
+        'name' => 'Cloudflare Firewall Tools',
         'path' => '#',
         'icon' => 'fa fa-building',
         'children' => [
@@ -113,6 +113,19 @@ return [
                 'path' => '/cms/delete-firewall-rule',
                 'icon' => 'fa fa-trash',
             ],
+        ]
+    ],
+
+    [
+        'name' => 'Miscellaneous Tools',
+        'path' => '#',
+        'icon' => 'fa fa-desktop',
+        'children' => [
+            [
+                'name' => '.Net Core HTTP Log Json2CSV',
+                'path' => '/cms/netcore-http-log-json-to-csv',
+                'icon' => 'fa fa-id-card',
+            ]
         ]
     ],
 

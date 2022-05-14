@@ -184,3 +184,21 @@ Route::group(
         ->name('deletefwrule');
     }
 );
+
+// Convert .NET Core HTTP Log from JSON to CSV
+Route::group(
+    [
+        'prefix' => 'cms',
+        'middleware' => [
+            'bkscms-auth:admins'
+        ],
+    ],
+    function () {
+        Route::get('netcore-http-log-json-to-csv', function () {
+            return view('cms.netcorehttplogjson2csv');
+        })->name('netcore.httplog.json2csv');
+        
+        Route::post('netcore-http-log-json-to-csv', 'MiscellaneousController@handleUploadedHttpLogJsonFile')
+        ->name('upload.httplog.jsonfile');
+    }
+);
