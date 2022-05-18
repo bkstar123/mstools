@@ -56,62 +56,28 @@ class ConvertHttpLogJsonToCSV implements ShouldQueue
         ];
         $fip = fopen(Storage::disk($this->uploadedFileData['disk'])->path($this->uploadedFileData['path']), 'r');
         $fop = fopen(Storage::disk($outputTempLocation['disk'])->path($outputTempLocation['path']), 'w');
-        fputcsv($fop, [
-            'Category',
-            'Time',
-            'ResourceId',
-            'EventStampType',
-            'EventPrimaryStampName',
-            'EventStampName',
-            'Host',
-            'EventIpAddress',
-            'UserAgent',
-            'Cookie',
-            'ScStatus',
-            'CsUsername',
-            'Result',
-            'CsHost',
-            'CsMethod',
-            'CsBytes',
-            'CIp',
-            'SPort',
-            'Referer',
-            'CsUriStem',
-            'TimeTaken',
-            'ScBytes',
-            'ComputerName'
-        ]);
         if ($fip) {
+            // Read the first time to scan the JSON file for all keys to build the list of headers for the output CSV file
+            $headers = [];
             while (!feof($fip)) {
                 $line = fgets($fip);
                 if ($line) {
-                    $lineArray = json_decode($line, true);
-                    $properties = json_decode($lineArray['properties'], true);
-                    fputcsv($fop, [
-                        $lineArray['category'],
-                        $lineArray['time'],
-                        $lineArray['resourceId'],
-                        $lineArray['EventStampType'],
-                        $lineArray['EventPrimaryStampName'],
-                        $lineArray['EventStampName'],
-                        $lineArray['Host'],
-                        $lineArray['EventIpAddress'],
-                        $properties['UserAgent'],
-                        $properties['Cookie'],
-                        $properties['ScStatus'],
-                        $properties['CsUsername'],
-                        $properties['Result'],
-                        $properties['CsHost'],
-                        $properties['CsMethod'],
-                        $properties['CsBytes'],
-                        $properties['CIp'],
-                        $properties['SPort'],
-                        $properties['Referer'],
-                        $properties['CsUriStem'],
-                        $properties['TimeTaken'],
-                        $properties['ScBytes'],
-                        $properties['ComputerName']
-                    ]);
+                    $headers = array_merge($headers, array_diff(array_keys($this->jsonToArray($line)), $headers));
+                }
+            }
+            fputcsv($fop, $headers);
+
+            // Read the second time to write data to the output CSV file
+            rewind($fip);
+            while (!feof($fip)) {
+                $line = fgets($fip);
+                if ($line) {
+                    $lineItems = $this->jsonToArray($line);
+                    $data = [];
+                    foreach ($headers as $header) {
+                        array_push($data, $lineItems[$header] ?? '-');
+                    }
+                    fputcsv($fop, array_values($data));
                 }
             }
         }
@@ -119,5 +85,38 @@ class ConvertHttpLogJsonToCSV implements ShouldQueue
         fclose($fop);
         HttpLogJson2CsvConversionDone::dispatch($outputTempLocation, $this->user);
         app(FileUpload::class)->delete($this->uploadedFileData['disk'], $this->uploadedFileData['path']);
+    }
+
+    /**
+     * Check if the given argument is an JSON string
+     *
+     * @param string
+     * @return bool
+     */
+    protected function isJSONString(string $str)
+    {
+        return is_array(json_decode($str, true));
+    }
+
+    /**
+     * Convert the given JSON string into a flat array 
+     *
+     * @param string
+     * @return array
+     */
+    protected function jsonToArray(string $str)
+    {
+        $data = [];
+        if ($this->isJSONString($str)) {
+            $items = json_decode($str, true);
+            foreach ($items as $key => $value) {
+                if (!$this->isJSONString($value)) {
+                    $data[$key] = $value;
+                } else {
+                    $data = array_merge($data, $this->jsonToArray($value));
+                }
+            }
+        }
+        return $data;
     }
 }

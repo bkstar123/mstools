@@ -6,7 +6,7 @@ This is the message from {{ config('app.name') }}.
 @endsection
 
 @section('content')
-You have recently requested me for converting a .NET Core HTTP Log from JSON to CSV.
+You have recently requested me for converting a .NET Core Log from JSON to CSV.
 
 Kindly find the attachment for the result.
 @endsection
