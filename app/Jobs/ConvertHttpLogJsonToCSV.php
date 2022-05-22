@@ -50,12 +50,12 @@ class ConvertHttpLogJsonToCSV implements ShouldQueue
     public function handle()
     {
         $outputFilename = md5(uniqid(rand(), true)) . '.csv';
-        $outputTempLocation = [
+        $outputFileLocation = [
             'disk' => $this->uploadedFileData['disk'],
             'path' => dirname($this->uploadedFileData['path']) . '/' . $outputFilename
         ];
         $fip = fopen(Storage::disk($this->uploadedFileData['disk'])->path($this->uploadedFileData['path']), 'r');
-        $fop = fopen(Storage::disk($outputTempLocation['disk'])->path($outputTempLocation['path']), 'w');
+        $fop = fopen(Storage::disk($outputFileLocation['disk'])->path($outputFileLocation['path']), 'w');
         if ($fip) {
             // Read the first time to scan the JSON file for all keys to build the list of headers for the output CSV file
             $headers = [];
@@ -83,7 +83,7 @@ class ConvertHttpLogJsonToCSV implements ShouldQueue
         }
         fclose($fip);
         fclose($fop);
-        HttpLogJson2CsvConversionDone::dispatch($outputTempLocation, $this->user);
+        HttpLogJson2CsvConversionDone::dispatch($outputFileLocation, $this->user);
         app(FileUpload::class)->delete($this->uploadedFileData['disk'], $this->uploadedFileData['path']);
     }
 

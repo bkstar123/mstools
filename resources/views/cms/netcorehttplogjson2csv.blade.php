@@ -12,7 +12,7 @@
                         <label for="file-upload">Upload HTTP Log JSON File</label>
                         <input type="file" class="form-control" name="httplog" id="file-upload">
                     </div>
-                    
+                    <div id="link-to-download"></div>
                 </div>
             </div>
         </div>

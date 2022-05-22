@@ -23,7 +23,7 @@ class HttpLogJson2CsvConversionDone implements ShouldBroadcast
     /**
      * @var array
      */
-    public $outputTempLocation;
+    public $outputFileLocation;
 
     /**
      * @var \Bkstar123\BksCMS\AdminPanel\Admin
@@ -35,9 +35,9 @@ class HttpLogJson2CsvConversionDone implements ShouldBroadcast
      *
      * @return void
      */
-    public function __construct(array $outputTempLocation, Admin $user)
+    public function __construct(array $outputFileLocation, Admin $user)
     {
-        $this->outputTempLocation = $outputTempLocation;
+        $this->outputFileLocation = $outputFileLocation;
         $this->user = $user;
     }
 
@@ -70,6 +70,8 @@ class HttpLogJson2CsvConversionDone implements ShouldBroadcast
     {
         return [
             'requestor' => $this->user->email,
+            'filepath' => $this->outputFileLocation['path'],
+            'disk' => $this->outputFileLocation['disk']
         ];
     }
 }

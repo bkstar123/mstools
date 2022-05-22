@@ -198,7 +198,10 @@ Route::group(
             return view('cms.netcorehttplogjson2csv');
         })->name('netcore.httplog.json2csv');
         
-        Route::post('netcore-http-log-json-to-csv', 'MiscellaneousController@handleUploadedHttpLogJsonFile')
+        Route::post('netcore-http-log-json-to-csv', 'JsonToCSVConversionController@handleUploadedHttpLogJsonFile')
         ->name('upload.httplog.jsonfile');
+
+        Route::get('get-output-csv-file', 'JsonToCSVConversionController@sendCSVFileToBrowser')
+        ->name('get.csv.file');
     }
 );

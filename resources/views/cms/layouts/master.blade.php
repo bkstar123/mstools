@@ -60,7 +60,7 @@
         <script type="text/javascript">
             Echo.private('user-' + {{ auth()->user()->id }})
                 .listen('.upload-certificate-cfzone.completed', (data) => {
-                    $.notify(`MSTool has completed the SSL cert uploading request for ${data.number_of_zones} Cloudflare zones, and will send the report to ${data.requestor}`, {
+                    $.notify(`MSTool has completed the SSL cert uploading request for ${data.number_of_zones} Cloudflare zones and will send the report to ${data.requestor}`, {
                         position: "right bottom",
                         className: "success",
                         clickToHide: true,
@@ -69,7 +69,7 @@
                 });
             Echo.private('user-' + {{ auth()->user()->id }})
                 .listen('.verify-cfzone-customssl.completed', (data) => {
-                    $.notify(`MSTool has completed checking custom SSL settings for ${data.number_of_zones} Cloudflare zones, and will send the result to ${data.requestor}`, {
+                    $.notify(`MSTool has completed checking custom SSL settings for ${data.number_of_zones} Cloudflare zones and will send the result to ${data.requestor}`, {
                         position: "right bottom",
                         className: "success",
                         clickToHide: true,
@@ -78,7 +78,7 @@
                 });
             Echo.private('user-' + {{ auth()->user()->id }})
                 .listen('.verify-domain-ssldata.completed', (data) => {
-                    $.notify(`MSTool has completed checking SSL data for ${data.number_of_domains} domains, and will send the result to ${data.requestor}`, {
+                    $.notify(`MSTool has completed checking SSL data for ${data.number_of_domains} domains and will send the result to ${data.requestor}`, {
                         position: "right bottom",
                         className: "success",
                         clickToHide: true,
@@ -87,7 +87,7 @@
                 }); 
             Echo.private('user-' + {{ auth()->user()->id }})
                 .listen('.export-pingdom-check.completed', (data) => {
-                    $.notify(`MSTool has completed exporting all Pingdom checks, and will send the result to ${data.requestor}`, {
+                    $.notify(`MSTool has completed exporting all Pingdom checks and will send the result to ${data.requestor}`, {
                         position: "right bottom",
                         className: "success",
                         clickToHide: true,
@@ -96,7 +96,7 @@
                 }); 
             Echo.private('user-' + {{ auth()->user()->id }})
                 .listen('.create-cf-fwrule.completed', (data) => {
-                    $.notify(`MSTool has completed creating the given Cloudflare firewall rule for multiple zones, and will send the result to ${data.requestor}`, {
+                    $.notify(`MSTool has completed creating the given Cloudflare firewall rule for multiple zones and will send the result to ${data.requestor}`, {
                         position: "right bottom",
                         className: "success",
                         clickToHide: true,
@@ -105,7 +105,7 @@
                 });
             Echo.private('user-' + {{ auth()->user()->id }})
                 .listen('.update-cf-fwrule.completed', (data) => {
-                    $.notify(`MSTool has completed updating the given Cloudflare firewall rule for multiple zones, and will send the result to ${data.requestor}`, {
+                    $.notify(`MSTool has completed updating the given Cloudflare firewall rule for multiple zones and will send the result to ${data.requestor}`, {
                         position: "right bottom",
                         className: "success",
                         clickToHide: true,
@@ -114,7 +114,8 @@
                 });
             Echo.private('user-' + {{ auth()->user()->id }})
                 .listen('.convert-httplog-json-to-csv.completed', (data) => {
-                    $.notify(`MSTool has completed converting the given .NET Core HTTP Log JSON file to CSV, and will send the result to ${data.requestor}`, {
+                    $("#link-to-download").html(`Click <a href="{{ route('get.csv.file') }}?disk=${data.disk}&filepath=${data.filepath}">here</a> to download the output CSV file. The download link is only valid for 5 minutes`);
+                    $.notify(`MSTool has completed converting the JSON log file to CSV and will send the result to ${data.requestor}`, {
                         position: "right bottom",
                         className: "success",
                         clickToHide: true,

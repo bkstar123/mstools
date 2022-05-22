@@ -24,10 +24,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command('cache:clear-expired')
-                 ->withoutOverlapping()
-                 ->runInBackground()
-                 ->hourly();
+        $schedule->command('netcorelog:purge')->everyFiveMinutes();
     }
 
     /**

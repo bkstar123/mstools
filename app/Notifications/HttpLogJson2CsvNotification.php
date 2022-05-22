@@ -52,7 +52,7 @@ class HttpLogJson2CsvNotification extends Notification implements ShouldQueue
      */
     public function toMail($notifiable)
     {
-        return (new HttpLogJson2CsvResult($this->payload->outputTempLocation))
+        return (new HttpLogJson2CsvResult($this->payload->outputFileLocation))
                ->to($notifiable->email);
     }
 

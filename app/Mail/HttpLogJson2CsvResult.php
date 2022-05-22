@@ -21,26 +21,16 @@ class HttpLogJson2CsvResult extends Mailable
     /**
      * @var array
      */
-    protected $outputTempLocation;
+    protected $outputFileLocation;
 
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct($outputTempLocation)
+    public function __construct($outputFileLocation)
     {
-        $this->outputTempLocation = $outputTempLocation;
-    }
-
-    /**
-     * Destroy the message instance.
-     *
-     * @return void
-     */
-    public function __destruct()
-    {
-        app(FileUpload::class)->delete($this->outputTempLocation['disk'], $this->outputTempLocation['path']);
+        $this->outputFileLocation = $outputFileLocation;
     }
 
     /**
@@ -50,11 +40,13 @@ class HttpLogJson2CsvResult extends Mailable
      */
     public function build()
     {
-        return $this->view('emails.miscellaneous.httplogjson2csv')
-                    ->subject('Convert .NET Core HTTP Log From JSON To CSV')
-                    ->attach(Storage::disk($this->outputTempLocation['disk'])->path($this->outputTempLocation['path']), [
-                        'as' => 'log.csv',
-                        'mime' => 'text/csv'
-                    ]);
+        if (Storage::disk($this->outputFileLocation['disk'])->exists($this->outputFileLocation['path'])) {
+            return  $this->view('emails.miscellaneous.httplogjson2csv')
+                         ->subject('Convert .NET Core HTTP Log From JSON To CSV')
+                         ->attach(Storage::disk($this->outputFileLocation['disk'])->path($this->outputFileLocation['path']), [
+                            'as' => 'log.csv',
+                            'mime' => 'text/csv'
+                        ]);
+        }     
     }
 }
