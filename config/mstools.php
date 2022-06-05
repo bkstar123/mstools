@@ -11,5 +11,10 @@ return [
     	'disk' => env('NETCORE_LOG_DISK', 'local'),
     	'directory' => env('NETCORE_LOG_DIRECTORY', 'dotnetcore-httplog'),
     	'ttl' => env('NETCORE_LOG_TTL', 5) // How long in minutes to keep the .NET Core logs on the server 
+    ],
+    'pingdomreport' => [
+    	'disk' => env('PINGDOM_REPORT_DISK', 'local'),
+    	'directory' => env('PINGDOM_REPORT_DIRECTORY', 'pingdom-report'),
+    	'ttl' => env('PINGDOM_REPORT_TTL', 5) // How long in minutes to keep Pingdom reports on the server 
     ]
 ];

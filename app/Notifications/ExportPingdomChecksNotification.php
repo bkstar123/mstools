@@ -47,7 +47,7 @@ class ExportPingdomChecksNotification extends Notification implements ShouldQueu
      */
     public function toMail($notifiable)
     {
-        return (new PingdomCheckExportResult($this->payload->attachment))
+        return (new PingdomCheckExportResult($this->payload->outputFileLocation))
                ->to($notifiable->email);
     }
 
@@ -65,9 +65,9 @@ class ExportPingdomChecksNotification extends Notification implements ShouldQueu
             ->content('A task from MSTool has been completed')
             ->attachment(function ($attachment) {
                 $attachment->fields([
-                               'Task' => 'Export all Pingdom checks',
-                               'Initiated By' => $this->payload->user->email,
-                           ]);
+                    'Task' => 'Export all Pingdom checks',
+                    'Initiated By' => $this->payload->user->email,
+                ]);
             });
     }
 

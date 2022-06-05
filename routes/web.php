@@ -29,6 +29,8 @@ Route::group(
     function () {
         Route::get('export-pingdom-checks', 'PingdomController@exportChecks')
         ->name('exportpingdomchecks');
+        Route::get('get-pingdom-report-file', 'PingdomController@sendReportFileToBrowser')
+        ->name('pingdom.getreport');
     }
 );
 
@@ -201,7 +203,7 @@ Route::group(
         Route::post('netcore-http-log-json-to-csv', 'JsonToCSVConversionController@handleUploadedHttpLogJsonFile')
         ->name('upload.httplog.jsonfile');
 
-        Route::get('get-output-csv-file', 'JsonToCSVConversionController@sendCSVFileToBrowser')
-        ->name('get.csv.file');
+        Route::get('get-netcore-httplog-csv-file', 'JsonToCSVConversionController@sendCSVFileToBrowser')
+        ->name('netcore.getcsvfile');
     }
 );

@@ -49,10 +49,10 @@ class ConvertHttpLogJsonToCSV implements ShouldQueue
      */
     public function handle()
     {
-        $outputFilename = md5(uniqid(rand(), true)) . '.csv';
+        $outputFilename = md5(uniqid(rand(), true)."_".getmypid()."_".gethostname()."_".time()).'.csv';
         $outputFileLocation = [
             'disk' => $this->uploadedFileData['disk'],
-            'path' => dirname($this->uploadedFileData['path']) . '/' . $outputFilename
+            'path' => dirname($this->uploadedFileData['path']).DIRECTORY_SEPARATOR.$outputFilename
         ];
         $fip = fopen(Storage::disk($this->uploadedFileData['disk'])->path($this->uploadedFileData['path']), 'r');
         $fop = fopen(Storage::disk($outputFileLocation['disk'])->path($outputFileLocation['path']), 'w');

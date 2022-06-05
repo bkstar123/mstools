@@ -3,10 +3,9 @@
 namespace App\Jobs;
 
 use Carbon\Carbon;
-use App\Exports\ExcelExport;
 use Illuminate\Bus\Queueable;
-use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -46,37 +45,15 @@ class ExportPingdomChecks implements ShouldQueue
      */
     public function handle()
     {
-        $data = [];
-        $pingdomCheck = resolve('pingdomCheck');
-        $checks = $pingdomCheck->getChecks();
-        if (!empty($checks)) {
-            foreach ($checks as $key => $check) {
-                array_push($data, [
-                    'Check ID' => $check['id'],
-                    'Created (UTC)' => Carbon::createFromTimestamp($check['created'])->setTimezone('UTC')->toDateTimeString(),
-                    'Name' => $check['name'],
-                    'Hostname' => trim($check['hostname']),
-                    'Tags' => array_key_exists('tags', $check) ? json_encode(array_column($check['tags'], 'name')) : '',
-                    'Type' => $check['type'],
-                    'Verify Certificate' => $check['verify_certificate'],
-                    'Status' => $check['status'],
-                    'Last Check Time (UTC)' => array_key_exists('lasttesttime', $check) ? Carbon::createFromTimestamp($check['lasttesttime'])->setTimezone('UTC')->toDateTimeString() : '',
-                ]);
-            }
-        } else {
-            array_push($data, [
-                'Check ID' => NUL,
-                'Created (UTC)' => null,
-                'Name' => null,
-                'Hostname' => null,
-                'Tags' => null,
-                'Type' => $check['type'],
-                'Verify Certificate' => null,
-                'Status' => null,
-                'Last Check Time (UTC)' => null,
-            ]);
-        }
-        $headings = [
+        $outputFilename = md5(uniqid(rand(), true)."_".getmypid()."_".gethostname()."_".time()).'.csv';
+        $subDirectory = md5(uniqid(rand(), true)."_".getmypid()."_".gethostname()."_".time());
+        $outputFileLocation = [
+            'disk' => config('mstools.pingdomreport.disk'),
+            'path' => config('mstools.pingdomreport.directory').DIRECTORY_SEPARATOR.$subDirectory.DIRECTORY_SEPARATOR.$outputFilename
+        ];
+        Storage::disk($outputFileLocation['disk'])->makeDirectory(config('mstools.pingdomreport.directory').DIRECTORY_SEPARATOR.$subDirectory);
+        $fop = fopen(Storage::disk($outputFileLocation['disk'])->path($outputFileLocation['path']), 'w');
+        fputcsv($fop, [
             'Check ID',
             'Created (UTC)',
             'Name',
@@ -86,7 +63,27 @@ class ExportPingdomChecks implements ShouldQueue
             'Verify Certificate',
             'Status',
             'Last Check Time (UTC)'
-        ];
-        ExportPingdomChecksCompleted::dispatch(Excel::raw(new ExcelExport($data, $headings), 'Xlsx'), $this->user);
+        ]);
+        $pingdomCheck = resolve('pingdomCheck');
+        $checks = $pingdomCheck->getChecks();
+        if (!empty($checks)) {
+            foreach ($checks as $key => $check) {
+                fputcsv($fop, [
+                    $check['id'],
+                    Carbon::createFromTimestamp($check['created'])->setTimezone('UTC')->toDateTimeString(),
+                    $check['name'],
+                    trim($check['hostname']),
+                    array_key_exists('tags', $check) ? json_encode(array_column($check['tags'], 'name')) : '',
+                    $check['type'],
+                    $check['verify_certificate'],
+                    $check['status'],
+                    array_key_exists('lasttesttime', $check) ? Carbon::createFromTimestamp($check['lasttesttime'])->setTimezone('UTC')->toDateTimeString() : '',
+                ]);
+            }
+        } else {
+            fputcsv($fop, [null, null, null, null, null, null, null, null, null]);
+        }
+        fclose($fop);
+        ExportPingdomChecksCompleted::dispatch($outputFileLocation, $this->user);
     }
 }

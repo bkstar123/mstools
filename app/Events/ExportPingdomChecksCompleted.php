@@ -20,9 +20,9 @@ class ExportPingdomChecksCompleted implements ShouldBroadcast
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     /**
-     * @var base64-encoded binary data
+     * @var array
      */
-    public $attachment;
+    public $outputFileLocation;
 
     /**
      * @var \Bkstar123\BksCMS\AdminPanel\Admin
@@ -34,9 +34,9 @@ class ExportPingdomChecksCompleted implements ShouldBroadcast
      *
      * @return void
      */
-    public function __construct($attachment, $user)
+    public function __construct($outputFileLocation, $user)
     {
-        $this->attachment = base64_encode($attachment);
+        $this->outputFileLocation = $outputFileLocation;
         $this->user = $user;
     }
 
@@ -69,6 +69,8 @@ class ExportPingdomChecksCompleted implements ShouldBroadcast
     {
         return [
             'requestor' => $this->user->email,
+            'filepath' => $this->outputFileLocation['path'],
+            'disk' => $this->outputFileLocation['disk']
         ];
     }
 }
