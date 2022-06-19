@@ -7,7 +7,7 @@
         <div class="card">
             <div class="card-header">
                 <h3 class="card-title">
-                    Files <sub><i class="bg bg-danger">Each file is valid for 5 minutes since its created time</i></sub>
+                    Files <sub><i class="bg bg-danger">Each file is valid for {{ config('mstools.report.ttl') }} minutes since its created time</i></sub>
                 </h3>
             </div><!-- /.card-header -->
             <div class="card-body table-responsive p-0">
