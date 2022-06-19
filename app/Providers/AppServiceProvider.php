@@ -2,7 +2,9 @@
 
 namespace App\Providers;
 
+use App\Report;
 use App\Exceptions\Cms\Handler;
+use App\Observers\ReportObserver;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Contracts\Debug\ExceptionHandler;
 
@@ -30,5 +32,6 @@ class AppServiceProvider extends ServiceProvider
                 app()->singleton(ExceptionHandler::class, Handler::class);
             }
         }
+        Report::observe(ReportObserver::class);
     }
 }

@@ -43,7 +43,7 @@ class PurgeDotNetCoreLog extends Command
         $netcoreLogFiles = Storage::disk(config('mstools.netcorelog.disk'))->allFiles(config('mstools.netcorelog.directory'));
         foreach ($netcoreLogFiles as $file) {
             // Delete files whose last modified datetime > 5 minutes
-            if (Storage::lastModified($file) < Carbon::now()->subMinutes(config('mstools.netcorelog.ttl'))->timestamp) {
+            if (Storage::lastModified($file) < Carbon::now()->subMinutes(config('mstools.report.ttl'))->timestamp) {
                 app(FileUpload::class)->delete(config('mstools.netcorelog.disk'), $file);
             }
         }

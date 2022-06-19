@@ -24,8 +24,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command('netcorelog:purge')->everyMinute();
-        $schedule->command('pingdomreport:purge')->everyMinute();
+        $schedule->command('report:purge')->everyMinute();
     }
 
     /**

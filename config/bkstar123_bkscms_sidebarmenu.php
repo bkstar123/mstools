@@ -23,7 +23,6 @@ return [
             ]
         ]
     ],
-
     [
         'name' => 'Role Managment',
         'path' => '#',
@@ -41,7 +40,6 @@ return [
             ]
         ]
     ],
-
     [
         'name' => 'Permission Managment',
         'path' => '#',
@@ -59,7 +57,6 @@ return [
             ]
         ]
     ],
-
     [
         'name' => 'SSL Tools',
         'path' => '#',
@@ -92,7 +89,6 @@ return [
             ],
         ]
     ],
-
     [
         'name' => 'Cloudflare Firewall Tools',
         'path' => '#',
@@ -115,7 +111,6 @@ return [
             ],
         ]
     ],
-
     [
         'name' => 'Miscellaneous Tools',
         'path' => '#',
@@ -128,7 +123,11 @@ return [
             ]
         ]
     ],
-
+    [
+        'name' => 'My Recent Files',
+        'path' => '/cms/reports/index',
+        'icon' => 'fa fa-file',
+    ],
     [
         'name' => 'Website',
         'path' => env('APP_WEBSITE'),

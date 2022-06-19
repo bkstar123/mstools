@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Report;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
@@ -10,10 +11,11 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use App\Events\ExportPingdomChecksCompleted;
+use App\Http\Components\GenerateCustomUniqueString;
 
 class ExportPingdomChecks implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, GenerateCustomUniqueString;
 
     /**
      * @var \Bkstar123\BksCMS\AdminPanel\Admin
@@ -45,13 +47,11 @@ class ExportPingdomChecks implements ShouldQueue
      */
     public function handle()
     {
-        $outputFilename = md5(uniqid(rand(), true)."_".getmypid()."_".gethostname()."_".time()).'.csv';
-        $subDirectory = md5(uniqid(rand(), true)."_".getmypid()."_".gethostname()."_".time());
         $outputFileLocation = [
             'disk' => config('mstools.pingdomreport.disk'),
-            'path' => config('mstools.pingdomreport.directory').DIRECTORY_SEPARATOR.$subDirectory.DIRECTORY_SEPARATOR.$outputFilename
+            'path' => config('mstools.pingdomreport.directory').DIRECTORY_SEPARATOR.$this->generateUniqueString().DIRECTORY_SEPARATOR.$this->generateUniqueString('.csv')
         ];
-        Storage::disk($outputFileLocation['disk'])->makeDirectory(config('mstools.pingdomreport.directory').DIRECTORY_SEPARATOR.$subDirectory);
+        Storage::disk($outputFileLocation['disk'])->makeDirectory(dirname($outputFileLocation['path']));
         $fop = fopen(Storage::disk($outputFileLocation['disk'])->path($outputFileLocation['path']), 'w');
         fputcsv($fop, [
             'Check ID',
@@ -84,6 +84,13 @@ class ExportPingdomChecks implements ShouldQueue
             fputcsv($fop, [null, null, null, null, null, null, null, null, null]);
         }
         fclose($fop);
-        ExportPingdomChecksCompleted::dispatch($outputFileLocation, $this->user);
+        $report = Report::create([
+            'name'     => 'List of pingdom checks ' . Carbon::createFromTimestamp(time())->setTimezone('UTC')->toDateTimeString()."(UTC).csv",
+            'admin_id' => $this->user->id,
+            'disk'     => $outputFileLocation['disk'],
+            'path'     => $outputFileLocation['path'],
+            'mime'     => 'text/csv'
+        ]);
+        ExportPingdomChecksCompleted::dispatch($report, $this->user);
     }
 }

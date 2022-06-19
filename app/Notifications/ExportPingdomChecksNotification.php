@@ -47,7 +47,7 @@ class ExportPingdomChecksNotification extends Notification implements ShouldQueu
      */
     public function toMail($notifiable)
     {
-        return (new PingdomCheckExportResult($this->payload->outputFileLocation))
+        return (new PingdomCheckExportResult($this->payload->report))
                ->to($notifiable->email);
     }
 

@@ -43,7 +43,7 @@ class PurgePingdomReport extends Command
         $pingdomReportFiles = Storage::disk(config('mstools.pingdomreport.disk'))->allFiles(config('mstools.pingdomreport.directory'));
         foreach ($pingdomReportFiles as $file) {
             // Delete files whose last modified datetime > 5 minutes
-            if (Storage::lastModified($file) < Carbon::now()->subMinutes(config('mstools.pingdomreport.ttl'))->timestamp) {
+            if (Storage::lastModified($file) < Carbon::now()->subMinutes(config('mstools.report.ttl'))->timestamp) {
                 app(FileUpload::class)->delete(config('mstools.pingdomreport.disk'), $file);
             }
         }

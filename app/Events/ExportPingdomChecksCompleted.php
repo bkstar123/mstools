@@ -7,6 +7,7 @@
  */
 namespace App\Events;
 
+use App\Report;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Broadcasting\PrivateChannel;
@@ -20,9 +21,9 @@ class ExportPingdomChecksCompleted implements ShouldBroadcast
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     /**
-     * @var array
+     * @var \App\Report
      */
-    public $outputFileLocation;
+    public $report;
 
     /**
      * @var \Bkstar123\BksCMS\AdminPanel\Admin
@@ -34,9 +35,9 @@ class ExportPingdomChecksCompleted implements ShouldBroadcast
      *
      * @return void
      */
-    public function __construct($outputFileLocation, $user)
+    public function __construct(Report $report, $user)
     {
-        $this->outputFileLocation = $outputFileLocation;
+        $this->report = $report;
         $this->user = $user;
     }
 
@@ -69,8 +70,8 @@ class ExportPingdomChecksCompleted implements ShouldBroadcast
     {
         return [
             'requestor' => $this->user->email,
-            'filepath' => $this->outputFileLocation['path'],
-            'disk' => $this->outputFileLocation['disk']
+            'path' => $this->report->path,
+            'disk' => $this->report->disk
         ];
     }
 }

@@ -12,7 +12,6 @@
                         <label for="file-upload">Upload HTTP Log JSON File</label>
                         <input type="file" class="form-control" name="httplog" id="file-upload">
                     </div>
-                    <div id="link-to-download-httplog-csv"></div>
                 </div>
             </div>
         </div>
@@ -28,7 +27,7 @@ $(document).ready(function () {
         allowedExtensions: ['json'],
         batchSize: 1,
         outerClass: 'col-md-12',
-        uploadUrl: '{{ route('upload.httplog.jsonfile') }}'
+        uploadUrl: '{{ route('netcore.httplog.json2csv') }}'
     });
 });
 </script>

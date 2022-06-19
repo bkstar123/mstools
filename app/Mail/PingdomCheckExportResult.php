@@ -2,6 +2,7 @@
 
 namespace App\Mail;
 
+use App\Report;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
@@ -13,18 +14,18 @@ class PingdomCheckExportResult extends Mailable
     use Queueable, SerializesModels;
 
     /**
-     * @var array
+     * @var \App\Report
      */
-    protected $outputFileLocation;
+    protected $report;
 
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct($outputFileLocation)
+    public function __construct(Report $report)
     {
-        $this->outputFileLocation = $outputFileLocation;
+        $this->report = $report;
     }
 
     /**
@@ -34,10 +35,10 @@ class PingdomCheckExportResult extends Mailable
      */
     public function build()
     {
-        if (Storage::disk($this->outputFileLocation['disk'])->exists($this->outputFileLocation['path'])) {
+        if (Storage::disk($this->report->disk)->exists($this->report->path)) {
             return  $this->view('emails.pingdom.allchecks')
-                         ->subject('Pingdom - All checks')
-                         ->attach(Storage::disk($this->outputFileLocation['disk'])->path($this->outputFileLocation['path']), [
+                         ->subject('Pingdom - List of checks')
+                         ->attach(Storage::disk($this->report->disk)->path($this->report->path), [
                             'as' => 'pingdom_checks.csv',
                             'mime' => 'text/csv'
                         ]);

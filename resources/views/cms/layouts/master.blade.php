@@ -87,8 +87,7 @@
                 }); 
             Echo.private('user-' + {{ auth()->user()->id }})
                 .listen('.export-pingdom-check.completed', (data) => {
-                    $("#link-to-download-pingdom-report").html(`Click <a href="{{ route('pingdom.getreport') }}?disk=${data.disk}&filepath=${data.filepath}">here</a> to download the output CSV file. The download link is only valid for 5 minutes`);
-                    $.notify(`MSTool has completed exporting all Pingdom checks and will send the result to ${data.requestor}`, {
+                    $.notify(`MSTool has completed exporting all Pingdom checks as requested by ${data.requestor}`, {
                         position: "right bottom",
                         className: "success",
                         clickToHide: true,
@@ -115,8 +114,7 @@
                 });
             Echo.private('user-' + {{ auth()->user()->id }})
                 .listen('.convert-httplog-json-to-csv.completed', (data) => {
-                    $("#link-to-download-httplog-csv").html(`Click <a href="{{ route('netcore.getcsvfile') }}?disk=${data.disk}&filepath=${data.filepath}">here</a> to download the output CSV file. The download link is only valid for 5 minutes`);
-                    $.notify(`MSTool has completed converting the JSON log file to CSV and will send the result to ${data.requestor}`, {
+                    $.notify(`MSTool has completed converting the JSON log file to CSV as requested by ${data.requestor}`, {
                         position: "right bottom",
                         className: "success",
                         clickToHide: true,

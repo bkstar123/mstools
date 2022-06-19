@@ -29,8 +29,6 @@ Route::group(
     function () {
         Route::get('export-pingdom-checks', 'PingdomController@exportChecks')
         ->name('exportpingdomchecks');
-        Route::get('get-pingdom-report-file', 'PingdomController@sendReportFileToBrowser')
-        ->name('pingdom.getreport');
     }
 );
 
@@ -201,9 +199,22 @@ Route::group(
         })->name('netcore.httplog.json2csv');
         
         Route::post('netcore-http-log-json-to-csv', 'JsonToCSVConversionController@handleUploadedHttpLogJsonFile')
-        ->name('upload.httplog.jsonfile');
+        ->name('netcore.httplog.json2csv');
+    }
+);
 
-        Route::get('get-netcore-httplog-csv-file', 'JsonToCSVConversionController@sendCSVFileToBrowser')
-        ->name('netcore.getcsvfile');
+// List all files of the current admin
+Route::group(
+    [
+        'prefix' => 'cms',
+        'middleware' => [
+            'bkscms-auth:admins'
+        ],
+    ],
+    function () {
+        Route::get('reports/index', 'ReportController@index')
+        ->name('reports.index');
+        Route::get('get-file', 'ReportController@sendFileToBrowser')
+        ->name('get-file');
     }
 );
