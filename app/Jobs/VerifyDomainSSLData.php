@@ -8,20 +8,22 @@
 namespace App\Jobs;
 
 use Exception;
+use App\Report;
+use Carbon\Carbon;
 use App\Events\JobFailing;
-use App\Exports\ExcelExport;
 use Illuminate\Bus\Queueable;
-use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Queue\InteractsWithQueue;
 use Spatie\SslCertificate\SslCertificate;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use App\Events\VerifyDomainSSLDataCompleted;
+use App\Http\Components\GenerateCustomUniqueString;
 
 class VerifyDomainSSLData implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, GenerateCustomUniqueString;
 
     /**
      * @var array
@@ -61,6 +63,24 @@ class VerifyDomainSSLData implements ShouldQueue
      */
     public function handle()
     {
+        $outputFileLocation = [
+            'disk' => config('mstools.report.disk'),
+            'path' => config('mstools.report.directory').DIRECTORY_SEPARATOR.$this->generateUniqueString().DIRECTORY_SEPARATOR.$this->generateUniqueString('.csv')
+        ];
+        Storage::disk($outputFileLocation['disk'])->makeDirectory(dirname($outputFileLocation['path']));
+        $fop = fopen(Storage::disk($outputFileLocation['disk'])->path($outputFileLocation['path']), 'w');
+        fputcsv($fop, [
+            'URL',
+            'Issuer',
+            'Valid_from',
+            'Expired_at',
+            'CN',
+            'Fingerprint',
+            'Remaining_days',
+            'A',
+            'CNAME',
+            'SAN'
+        ]);
         $data = [];
         foreach ($this->domains as $domain) {
             $domain = idn_to_ascii(trim($domain), IDNA_DEFAULT, INTL_IDNA_VARIANT_UTS46);
@@ -88,46 +108,31 @@ class VerifyDomainSSLData implements ShouldQueue
             }
             try {
                 $cert = SslCertificate::createForHostName($domain);
-                array_push($data, [
-                    'URL' => $domain,
-                    'Issuer' => $cert->getIssuer(),
-                    'Valid_from' => $cert->validFromDate(),
-                    'Expired_at' => $cert->expirationDate(),
-                    'CN' => $cert->getDomain(),
-                    'Fingerprint' => $cert->getFingerprint(),
-                    'Remaining_days' => $cert->daysUntilExpirationDate(),
-                    'A' => json_encode($IPs),
-                    'CNAME' => json_encode($Aliases),
-                    'SAN' => json_encode($cert->getAdditionalDomains()),
+                fputcsv($fop, [
+                    $domain,
+                    $cert->getIssuer(),
+                    $cert->validFromDate(),
+                    $cert->expirationDate(),
+                    $cert->getDomain(),
+                    $cert->getFingerprint(),
+                    $cert->daysUntilExpirationDate(),
+                    json_encode($IPs),
+                    json_encode($Aliases),
+                    json_encode($cert->getAdditionalDomains()),
                 ]);
             } catch (Exception $e) {
-                array_push($data, [
-                    'URL' => $domain,
-                    'Issuer' => '',
-                    'Valid_from' => '',
-                    'Expired_at' => '',
-                    'CN' => '',
-                    'Fingerprint' => '',
-                    'Remaining_days' => '',
-                    'A' => json_encode($IPs),
-                    'CNAME' => json_encode($Aliases),
-                    'SAN' => '',
-                ]);
+                fputcsv($fop, [$domain,'','','','','','',json_encode($IPs),json_encode($Aliases),'']);
             }
         }
-        $headings = [
-            'URL',
-            'Issuer',
-            'Valid_from',
-            'Expired_at',
-            'CN',
-            'Fingerprint',
-            'Remaining_days',
-            'A',
-            'CNAME',
-            'SAN'
-        ];
-        VerifyDomainSSLDataCompleted::dispatch(Excel::raw(new ExcelExport($data, $headings), 'Xlsx'), $this->domains, $this->user);
+        fclose($fop);
+        $report = Report::create([
+            'name'     => 'Verify SSL certificate for domains ' . Carbon::createFromTimestamp(time())->setTimezone('UTC')->toDateTimeString()."(UTC).csv",
+            'admin_id' => $this->user->id,
+            'disk'     => $outputFileLocation['disk'],
+            'path'     => $outputFileLocation['path'],
+            'mime'     => 'text/csv'
+        ]);
+        VerifyDomainSSLDataCompleted::dispatch($report, $this->domains, $this->user);
     }
 
     /**

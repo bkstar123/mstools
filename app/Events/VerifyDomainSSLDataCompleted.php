@@ -7,6 +7,7 @@
  */
 namespace App\Events;
 
+use App\Report;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Broadcasting\PrivateChannel;
@@ -25,9 +26,9 @@ class VerifyDomainSSLDataCompleted implements ShouldBroadcast
     public $domains;
 
     /**
-     * @var base64-encoded binary data
+     * @var \App\Report
      */
-    public $attachment;
+    public $report;
 
     /**
      * @var \Bkstar123\BksCMS\AdminPanel\Admin
@@ -39,9 +40,9 @@ class VerifyDomainSSLDataCompleted implements ShouldBroadcast
      *
      * @return void
      */
-    public function __construct($attachment, $domains, $user)
+    public function __construct(Report $report, $domains, $user)
     {
-        $this->attachment = base64_encode($attachment);
+        $this->report = $report;
         $this->domains = $domains;
         $this->user = $user;
     }

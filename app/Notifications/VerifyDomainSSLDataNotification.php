@@ -46,7 +46,7 @@ class VerifyDomainSSLDataNotification extends Notification implements ShouldQueu
      */
     public function toMail($notifiable)
     {
-        return (new VerifyDomainSSLDataResult($this->payload->attachment, $this->payload->domains))
+        return (new VerifyDomainSSLDataResult($this->payload->report, $this->payload->domains))
                ->to($notifiable->email);
     }
 
