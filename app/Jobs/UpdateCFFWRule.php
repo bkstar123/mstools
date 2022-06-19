@@ -2,6 +2,8 @@
 
 namespace App\Jobs;
 
+use Exception;
+use App\Events\JobFailing;
 use App\Exports\ExcelExport;
 use Illuminate\Bus\Queueable;
 use Maatwebsite\Excel\Facades\Excel;
@@ -128,5 +130,16 @@ class UpdateCFFWRule implements ShouldQueue
         }
         $headings = ['Zone', 'isCompleted', 'Comment'];
         UpdateCFFWRuleCompleted::dispatch(Excel::raw(new ExcelExport($data, $headings), 'Xlsx'), $this->zones, $this->user, $this->request['new_description'] ?? $this->request['description']);
+    }
+
+    /**
+     * The job failed to process.
+     *
+     * @param  Exception  $exception
+     * @return void
+     */
+    public function failed(Exception $exception)
+    {
+        JobFailing::dispatch($this->user);
     }
 }

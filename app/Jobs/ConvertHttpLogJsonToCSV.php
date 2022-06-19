@@ -7,6 +7,10 @@
  */
 namespace App\Jobs;
 
+use Exception;
+use App\Report;
+use Carbon\Carbon;
+use App\Events\JobFailing;
 use Illuminate\Bus\Queueable;
 use Bkstar123\BksCMS\AdminPanel\Admin;
 use Illuminate\Queue\SerializesModels;
@@ -15,11 +19,12 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use App\Events\HttpLogJson2CsvConversionDone;
+use App\Http\Components\GenerateCustomUniqueString;
 use Bkstar123\LaravelUploader\Contracts\FileUpload;
 
 class ConvertHttpLogJsonToCSV implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, GenerateCustomUniqueString;
 
     /**
      * @var array
@@ -49,11 +54,11 @@ class ConvertHttpLogJsonToCSV implements ShouldQueue
      */
     public function handle()
     {
-        $outputFilename = md5(uniqid(rand(), true)."_".getmypid()."_".gethostname()."_".time()).'.csv';
         $outputFileLocation = [
-            'disk' => $this->uploadedFileData['disk'],
-            'path' => dirname($this->uploadedFileData['path']).DIRECTORY_SEPARATOR.$outputFilename
+            'disk' => config('mstools.report.disk'),
+            'path' => config('mstools.report.directory').DIRECTORY_SEPARATOR.$this->generateUniqueString().DIRECTORY_SEPARATOR.$this->generateUniqueString('.csv')
         ];
+        Storage::disk($outputFileLocation['disk'])->makeDirectory(dirname($outputFileLocation['path']));
         $fip = fopen(Storage::disk($this->uploadedFileData['disk'])->path($this->uploadedFileData['path']), 'r');
         $fop = fopen(Storage::disk($outputFileLocation['disk'])->path($outputFileLocation['path']), 'w');
         if ($fip) {
@@ -66,7 +71,6 @@ class ConvertHttpLogJsonToCSV implements ShouldQueue
                 }
             }
             fputcsv($fop, $headers);
-
             // Read the second time to write data to the output CSV file
             rewind($fip);
             while (!feof($fip)) {
@@ -83,8 +87,27 @@ class ConvertHttpLogJsonToCSV implements ShouldQueue
         }
         fclose($fip);
         fclose($fop);
-        HttpLogJson2CsvConversionDone::dispatch($outputFileLocation, $this->user);
+        $report = Report::create([
+            'name'     => 'DotNet Core Log ' . Carbon::createFromTimestamp(time())->setTimezone('UTC')->toDateTimeString()."(UTC).csv",
+            'admin_id' => $this->user->id,
+            'disk'     => $outputFileLocation['disk'],
+            'path'     => $outputFileLocation['path'],
+            'mime'     => 'text/csv'
+        ]);
+        HttpLogJson2CsvConversionDone::dispatch($report, $this->user);
         app(FileUpload::class)->delete($this->uploadedFileData['disk'], $this->uploadedFileData['path']);
+    }
+
+    /**
+     * The job failed to process.
+     *
+     * @param  Exception  $exception
+     * @return void
+     */
+    public function failed(Exception $exception)
+    {
+        app(FileUpload::class)->delete($this->uploadedFileData['disk'], $this->uploadedFileData['path']);
+        JobFailing::dispatch($this->user);
     }
 
     /**

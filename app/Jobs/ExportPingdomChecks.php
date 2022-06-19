@@ -2,8 +2,10 @@
 
 namespace App\Jobs;
 
+use Exception;
 use App\Report;
 use Carbon\Carbon;
+use App\Events\JobFailing;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Storage;
@@ -48,8 +50,8 @@ class ExportPingdomChecks implements ShouldQueue
     public function handle()
     {
         $outputFileLocation = [
-            'disk' => config('mstools.pingdomreport.disk'),
-            'path' => config('mstools.pingdomreport.directory').DIRECTORY_SEPARATOR.$this->generateUniqueString().DIRECTORY_SEPARATOR.$this->generateUniqueString('.csv')
+            'disk' => config('mstools.report.disk'),
+            'path' => config('mstools.report.directory').DIRECTORY_SEPARATOR.$this->generateUniqueString().DIRECTORY_SEPARATOR.$this->generateUniqueString('.csv')
         ];
         Storage::disk($outputFileLocation['disk'])->makeDirectory(dirname($outputFileLocation['path']));
         $fop = fopen(Storage::disk($outputFileLocation['disk'])->path($outputFileLocation['path']), 'w');
@@ -92,5 +94,16 @@ class ExportPingdomChecks implements ShouldQueue
             'mime'     => 'text/csv'
         ]);
         ExportPingdomChecksCompleted::dispatch($report, $this->user);
+    }
+
+    /**
+     * The job failed to process.
+     *
+     * @param  Exception  $exception
+     * @return void
+     */
+    public function failed(Exception $exception)
+    {
+        JobFailing::dispatch($this->user);
     }
 }

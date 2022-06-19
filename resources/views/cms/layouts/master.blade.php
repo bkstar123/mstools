@@ -60,7 +60,7 @@
         <script type="text/javascript">
             Echo.private('user-' + {{ auth()->user()->id }})
                 .listen('.upload-certificate-cfzone.completed', (data) => {
-                    $.notify(`MSTool has completed the SSL cert uploading request for ${data.number_of_zones} Cloudflare zones and will send the report to ${data.requestor}`, {
+                    $.notify(`MSTool has completed the SSL cert uploading request for ${data.number_of_zones} Cloudflare zones as requested by ${data.requestor}`, {
                         position: "right bottom",
                         className: "success",
                         clickToHide: true,
@@ -69,7 +69,7 @@
                 });
             Echo.private('user-' + {{ auth()->user()->id }})
                 .listen('.verify-cfzone-customssl.completed', (data) => {
-                    $.notify(`MSTool has completed checking custom SSL settings for ${data.number_of_zones} Cloudflare zones and will send the result to ${data.requestor}`, {
+                    $.notify(`MSTool has completed checking custom SSL settings for ${data.number_of_zones} Cloudflare zones as requested by ${data.requestor}`, {
                         position: "right bottom",
                         className: "success",
                         clickToHide: true,
@@ -78,7 +78,7 @@
                 });
             Echo.private('user-' + {{ auth()->user()->id }})
                 .listen('.verify-domain-ssldata.completed', (data) => {
-                    $.notify(`MSTool has completed checking SSL data for ${data.number_of_domains} domains and will send the result to ${data.requestor}`, {
+                    $.notify(`MSTool has completed checking SSL data for ${data.number_of_domains} domains as requested by ${data.requestor}`, {
                         position: "right bottom",
                         className: "success",
                         clickToHide: true,
@@ -96,7 +96,7 @@
                 }); 
             Echo.private('user-' + {{ auth()->user()->id }})
                 .listen('.create-cf-fwrule.completed', (data) => {
-                    $.notify(`MSTool has completed creating the given Cloudflare firewall rule for multiple zones and will send the result to ${data.requestor}`, {
+                    $.notify(`MSTool has completed creating the given Cloudflare firewall rule for multiple zones as requested by ${data.requestor}`, {
                         position: "right bottom",
                         className: "success",
                         clickToHide: true,
@@ -105,7 +105,16 @@
                 });
             Echo.private('user-' + {{ auth()->user()->id }})
                 .listen('.update-cf-fwrule.completed', (data) => {
-                    $.notify(`MSTool has completed updating the given Cloudflare firewall rule for multiple zones and will send the result to ${data.requestor}`, {
+                    $.notify(`MSTool has completed updating the given Cloudflare firewall rule for multiple zones as requested by ${data.requestor}`, {
+                        position: "right bottom",
+                        className: "success",
+                        clickToHide: true,
+                        autoHide: false,
+                    })
+                });
+            Echo.private('user-' + {{ auth()->user()->id }})
+                .listen('.delete-cf-fwrule.completed', (data) => {
+                    $.notify(`MSTool has completed deleting the given Cloudflare firewall rule for multiple zones as requested by ${data.requestor}`, {
                         position: "right bottom",
                         className: "success",
                         clickToHide: true,
@@ -117,6 +126,15 @@
                     $.notify(`MSTool has completed converting the JSON log file to CSV as requested by ${data.requestor}`, {
                         position: "right bottom",
                         className: "success",
+                        clickToHide: true,
+                        autoHide: false,
+                    })
+                });
+            Echo.private('user-' + {{ auth()->user()->id }})
+                .listen('.a.job.failed', (data) => {
+                    $.notify('You may get incompleted outcome because MSTool has failed to perform one of necessary jobs while proceeding your requests', {
+                        position: "right bottom",
+                        className: "error",
                         clickToHide: true,
                         autoHide: false,
                     })

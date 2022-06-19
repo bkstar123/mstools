@@ -8,7 +8,7 @@
 namespace App\Observers;
 
 use App\Report;
-use Illuminate\Support\Facades\Storage;
+use Bkstar123\LaravelUploader\Contracts\FileUpload;
 
 class ReportObserver
 {
@@ -20,9 +20,6 @@ class ReportObserver
      */
     public function deleted(Report $report)
     {
-        Storage::disk($report->disk)->delete($report->path);
-        if (empty(Storage::disk($report->disk)->allFiles(dirname($report->path)))) {
-        	Storage::disk($report->disk)->deleteDirectory(dirname($report->path));
-        }
+        app(FileUpload::class)->delete($report->disk, $report->path);
     }
 }

@@ -8,6 +8,7 @@
 namespace App\Jobs;
 
 use Exception;
+use App\Events\JobFailing;
 use App\Exports\ExcelExport;
 use Illuminate\Bus\Queueable;
 use Maatwebsite\Excel\Facades\Excel;
@@ -127,5 +128,16 @@ class VerifyDomainSSLData implements ShouldQueue
             'SAN'
         ];
         VerifyDomainSSLDataCompleted::dispatch(Excel::raw(new ExcelExport($data, $headings), 'Xlsx'), $this->domains, $this->user);
+    }
+
+    /**
+     * The job failed to process.
+     *
+     * @param  Exception  $exception
+     * @return void
+     */
+    public function failed(Exception $exception)
+    {
+        JobFailing::dispatch($this->user);
     }
 }

@@ -25,28 +25,14 @@ class JsonToCSVConversionController extends Controller
     {
         $uploadedFileData = $fileupload->handle($request, 'httplog', [
             'allowedExtensions' => ['json'],
-            'directory' => config('mstools.netcorelog.directory'),
+            'directory' => 'uploaded-'.config('mstools.report.directory'),
             'maxFileSize' => config('mstools.maxFileUpload'),
-            'disk' => config('mstools.netcorelog.disk')
+            'disk' => config('mstools.report.disk')
         ]);
         if (!$uploadedFileData) {
             return response()->json(['error' => $fileupload->uploadError], 422);
         }
         ConvertHttpLogJsonToCSV::dispatch($uploadedFileData, auth()->user());
         return response()->json(['success' => "The JSON log file has been sent to MSTools for conversion"], 200);
-    }
-
-    /**
-     * Send the output CSV file to browser
-     *
-     * @param \Illuminate\Http\Request $request
-     */
-    public function sendCSVFileToBrowser(Request $request)
-    {
-        if (Storage::disk($request->query('disk'))->exists($request->query('filepath'))) {
-            return Storage::disk($request->query('disk'))->download($request->query('filepath'), 'log.csv', ['Content-Type' => 'text/csv']);
-        }
-        flashing('There is no such file to download')->error()->flash();
-        return redirect()->route('netcore.httplog.json2csv');
     }
 }

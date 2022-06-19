@@ -5,6 +5,8 @@ namespace App\Console\Commands;
 use App\Report;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Storage;
+use Bkstar123\LaravelUploader\Contracts\FileUpload;
 
 class PurgeReport extends Command
 {
@@ -40,8 +42,20 @@ class PurgeReport extends Command
     public function handle()
     {
         $expiredReports = Report::where('created_at', '<', Carbon::now()->subMinutes(config('mstools.report.ttl')))->get();
-        foreach ($expiredReports as $report) {
-            $report->delete();
+        if ($expiredReports->isEmpty()) {
+            $files = array_merge(
+                Storage::disk(config('mstools.report.disk'))->allFiles(config('mstools.report.directory')),
+                Storage::disk(config('mstools.report.disk'))->allFiles("uploaded-".config('mstools.report.directory'))
+            );
+            foreach ($files as $file) {
+                if (Storage::lastModified($file) < Carbon::now()->subMinutes(config('mstools.report.ttl'))->timestamp) {
+                    app(FileUpload::class)->delete(config('mstools.report.disk'), $file);
+                }
+            }
+        } else {
+            foreach ($expiredReports as $report) {
+                $report->delete();
+            }
         }
     }
 }
