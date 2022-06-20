@@ -122,7 +122,7 @@ class ConvertHttpLogJsonToCSV implements ShouldQueue
     }
 
     /**
-     * Convert the given JSON string into a flat array 
+     * Convert the given JSON string into a flat array
      *
      * @param string
      * @return array

@@ -46,7 +46,7 @@ class VerifyCFZoneCustomSSLNotification extends Notification implements ShouldQu
      */
     public function toMail($notifiable)
     {
-        return (new VerifyCFZoneCustomSSLResult($this->payload->attachment, $this->payload->zones))
+        return (new VerifyCFZoneCustomSSLResult($this->payload->report, $this->payload->zones))
                ->to($notifiable->email);
     }
 

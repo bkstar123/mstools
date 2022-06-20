@@ -8,19 +8,21 @@
 namespace App\Jobs;
 
 use Exception;
+use App\Report;
+use Carbon\Carbon;
 use App\Events\JobFailing;
-use App\Exports\ExcelExport;
 use Illuminate\Bus\Queueable;
-use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use App\Events\VerifyCFZoneCustomSSLCompleted;
+use App\Http\Components\GenerateCustomUniqueString;
 
 class VerifyCFZoneCustomSSL implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, GenerateCustomUniqueString;
 
     /**
      * @var array
@@ -60,97 +62,13 @@ class VerifyCFZoneCustomSSL implements ShouldQueue
      */
     public function handle()
     {
-        $data = [];
-        $zoneMgmt = resolve('zoneMgmt');
-        $customSSL = resolve('customSSL');
-        foreach ($this->zones as $zone) {
-            $zone = idn_to_ascii(trim($zone), IDNA_DEFAULT, INTL_IDNA_VARIANT_UTS46);
-            $zoneID = $zoneMgmt->getZoneID($zone);
-            if ($zoneID === null) {
-                array_push($data, [
-                    'Zone' => $zone,
-                    'Found on Cloudflare' => 'false',
-                    'Issuer' => '',
-                    'SSL mode' => '',
-                    'SSL uploaded on' => '',
-                    'SSL modified on' => '',
-                    'Expired_at' => '',
-                    'Hosts' => '',
-                    'Note' => ''
-                ]);
-                continue;
-            } elseif ($zoneID === false) {
-                array_push($data, [
-                    'Zone' => $zone,
-                    'Found on Cloudflare' => 'Unknown',
-                    'Issuer' => '',
-                    'SSL mode' => '',
-                    'SSL uploaded on' => '',
-                    'SSL modified on' => '',
-                    'Expired_at' => '',
-                    'Hosts' => '',
-                    'Note' => 'Something is unusual, please manually double check in the Cloudflare portal'
-                ]);
-                continue;
-            }
-            $currentCertID = $customSSL->getCurrentCustomCertID($zoneID);
-            $sslMode = $zoneMgmt->getZoneSSLMode($zoneID);
-            if ($currentCertID === false) {
-                array_push($data, [
-                    'Zone' => $zone,
-                    'Found on Cloudflare' => 'true',
-                    'Issuer' => '',
-                    'SSL mode' => !empty($sslMode) ? $sslMode : null,
-                    'SSL uploaded on' => '',
-                    'SSL modified on' => '',
-                    'Expired_at' => '',
-                    'Hosts' => '',
-                    'Note' => 'Something is unusual, please manually double check in the Cloudflare portal'
-                ]);
-                continue;
-            } elseif ($currentCertID === null) {
-                array_push($data, [
-                    'Zone' => $zone,
-                    'Found on Cloudflare' => 'true',
-                    'Issuer' => '',
-                    'SSL mode' => !empty($sslMode) ? $sslMode : null,
-                    'SSL uploaded on' => '',
-                    'SSL modified on' => '',
-                    'Expired_at' => '',
-                    'Hosts' => '',
-                    'Note' => ''
-                ]);
-            } else {
-                $res = $customSSL->fetchCertData($zoneID, $currentCertID);
-                if (!$res) {
-                    array_push($data, [
-                        'Zone' => $zone,
-                        'Found on Cloudflare' => 'true',
-                        'Issuer' => '',
-                        'SSL mode' => !empty($sslMode) ? $sslMode : null,
-                        'SSL uploaded on' => '',
-                        'SSL modified on' => '',
-                        'Expired_at' => '',
-                        'Hosts' => '',
-                        'Note' => 'Something is unusual, please manually double check in the Cloudflare portal'
-                    ]);
-                    continue;
-                } else {
-                    array_push($data, [
-                        'Zone' => $zone,
-                        'Found on Cloudflare' => 'true',
-                        'Issuer' => $res['issuer'],
-                        'SSL mode' => !empty($sslMode) ? $sslMode : null,
-                        'SSL uploaded on' => $res['uploaded_on'],
-                        'SSL modified on' => $res['modified_on'],
-                        'Expired_at' => $res['expires_on'],
-                        'Hosts' => $res['hosts'],
-                        'Note' => ''
-                    ]);
-                }
-            }
-        }
-        $headings = [
+        $outputFileLocation = [
+            'disk' => config('mstools.report.disk'),
+            'path' => config('mstools.report.directory').DIRECTORY_SEPARATOR.$this->generateUniqueString().DIRECTORY_SEPARATOR.$this->generateUniqueString('.csv')
+        ];
+        Storage::disk($outputFileLocation['disk'])->makeDirectory(dirname($outputFileLocation['path']));
+        $fop = fopen(Storage::disk($outputFileLocation['disk'])->path($outputFileLocation['path']), 'w');
+        fputcsv($fop, [
             'Zone',
             'Found on Cloudflare',
             'Issuer',
@@ -160,8 +78,56 @@ class VerifyCFZoneCustomSSL implements ShouldQueue
             'Expired_at',
             'Hosts',
             'Note'
-        ];
-        VerifyCFZoneCustomSSLCompleted::dispatch(Excel::raw(new ExcelExport($data, $headings), 'Xlsx'), $this->zones, $this->user);
+        ]);
+        $data = [];
+        $zoneMgmt = resolve('zoneMgmt');
+        $customSSL = resolve('customSSL');
+        foreach ($this->zones as $zone) {
+            $zone = idn_to_ascii(trim($zone), IDNA_DEFAULT, INTL_IDNA_VARIANT_UTS46);
+            $zoneID = $zoneMgmt->getZoneID($zone);
+            if ($zoneID === null) {
+                fputcsv($fop, [$zone,'false','','','','','','','']);
+                continue;
+            } elseif ($zoneID === false) {
+                fputcsv($fop, [$zone,'Unknown','','','','','','','Something is unusual, please manually double check in the Cloudflare portal']);
+                continue;
+            }
+            $currentCertID = $customSSL->getCurrentCustomCertID($zoneID);
+            $sslMode = $zoneMgmt->getZoneSSLMode($zoneID);
+            if ($currentCertID === false) {
+                fputcsv($fop, [$zone,'true','',!empty($sslMode) ? $sslMode : null,'','','','','Something is unusual, please manually double check in the Cloudflare portal']);
+                continue;
+            } elseif ($currentCertID === null) {
+                fputcsv($fop, [$zone,'true','',!empty($sslMode) ? $sslMode : null,'','','','','']);
+            } else {
+                $res = $customSSL->fetchCertData($zoneID, $currentCertID);
+                if (!$res) {
+                    fputcsv($fop, [$zone,'true','',!empty($sslMode) ? $sslMode : null,'','','','','Something is unusual, please manually double check in the Cloudflare portal']);
+                    continue;
+                } else {
+                    fputcsv($fop, [
+                        $zone,
+                        'true',
+                        $res['issuer'],
+                        !empty($sslMode) ? $sslMode : null,
+                        $res['uploaded_on'],
+                        $res['modified_on'],
+                        $res['expires_on'],
+                        $res['hosts'],
+                        ''
+                    ]);
+                }
+            }
+        }
+        fclose($fop);
+        $report = Report::create([
+            'name'     => 'Verify custom SSL configuration for Cloudflare zones ' . Carbon::createFromTimestamp(time())->setTimezone('UTC')->toDateTimeString()."(UTC).csv",
+            'admin_id' => $this->user->id,
+            'disk'     => $outputFileLocation['disk'],
+            'path'     => $outputFileLocation['path'],
+            'mime'     => 'text/csv'
+        ]);
+        VerifyCFZoneCustomSSLCompleted::dispatch($report, $this->zones, $this->user);
     }
 
     /**

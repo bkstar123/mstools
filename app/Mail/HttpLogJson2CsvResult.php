@@ -48,6 +48,6 @@ class HttpLogJson2CsvResult extends Mailable
                             'as' => 'DotNet Core Log.csv',
                             'mime' => 'text/csv'
                         ]);
-        }     
+        }
     }
 }
