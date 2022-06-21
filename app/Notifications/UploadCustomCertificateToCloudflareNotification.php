@@ -51,7 +51,7 @@ class UploadCustomCertificateToCloudflareNotification extends Notification imple
      */
     public function toMail($notifiable)
     {
-        return (new UploadCustomCertificateToCloudflareResult($this->payload->attachment, $this->payload->zones))
+        return (new UploadCustomCertificateToCloudflareResult($this->payload->report, $this->payload->zones))
                ->to($notifiable->email);
     }
 

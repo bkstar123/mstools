@@ -79,7 +79,6 @@ class VerifyCFZoneCustomSSL implements ShouldQueue
             'Hosts',
             'Note'
         ]);
-        $data = [];
         $zoneMgmt = resolve('zoneMgmt');
         $customSSL = resolve('customSSL');
         foreach ($this->zones as $zone) {

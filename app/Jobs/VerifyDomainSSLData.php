@@ -81,7 +81,6 @@ class VerifyDomainSSLData implements ShouldQueue
             'CNAME',
             'SAN'
         ]);
-        $data = [];
         foreach ($this->domains as $domain) {
             $domain = idn_to_ascii(trim($domain), IDNA_DEFAULT, INTL_IDNA_VARIANT_UTS46);
             $IPs = [];

@@ -8,21 +8,23 @@
 namespace App\Jobs;
 
 use Exception;
+use App\Report;
+use Carbon\Carbon;
 use App\Events\JobFailing;
-use App\Exports\ExcelExport;
 use Illuminate\Bus\Queueable;
 use App\Jobs\VerifyCFZoneCustomSSL;
-use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Queue\InteractsWithQueue;
 use Spatie\SslCertificate\SslCertificate;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use App\Http\Components\GenerateCustomUniqueString;
 use App\Events\UploadCustomCertificateToCloudflareCompleted;
 
 class UploadCustomCertificateToCloudflare implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, GenerateCustomUniqueString;
 
     /**
      * @var array
@@ -72,72 +74,83 @@ class UploadCustomCertificateToCloudflare implements ShouldQueue
      */
     public function handle()
     {
-        $data = [];
+        $outputFileLocation = [
+            'disk' => config('mstools.report.disk'),
+            'path' => config('mstools.report.directory').DIRECTORY_SEPARATOR.$this->generateUniqueString().DIRECTORY_SEPARATOR.$this->generateUniqueString('.csv')
+        ];
+        Storage::disk($outputFileLocation['disk'])->makeDirectory(dirname($outputFileLocation['path']));
+        $fop = fopen(Storage::disk($outputFileLocation['disk'])->path($outputFileLocation['path']), 'w');
+        fputcsv($fop, [
+            'Zone',
+            'isCompleted',
+            'isSSLReplacement',
+            'Comment'
+        ]);
         $zoneMgmt = resolve('zoneMgmt');
         $customSSL = resolve('customSSL');
         foreach ($this->zones as $zone) {
             $zone = idn_to_ascii(trim($zone), IDNA_DEFAULT, INTL_IDNA_VARIANT_UTS46);
             $zoneID = $zoneMgmt->getZoneID($zone);
             if (empty($zoneID)) {
-                array_push($data, [
-                    'Zone' => $zone,
-                    'isCompleted' => 'No',
-                    'isSSLReplacement' => 'Unknown',
-                    'Comment' => "Failed to check this zone's data on Cloudflare"
+                fputcsv($fop, [
+                    $zone,
+                    'No',
+                    'Unknown',
+                    "Failed to check this zone's data on Cloudflare"
                 ]);
                 continue;
             }
             $currentCertID = $customSSL->getCurrentCustomCertID($zoneID);
             if ($currentCertID === false) {
-                array_push($data, [
-                    'Zone' => $zone,
-                    'isCompleted' => 'No',
-                    'isSSLReplacement' => 'Unknown',
-                    'Comment' => "Failed to check the zone's custom SSL settings, or the configuration is unusal"
+                fputcsv($fop, [
+                    $zone,
+                    'No',
+                    'Unknown',
+                    "Failed to check the zone's custom SSL settings, or the configuration is unusal"
                 ]);
                 continue;
             } elseif ($currentCertID === null) {
                 if (!$customSSL->uploadNewCustomCert($zoneID, $this->cert, $this->key)) {
-                    array_push($data, [
-                        'Zone' => $zone,
-                        'isCompleted' => 'No',
-                        'isSSLReplacement' => 'No',
-                        'Comment' => "No existing certificate was found, the new certificate failed to be installed"
+                    fputcsv($fop, [
+                        $zone,
+                        'No',
+                        'No',
+                        "No existing certificate was found, the new certificate failed to be installed"
                     ]);
                     continue;
                 } else {
-                    array_push($data, [
-                        'Zone' => $zone,
-                        'isCompleted' => 'Yes',
-                        'isSSLReplacement' => 'No',
-                        'Comment' => "No existing certificate was found, the new certificate has been successfully installed"
+                    fputcsv($fop, [
+                        $zone,
+                        'Yes',
+                        'No',
+                        "No existing certificate was found, the new certificate has been successfully installed"
                     ]);
                 }
             } else {
                 $validate = $this->preReplaceValidate($zoneID, $currentCertID, $this->cert, $customSSL);
                 if ($validate['isOK']) {
                     if (!$customSSL->updateCustomCert($zoneID, $currentCertID, $this->cert, $this->key)) {
-                        array_push($data, [
-                            'Zone' => $zone,
-                            'isCompleted' => 'No',
-                            'isSSLReplacement' => 'Yes',
-                            'Comment' => "An existing certificate was found, the SSL replacement failed"
+                        fputcsv($fop, [
+                            $zone,
+                            'No',
+                            'Yes',
+                            "An existing certificate was found, the SSL replacement failed"
                         ]);
                         continue;
                     } else {
-                        array_push($data, [
-                            'Zone' => $zone,
-                            'isCompleted' => 'Yes',
-                            'isSSLReplacement' => 'Yes',
-                            'Comment' => "An existing certificate was found, the SSL replacement has been succeeded"
+                        fputcsv($fop, [
+                            $zone,
+                            'Yes',
+                            'Yes',
+                            "An existing certificate was found, the SSL replacement has been succeeded"
                         ]);
                     }
                 } else {
-                    array_push($data, [
-                        'Zone' => $zone,
-                        'isCompleted' => 'No',
-                        'isSSLReplacement' => 'Yes',
-                        'Comment' => empty($validate['diff']) ?
+                    fputcsv($fop, [
+                        $zone,
+                        'No',
+                        'Yes',
+                        empty($validate['diff']) ?
                             "Cannot validate the new certificate's domains with those of the existing certificate" :
                             "Not being proceeded yet. The existing certificate differs from the new one on the following domains: " .
                             json_encode($validate['diff']) .
@@ -147,8 +160,15 @@ class UploadCustomCertificateToCloudflare implements ShouldQueue
                 }
             }
         }
-        $headings = ['Zone', 'isCompleted', 'isSSLReplacement', 'Comment'];
-        UploadCustomCertificateToCloudflareCompleted::dispatch(Excel::raw(new ExcelExport($data, $headings), 'Xlsx'), $this->zones, $this->user);
+        fclose($fop);
+        $report = Report::create([
+            'name'     => 'Result of SSL uploading to Cloudflares ' . Carbon::createFromTimestamp(time())->setTimezone('UTC')->toDateTimeString()."(UTC).csv",
+            'admin_id' => $this->user->id,
+            'disk'     => $outputFileLocation['disk'],
+            'path'     => $outputFileLocation['path'],
+            'mime'     => 'text/csv'
+        ]);
+        UploadCustomCertificateToCloudflareCompleted::dispatch($report, $this->zones, $this->user);
         VerifyCFZoneCustomSSL::dispatch($this->zones, $this->user);
     }
 
