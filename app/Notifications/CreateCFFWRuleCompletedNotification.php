@@ -47,7 +47,7 @@ class CreateCFFWRuleCompletedNotification extends Notification implements Should
      */
     public function toMail($notifiable)
     {
-        return (new CreateCFFWRuleResult($this->payload->attachment, $this->payload->zones, $this->payload->ruleDescription))
+        return (new CreateCFFWRuleResult($this->payload->report, $this->payload->zones, $this->payload->ruleDescription))
                ->to($notifiable->email);
     }
 

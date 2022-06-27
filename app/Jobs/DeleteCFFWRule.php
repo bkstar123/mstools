@@ -3,19 +3,21 @@
 namespace App\Jobs;
 
 use Exception;
+use App\Report;
+use Carbon\Carbon;
 use App\Events\JobFailing;
-use App\Exports\ExcelExport;
 use Illuminate\Bus\Queueable;
-use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Queue\SerializesModels;
 use App\Events\DeleteCFFWRuleCompleted;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use App\Http\Components\GenerateCustomUniqueString;
 
 class DeleteCFFWRule implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, GenerateCustomUniqueString;
 
     /**
      * @var array
@@ -59,7 +61,17 @@ class DeleteCFFWRule implements ShouldQueue
      */
     public function handle()
     {
-        $data = [];
+        $outputFileLocation = [
+            'disk' => config('mstools.report.disk'),
+            'path' => config('mstools.report.directory').DIRECTORY_SEPARATOR.$this->generateUniqueString().DIRECTORY_SEPARATOR.$this->generateUniqueString('.csv')
+        ];
+        Storage::disk($outputFileLocation['disk'])->makeDirectory(dirname($outputFileLocation['path']));
+        $fop = fopen(Storage::disk($outputFileLocation['disk'])->path($outputFileLocation['path']), 'w');
+        fputcsv($fop, [
+            'Zone',
+            'isCompleted',
+            'Comment',
+        ]);
         $filter_delete_status = [
             'msg' => null,
             'status' => null
@@ -70,10 +82,10 @@ class DeleteCFFWRule implements ShouldQueue
             $zone = idn_to_ascii(strtolower(trim($zone)), IDNA_DEFAULT, INTL_IDNA_VARIANT_UTS46);
             $zoneID = $zoneMgmt->getZoneID($zone);
             if (empty($zoneID)) {
-                array_push($data, [
-                    'Zone' => $zone,
-                    'isCompleted' => 'No',
-                    'Comment' => "Failed to check this zone's data on Cloudflare"
+                fputcsv($fop, [
+                    $zone,
+                    'No',
+                    "Failed to check this zone's data on Cloudflare"
                 ]);
                 continue;
             }
@@ -81,18 +93,18 @@ class DeleteCFFWRule implements ShouldQueue
                 'description' => $this->ruleDescription
             ]);
             if (!$rules) {
-                array_push($data, [
-                    'Zone' => $zone,
-                    'isCompleted' => 'No',
-                    'Comment' => 'There is no firewall rule with the given description for this zone'
+                fputcsv($fop, [
+                    $zone,
+                    'No',
+                    'There is no firewall rule with the given description for this zone'
                 ]);
                 continue;
             }
             if (count($rules) > 1) {
-                array_push($data, [
-                    'Zone' => $zone,
-                    'isCompleted' => 'No',
-                    'Comment' => 'Found more than one rule with the given description. You must give a more specific description to only operate on your concerned rule'
+                fputcsv($fop, [
+                    $zone,
+                    'No',
+                    'Found more than one rule with the given description. You must give a more specific description to only operate on your concerned rule'
                 ]);
                 continue;
             }
@@ -105,22 +117,29 @@ class DeleteCFFWRule implements ShouldQueue
                 $filter_delete_status['status'] = true;
             }
             if (!$zoneFW->deleteFWRuleForZone($zoneID, $rule)) {
-                array_push($data, [
-                    'Zone' => $zone,
-                    'isCompleted' => $filter_delete_status['status'] ? 'Partially Done' : 'No',
-                    'Comment' => 'Failed to delete the given firewall rule on this zone' . $filter_delete_status['msg']
+                fputcsv($fop, [
+                    $zone,
+                    $filter_delete_status['status'] ? 'Partially Done' : 'No',
+                    'Failed to delete the given firewall rule on this zone' . $filter_delete_status['msg']
                 ]);
                 continue;
             } else {
-                array_push($data, [
-                    'Zone' => $zone,
-                    'isCompleted' => $filter_delete_status['status'] ? 'Yes' : 'Partially Done',
-                    'Comment' => 'The given firewall rule has been successfully deleted for this zone' . $filter_delete_status['msg']
+                fputcsv($fop, [
+                    $zone,
+                    $filter_delete_status['status'] ? 'Yes' : 'Partially Done',
+                    'The given firewall rule has been successfully deleted for this zone' . $filter_delete_status['msg']
                 ]);
             }
         }
-        $headings = ['Zone', 'isCompleted', 'Comment'];
-        DeleteCFFWRuleCompleted::dispatch(Excel::raw(new ExcelExport($data, $headings), 'Xlsx'), $this->zones, $this->user, $this->ruleDescription);
+        fclose($fop);
+        $report = Report::create([
+            'name'     => 'Delete Cloudflare firewall rule for multiple zones ' . Carbon::createFromTimestamp(time())->setTimezone('UTC')->toDateTimeString()."(UTC).csv",
+            'admin_id' => $this->user->id,
+            'disk'     => $outputFileLocation['disk'],
+            'path'     => $outputFileLocation['path'],
+            'mime'     => 'text/csv'
+        ]);
+        DeleteCFFWRuleCompleted::dispatch($report, $this->zones, $this->user, $this->ruleDescription);
     }
 
     /**

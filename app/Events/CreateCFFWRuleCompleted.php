@@ -7,6 +7,7 @@
  */
 namespace App\Events;
 
+use App\Report;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Broadcasting\PrivateChannel;
@@ -25,9 +26,9 @@ class CreateCFFWRuleCompleted implements ShouldBroadcast
     public $zones;
 
     /**
-     * @var base64-encoded binary data
+     * @var \App\Report
      */
-    public $attachment;
+    public $report;
 
     /**
      * @var \Bkstar123\BksCMS\AdminPanel\Admin
@@ -44,9 +45,9 @@ class CreateCFFWRuleCompleted implements ShouldBroadcast
      *
      * @return void
      */
-    public function __construct($attachment, $zones, $user, $ruleDescription)
+    public function __construct(Report $report, $zones, $user, $ruleDescription)
     {
-        $this->attachment = base64_encode($attachment);
+        $this->report = $report;
         $this->zones = $zones;
         $this->user = $user;
         $this->ruleDescription = $ruleDescription;

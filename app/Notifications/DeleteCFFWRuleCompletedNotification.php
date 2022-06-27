@@ -47,7 +47,7 @@ class DeleteCFFWRuleCompletedNotification extends Notification implements Should
      */
     public function toMail($notifiable)
     {
-        return (new DeleteCFFWRuleResult($this->payload->attachment, $this->payload->zones, $this->payload->ruleDescription))
+        return (new DeleteCFFWRuleResult($this->payload->report, $this->payload->zones, $this->payload->ruleDescription))
                ->to($notifiable->email);
     }
 

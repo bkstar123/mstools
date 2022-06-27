@@ -2,9 +2,11 @@
 
 namespace App\Mail;
 
+use App\Report;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
 class UpdateCFFWRuleResult extends Mailable
@@ -17,9 +19,9 @@ class UpdateCFFWRuleResult extends Mailable
     public $zones;
 
     /**
-     * @var base64-encoded binary data
+     * @var \App\Report
      */
-    protected $attachment;
+    protected $report;
 
     /**
      * @var string
@@ -31,9 +33,9 @@ class UpdateCFFWRuleResult extends Mailable
      *
      * @return void
      */
-    public function __construct($attachment, $zones, $ruleDescription)
+    public function __construct(Report $report, $zones, $ruleDescription)
     {
-        $this->attachment = $attachment;
+        $this->report = $report;
         $this->zones = $zones;
         $this->ruleDescription = $ruleDescription;
     }
@@ -45,8 +47,13 @@ class UpdateCFFWRuleResult extends Mailable
      */
     public function build()
     {
-        return $this->view('emails.firewall.updaterule')
-                    ->subject('Update Cloudflare firewall rule for multiple zones')
-                    ->attachData(base64_decode($this->attachment), 'cf_zone_firewall_rule_update_report.xlsx');
+        if (Storage::disk($this->report->disk)->exists($this->report->path)) {
+            return  $this->view('emails.firewall.updaterule')
+                         ->subject('Update Cloudflare firewall rule for multiple zones')
+                         ->attach(Storage::disk($this->report->disk)->path($this->report->path), [
+                            'as' => 'cf_zone_firewall_rule_update_report.csv',
+                            'mime' => 'text/csv'
+                        ]);
+        }
     }
 }
