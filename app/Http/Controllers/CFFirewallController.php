@@ -32,8 +32,7 @@ class CFFirewallController extends Controller
             $this->setRequestThrottling();
             $zones = explode(",", $request->zones);
             $filter = new CFFWRuleFilter($request->expression);
-            $ruleDescription = $request->description;
-            $rule = new CFFWRule($ruleDescription, false, $filter, $request->action, $request->products ?? []);
+            $rule = new CFFWRule($request->description, false, $filter, $request->action, $request->products ?? []);
             CreateCFFWRule::dispatch($zones, $rule, auth()->user());
             flashing('MSTool is processing the request')->flash();
         } else {

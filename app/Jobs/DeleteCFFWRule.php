@@ -33,6 +33,14 @@ class DeleteCFFWRule implements ShouldQueue
     public $user;
 
     /**
+     * The number of seconds the job can run before timing out
+     * must be on several seconds less than the queue connection's retry_after defined in the config/queue.php
+     *
+     * @var int
+     */
+    public $timeout = 1190;
+
+    /**
      * Create a new job instance.
      *
      * @return void
