@@ -20,6 +20,7 @@ class CreateReportsTable extends Migration
             $table->string('disk');
             $table->string('path');
             $table->string('mime');
+            $table->boolean('is_public')->default(false);
             $table->timestamps();
             $table->foreign('admin_id')->references('id')->on('admins')->onDelete('cascade');
         });

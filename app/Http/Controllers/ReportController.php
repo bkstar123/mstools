@@ -26,6 +26,7 @@ class ReportController extends Controller
                 $reports = Report::simplePaginate(config('bkstar123_bkscms_adminpanel.pageSize'));
             } else {
                 $reports = Report::where('admin_id', auth()->user()->id)
+                                 ->orWhere('is_public', true)
                                  ->simplePaginate(config('bkstar123_bkscms_adminpanel.pageSize'));
             }
         } catch (Exception $e) {
