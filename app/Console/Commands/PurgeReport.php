@@ -41,14 +41,22 @@ class PurgeReport extends Command
      */
     public function handle()
     {
-        $expiredReports = Report::where('created_at', '<', Carbon::now()->subMinutes(config('mstools.report.ttl')))->get();
+        // Get short-lived reports & aged more than <short_ttl> minutes or long-lived reports & aged more than <long_ttl> minutes
+        $expiredReports = Report::where(function ($query) {
+                                      $query->where('is_longlive', false)
+                                            ->where('created_at', '<', Carbon::now()->subMinutes(config('mstools.report.short_ttl')));
+                                 })->orWhere(function ($query) {
+                                      $query->where('is_longlive', true)
+                                            ->where('created_at', '<', Carbon::now()->subMinutes(config('mstools.report.long_ttl')));      
+                                 })->get();
+        // If no expired reports found on the db layer, then find & delete physical reports aged more than <long_ttl> minutes if any                      
         if ($expiredReports->isEmpty()) {
             $files = array_merge(
                 Storage::disk(config('mstools.report.disk'))->allFiles(config('mstools.report.directory')),
                 Storage::disk(config('mstools.report.disk'))->allFiles("uploaded-".config('mstools.report.directory'))
             );
             foreach ($files as $file) {
-                if (Storage::lastModified($file) < Carbon::now()->subMinutes(config('mstools.report.ttl'))->timestamp) {
+                if (Storage::lastModified($file) < Carbon::now()->subMinutes(config('mstools.report.long_ttl'))->timestamp) {
                     app(FileUpload::class)->delete(config('mstools.report.disk'), $file);
                 }
             }

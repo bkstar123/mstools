@@ -7,7 +7,7 @@
         <div class="card">
             <div class="card-header">
                 <h3 class="card-title">
-                    Files <sub><i class="bg bg-danger">Each file is valid for {{ config('mstools.report.ttl') }} minutes since its created time</i></sub>
+                    Files <sub><i class="bg bg-danger">Each short-lived file is valid for {{ config('mstools.report.short_ttl') }} minutes and long-lived file is valid for {{ config('mstools.report.long_ttl') }} minutes since its creation time</i></sub>
                 </h3>
             </div><!-- /.card-header -->
             <div class="card-body table-responsive p-0">
@@ -18,6 +18,7 @@
                             @if(auth()->user()->hasRole(\Bkstar123\BksCMS\AdminPanel\Role::SUPERADMINS))
                                 <th>Created By</th>
                             @endif
+                            <th>Long-lived</th>
                             <th>Created (UTC+7)</th>
                             <th>Updated (UTC+7)</th>
                         </tr>
@@ -38,6 +39,9 @@
                             @if(auth()->user()->hasRole(\Bkstar123\BksCMS\AdminPanel\Role::SUPERADMINS))
                                 <td>{{ $report->admin->email }}</td>
                             @endif
+                            <td>
+                                {{ $report->is_longlive ? "YES" : "NO" }}
+                            </td>
                             <td>
                                 {{ $report->created_at }}
                             </td>
