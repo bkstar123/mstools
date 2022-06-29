@@ -112,7 +112,7 @@ class UniversalSSLVerificationCheck extends Command
                 }
             }
             ++$page;
-        } while ($page == 2);
+        } while (!empty($zones));
         fclose($fop);
         Report::create([
             'name'        => 'Check universal SSL verification status for all Cloudflare zones ' . Carbon::createFromTimestamp(time())->setTimezone('UTC')->toDateTimeString()."(UTC).csv",
