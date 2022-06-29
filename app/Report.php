@@ -13,7 +13,7 @@ class Report extends Model
      * @var array
      */
     protected $fillable = [
-        'name', 'admin_id', 'disk', 'path', 'mime'
+        'name', 'admin_id', 'disk', 'path', 'mime', 'is_public', 'is_longlive'
     ];
 
     /**
