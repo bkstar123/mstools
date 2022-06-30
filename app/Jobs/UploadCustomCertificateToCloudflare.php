@@ -220,11 +220,11 @@ class UploadCustomCertificateToCloudflare implements ShouldQueue
         }
         $existingCertDomains = json_decode($data['hosts'], true);
         $normalizedExistingCertDomains = array_map(function ($hostname) {
-            return strtolower($hostname);
+            return strtolower(idn_to_ascii(trim($hostname), IDNA_DEFAULT, INTL_IDNA_VARIANT_UTS46));
         }, $existingCertDomains);
         $newCertDomains = $this->getCertificateDomains($cert);
         $normalizedNewCertDomains = array_map(function ($hostname) {
-            return strtolower($hostname);
+            return strtolower(idn_to_ascii(trim($hostname), IDNA_DEFAULT, INTL_IDNA_VARIANT_UTS46));
         }, $newCertDomains);
         $diffHostnames = array_merge([], array_diff($normalizedExistingCertDomains, $normalizedNewCertDomains));
         $diffHostnames = array_filter($diffHostnames, function ($hostname) use ($normalizedNewCertDomains) {
