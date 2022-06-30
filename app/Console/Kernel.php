@@ -24,7 +24,13 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command('report:purge')->everyMinute();
+        $schedule->command('report:purge')
+                 ->everyMinute()
+                 ->runInBackground();
+
+        $schedule->command('universalSSLVerification:check')
+                 ->cron('0 0 1,15 * *')
+                 ->runInBackground();
     }
 
     /**
@@ -37,5 +43,15 @@ class Kernel extends ConsoleKernel
         $this->load(__DIR__.'/Commands');
 
         require base_path('routes/console.php');
+    }
+
+    /**
+     * Get the timezone that should be used by default for scheduled events.
+     *
+     * @return \DateTimeZone|string|null
+     */
+    protected function scheduleTimezone()
+    {
+        return config('app.timezone');
     }
 }
