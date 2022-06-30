@@ -2,6 +2,7 @@
 
 namespace App\Console;
 
+use Illuminate\Support\Facades\App;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -27,10 +28,12 @@ class Kernel extends ConsoleKernel
         $schedule->command('report:purge')
                  ->everyMinute()
                  ->runInBackground();
-
-        $schedule->command('universalSSLVerification:check')
-                 ->cron('0 0 1,15 * *')
-                 ->runInBackground();
+        
+        if (App::environment('production')) {
+            $schedule->command('universalSSLVerification:check')
+                     ->cron('0 0 1,15 * *')
+                     ->runInBackground();
+        }
     }
 
     /**
