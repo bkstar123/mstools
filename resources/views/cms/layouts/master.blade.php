@@ -131,6 +131,15 @@
                     })
                 });
             Echo.private('user-' + {{ auth()->user()->id }})
+                .listen('.check-dns.completed', (data) => {
+                    $.notify(`MSTool has completed checking DNS A & CNAME for given domain as requested by ${data.requestor}`, {
+                        position: "right bottom",
+                        className: "success",
+                        clickToHide: true,
+                        autoHide: false,
+                    })
+                });
+            Echo.private('user-' + {{ auth()->user()->id }})
                 .listen('.a.job.failed', (data) => {
                     $.notify('You may get incompleted outcome because MSTool has failed to perform one of necessary jobs while proceeding your requests', {
                         position: "right bottom",

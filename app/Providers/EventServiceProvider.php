@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Events\CheckDNSCompleted;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Auth\Events\Registered;
 use App\Events\CreateCFFWRuleCompleted;
@@ -11,6 +12,7 @@ use App\Events\ExportPingdomChecksCompleted;
 use App\Events\VerifyDomainSSLDataCompleted;
 use App\Events\HttpLogJson2CsvConversionDone;
 use App\Events\VerifyCFZoneCustomSSLCompleted;
+use App\Listeners\SendNotificationCheckDNSCompleted;
 use App\Listeners\SendNotificationCreateCFFWRuleCompleted;
 use App\Listeners\SendNotificationDeleteCFFWRuleCompleted;
 use App\Listeners\SendNotificationDomainSSLDataCompletion;
@@ -57,6 +59,9 @@ class EventServiceProvider extends ServiceProvider
         ],
         HttpLogJson2CsvConversionDone::class => [
             SendNotificationHttpLogJson2CsvConversionDone::class
+        ],
+        CheckDNSCompleted::class => [
+            SendNotificationCheckDNSCompleted::class
         ]
     ];
 

@@ -66,8 +66,8 @@ class UniversalSSLVerificationCheck extends Command
                 $packs = $zoneMgmt->getUniversalSSLVerificationStatus($zone['id']);
                 if (empty($packs)) {
                     fputcsv($fop, [
-                        $zone['name'], 
-                        '', 
+                        $zone['name'],
+                        '',
                         'There seems no certificate packs eligible for verification on this zone'
                     ]);
                 } else {
@@ -105,8 +105,8 @@ class UniversalSSLVerificationCheck extends Command
                         $comment = 'No hostnames with inactive universal certificate on the zone';
                     }
                     fputcsv($fop, [
-                        $zone['name'], 
-                        json_encode($inactiveUniversalSSL), 
+                        $zone['name'],
+                        json_encode($inactiveUniversalSSL),
                         $comment
                     ]);
                 }

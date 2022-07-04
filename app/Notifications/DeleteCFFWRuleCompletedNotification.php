@@ -14,7 +14,7 @@ class DeleteCFFWRuleCompletedNotification extends Notification implements Should
     use Queueable;
 
     /**
-     * @var \App\Events\CreateCFFWRuleCompleted
+     * @var \App\Events\DeleteCFFWRuleCompleted
      */
     protected $payload;
 

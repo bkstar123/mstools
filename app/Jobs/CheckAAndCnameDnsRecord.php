@@ -1,10 +1,5 @@
 <?php
-/**
- * VerifyDomainSSLData Job
- *
- * @author: tuanha
- * @last-mod: 23-Jan-2021
- */
+
 namespace App\Jobs;
 
 use Exception;
@@ -12,17 +7,16 @@ use App\Report;
 use Carbon\Carbon;
 use App\Events\JobFailing;
 use Illuminate\Bus\Queueable;
+use App\Events\CheckDNSCompleted;
 use App\Http\Components\DNSQueryable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Queue\InteractsWithQueue;
-use Spatie\SslCertificate\SslCertificate;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use App\Events\VerifyDomainSSLDataCompleted;
 use App\Http\Components\GenerateCustomUniqueString;
 
-class VerifyDomainSSLData implements ShouldQueue
+class CheckAAndCnameDnsRecord implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, GenerateCustomUniqueString, DNSQueryable;
 
@@ -72,46 +66,27 @@ class VerifyDomainSSLData implements ShouldQueue
         $fop = fopen(Storage::disk($outputFileLocation['disk'])->path($outputFileLocation['path']), 'w');
         fputcsv($fop, [
             'URL',
-            'Issuer',
-            'Valid_from',
-            'Expired_at',
-            'CN',
-            'Fingerprint',
-            'Remaining_days',
             'A',
-            'CNAME',
-            'SAN'
+            'CNAME'
         ]);
         foreach ($this->domains as $domain) {
             $domain = idn_to_ascii(trim($domain), IDNA_DEFAULT, INTL_IDNA_VARIANT_UTS46);
             $dnsRecords = $this->getDNSRecords($domain);
-            try {
-                $cert = SslCertificate::createForHostName($domain);
-                fputcsv($fop, [
-                    $domain,
-                    $cert->getIssuer(),
-                    $cert->validFromDate(),
-                    $cert->expirationDate(),
-                    $cert->getDomain(),
-                    $cert->getFingerprint(),
-                    $cert->daysUntilExpirationDate(),
-                    implode(',', $dnsRecords['A']),
-                    implode(',', $dnsRecords['CNAME']),
-                    json_encode($cert->getAdditionalDomains()),
-                ]);
-            } catch (Exception $e) {
-                fputcsv($fop, [$domain,'','','','','','',json_encode($IPs),json_encode($Aliases),'']);
-            }
+            fputcsv($fop, [
+                $domain,
+                implode(',', $dnsRecords['A']),
+                implode(',', $dnsRecords['CNAME'])
+            ]);
         }
         fclose($fop);
         $report = Report::create([
-            'name'     => 'Verify SSL certificate for domains ' . Carbon::createFromTimestamp(time())->setTimezone('UTC')->toDateTimeString()."(UTC).csv",
+            'name'     => 'DNS A and CNAME records for domains ' . Carbon::createFromTimestamp(time())->setTimezone('UTC')->toDateTimeString()."(UTC).csv",
             'admin_id' => $this->user->id,
             'disk'     => $outputFileLocation['disk'],
             'path'     => $outputFileLocation['path'],
             'mime'     => 'text/csv'
         ]);
-        VerifyDomainSSLDataCompleted::dispatch($report, $this->domains, $this->user);
+        CheckDNSCompleted::dispatch($report, $this->domains, $this->user);
     }
 
     /**

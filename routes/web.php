@@ -218,3 +218,17 @@ Route::group(
         ->name('get-file');
     }
 );
+
+// Check DNS records for domains
+Route::group(
+    [
+        'prefix' => 'cms',
+        'middleware' => [
+            'bkscms-auth:admins',
+        ],
+    ],
+    function () {
+        Route::post('check-dns', 'DnsController@checkDns')
+        ->name('checkdns');
+    }
+);

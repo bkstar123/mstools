@@ -27,7 +27,6 @@ class PingdomController extends Controller
             $this->setRequestThrottling(20);
             ExportPingdomChecks::dispatch(auth()->user());
             flashing('MSTool is exporting Pingdom checks and will mail the result to you')
-            ->success()
             ->flash();
         } else {
             flashing('MSTool is busy processing your first request, please wait for 20 seconds before sending more')

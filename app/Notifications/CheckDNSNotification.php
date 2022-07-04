@@ -2,19 +2,19 @@
 
 namespace App\Notifications;
 
+use App\Mail\CheckDNSResult;
 use Illuminate\Bus\Queueable;
-use App\Mail\UpdateCFFWRuleResult;
 use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Messages\SlackMessage;
 
-class UpdateCFFWRuleCompletedNotification extends Notification implements ShouldQueue
+class CheckDNSNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
     /**
-     * @var \App\Events\UpdateCFFWRuleCompleted
+     * @var \App\Events\CheckDNSCompleted
      */
     protected $payload;
 
@@ -43,11 +43,11 @@ class UpdateCFFWRuleCompletedNotification extends Notification implements Should
      * Get the mail representation of the notification.
      *
      * @param  mixed  $notifiable
-     * @return \Illuminate\Notifications\Messages\MailMessage
+     * @return \App\Mail\CheckDNSResult
      */
     public function toMail($notifiable)
     {
-        return (new UpdateCFFWRuleResult($this->payload->report, $this->payload->zones, $this->payload->ruleDescription))
+        return (new CheckDNSResult($this->payload->report, $this->payload->domains))
                ->to($notifiable->email);
     }
 
@@ -65,10 +65,7 @@ class UpdateCFFWRuleCompletedNotification extends Notification implements Should
             ->content('A task from MSTool has been completed')
             ->attachment(function ($attachment) {
                 $attachment->fields([
-                               'Task' => 'Update a firewall rule for Cloudflare zones',
-                               'Rule name' => $this->payload->ruleDescription,
-                               'Number of zones' => count($this->payload->zones),
-                               'First zone in the list' => head($this->payload->zones),
+                               'Task' => 'Check DNS records',
                                'Initiated By' => $this->payload->user->email,
                            ]);
             });
