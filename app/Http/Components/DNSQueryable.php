@@ -7,6 +7,8 @@
  */
 namespace App\Http\Components;
 
+use Exception;
+
 trait DNSQueryable
 {
     /**
