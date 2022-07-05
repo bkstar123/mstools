@@ -100,7 +100,7 @@ class VerifyDomainSSLData implements ShouldQueue
                     json_encode($cert->getAdditionalDomains()),
                 ]);
             } catch (Exception $e) {
-                fputcsv($fop, [$domain,'','','','','','',json_encode($IPs),json_encode($Aliases),'']);
+                fputcsv($fop, [$domain,'','','','','','',implode(',', $dnsRecords['A']),implode(',', $dnsRecords['CNAME']),'']);
             }
         }
         fclose($fop);
