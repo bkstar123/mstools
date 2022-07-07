@@ -92,12 +92,12 @@ return [
     [
         'name' => 'Cloudflare Firewall Tools',
         'path' => '#',
-        'icon' => 'fa fa-building',
+        'icon' => 'fa fa-lock',
         'children' => [
             [
                 'name' => 'Create firewall rule for zones',
                 'path' => '/cms/create-firewall-rule',
-                'icon' => 'fa fa-wrench',
+                'icon' => 'fa fa-plus',
             ],
             [
                 'name' => 'Update firewall rule for zones',
@@ -108,6 +108,23 @@ return [
                 'name' => 'Remove firewall rule for zones',
                 'path' => '/cms/delete-firewall-rule',
                 'icon' => 'fa fa-trash',
+            ],
+        ]
+    ],
+    [
+        'name' => 'Go-live tracking DXP sites',
+        'path' => '#',
+        'icon' => 'fa fa-lock',
+        'children' => [
+            [
+                'name' => 'Trackings',
+                'path' => '/cms/trackings',
+                'icon' => 'fa fa-list',
+            ],
+             [
+                'name' => 'Create tracking',
+                'path' => '/cms/trackings/create',
+                'icon' => 'fa fa-plus',
             ],
         ]
     ],

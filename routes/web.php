@@ -232,3 +232,29 @@ Route::group(
         ->name('checkdns');
     }
 );
+
+// Tracking go-live DXP sites
+Route::group(
+    [
+        'prefix' => 'cms',
+        'middleware' => [
+            'bkscms-auth:admins',
+        ],
+    ],
+    function () {
+        Route::get('trackings', 'TrackingGoliveDxpSiteController@index')
+        ->name('trackings.index');
+        Route::get('trackings/create', 'TrackingGoliveDxpSiteController@create')
+        ->name('trackings.create');
+        Route::post('trackings', 'TrackingGoliveDxpSiteController@store')
+        ->name('trackings.store');
+        Route::patch('trackings/{tracking}/on', 'TrackingGoliveDxpSiteController@trackingOn')
+        ->name('trackings.on');
+        Route::patch('trackings/{tracking}/off', 'TrackingGoliveDxpSiteController@trackingOff')
+        ->name('trackings.off');
+        Route::delete('trackings/{tracking}/destroy', 'TrackingGoliveDxpSiteController@destroy')
+        ->name('trackings.destroy');
+        Route::delete('trackings', 'TrackingGoliveDxpSiteController@massiveDestroy')
+        ->name('trackings.massiveDestroy');
+    }
+);
