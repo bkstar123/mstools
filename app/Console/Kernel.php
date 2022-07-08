@@ -28,7 +28,17 @@ class Kernel extends ConsoleKernel
         $schedule->command('report:purge')
                  ->everyMinute()
                  ->runInBackground();
+
+        $schedule->command('trackings:purge')
+                 ->everyMinute()
+                 ->runInBackground();
+
+        // Run at 00:00 AM on every Monday
+        $schedule->command('trackings:scan')
+                 ->cron('0 0 * * 1')
+                 ->runInBackground();
         
+        // Run on 1st & 15th of every month at 00:00 AM
         if (App::environment('production')) {
             $schedule->command('universalSSLVerification:check')
                      ->cron('0 0 1,15 * *')

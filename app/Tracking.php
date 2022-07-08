@@ -1,6 +1,6 @@
 <?php
 /**
- * TrackingGoliveDxpSite model
+ * Tracking model
  *
  * @author: tuanha
  * @date: 07-July-2022
@@ -11,7 +11,7 @@ use Bkstar123\BksCMS\AdminPanel\Admin;
 use Illuminate\Database\Eloquent\Model;
 use Bkstar123\MySqlSearch\Traits\MySqlSearch;
 
-class TrackingGoliveDxpSite extends Model
+class Tracking extends Model
 {
     use MySqlSearch;
 
@@ -32,7 +32,7 @@ class TrackingGoliveDxpSite extends Model
      * @var array
      */
     protected $fillable = [
-        'sites', 'admin_id'
+        'sites', 'admin_id', 'tracking_size'
     ];
 
     /**

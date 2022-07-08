@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class TrackingGoliveDxpSites extends Migration
+class CreateTrackingsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,11 @@ class TrackingGoliveDxpSites extends Migration
      */
     public function up()
     {
-        Schema::create('tracking_golive_dxp_sites', function (Blueprint $table) {
+        Schema::create('trackings', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('sites');
+            $table->text('sites');
             $table->bigInteger('admin_id')->unsigned()->index();
+            $table->integer('tracking_size');
             $table->boolean('status')->default(true);
             $table->timestamps();
             $table->foreign('admin_id')->references('id')->on('admins')->onDelete('cascade');
@@ -30,6 +31,6 @@ class TrackingGoliveDxpSites extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('tracking_golive_dxp_sites');
+        Schema::dropIfExists('trackings');
     }
 }

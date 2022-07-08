@@ -242,29 +242,29 @@ Route::group(
         ],
     ],
     function () {
-        Route::get('trackings', 'TrackingGoliveDxpSiteController@index')
+        Route::get('trackings', 'TrackingController@index')
         ->name('trackings.index');
 
-        Route::get('trackings/create', 'TrackingGoliveDxpSiteController@create')
+        Route::get('trackings/create', 'TrackingController@create')
         ->name('trackings.create')
         ->middleware('can:trackings.create');
 
-        Route::post('trackings', 'TrackingGoliveDxpSiteController@store')
+        Route::post('trackings', 'TrackingController@store')
         ->name('trackings.store')
         ->middleware('can:trackings.create');
 
-        Route::patch('trackings/{tracking}/on', 'TrackingGoliveDxpSiteController@trackingOn')
+        Route::patch('trackings/{tracking}/on', 'TrackingController@trackingOn')
         ->name('trackings.on')
         ->middleware('can:trackings.on,tracking');
 
-        Route::patch('trackings/{tracking}/off', 'TrackingGoliveDxpSiteController@trackingOff')
+        Route::patch('trackings/{tracking}/off', 'TrackingController@trackingOff')
         ->name('trackings.off')
         ->middleware('can:trackings.off,tracking');
 
-        Route::delete('trackings/{tracking}/destroy', 'TrackingGoliveDxpSiteController@destroy')
+        Route::delete('trackings/{tracking}/destroy', 'TrackingController@destroy')
         ->name('trackings.destroy')
         ->middleware('can:trackings.destroy,tracking');
-        Route::delete('trackings', 'TrackingGoliveDxpSiteController@massiveDestroy')
+        Route::delete('trackings', 'TrackingController@massiveDestroy')
         ->name('trackings.massiveDestroy')
         ->middleware('can:trackings.massiveDestroy');
     }

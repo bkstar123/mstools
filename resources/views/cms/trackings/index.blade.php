@@ -30,6 +30,7 @@
                             <th>Sites</th>
                             <th>Tracked by</th>
                             <th>Status</th>
+                            <th>Tracking Size</th>
                             <th>Action</th>
                             <th>Created At</th>
                             <th>Updated At</th>
@@ -42,7 +43,7 @@
                                 {{ CrudView::checkBox($tracking, 'danger') }}
                             </td>
                             <td>
-                                {{ $tracking->sites }}
+                                {{ Str::limit($tracking->sites, 50) }}
                             </td>
                             <td>
                                 {{ $tracking->admin->email }}
@@ -70,6 +71,7 @@
                                     @endcan
                                 @endif
                             </td>
+                            <td>{{ $tracking->tracking_size }}</td>
                             <td>
                                 @can('trackings.destroy', $tracking)
                                 {{ CrudView::removeBtn($tracking, route('trackings.destroy', [

@@ -1,6 +1,6 @@
 <?php
 /**
- * TrackingGoliveDxpSiteController Controller
+ * TrackingController Controller
  *
  * @author: tuanha
  * @date: 07-July-2022
@@ -8,10 +8,10 @@
 namespace App\Http\Controllers;
 
 use Exception;
+use App\Tracking;
 use Illuminate\Http\Request;
-use App\TrackingGoliveDxpSite;
 
-class TrackingGoliveDxpSiteController extends Controller
+class TrackingController extends Controller
 {
 	/**
      * Display a listing of the resource.
@@ -22,7 +22,7 @@ class TrackingGoliveDxpSiteController extends Controller
     {
     	$searchText = request()->input('search');
         try {
-            $trackings = TrackingGoliveDxpSite::search($searchText)
+            $trackings = Tracking::search($searchText)
                     ->simplePaginate(config('bkstar123_bkscms_adminpanel.pageSize'))
                     ->appends([
                         'search' => $searchText
@@ -55,14 +55,16 @@ class TrackingGoliveDxpSiteController extends Controller
             'sites' => 'required'
         ]);
         try {
-        	TrackingGoliveDxpSite::create([
-        		'sites'    => $request->sites,
-        		'admin_id' => $request->user()->id
+        	Tracking::create([
+        		'sites'         => $request->sites,
+        		'admin_id'      => $request->user()->id,
+                'tracking_size' => count(explode(',', $request->sites))
         	]);
         	flashing("A go-live tracking has been created")
                 ->success()
                 ->flash();
         } catch (Exception $e) {
+            dd($e);
         	flashing("The submitted action failed to be executed due to some unknown error")
                 ->error()
                 ->flash();
@@ -73,12 +75,12 @@ class TrackingGoliveDxpSiteController extends Controller
     /**
      * Enabling the selected tracking
      *
-     * @param \App\TrackingGoliveDxpSite $tracking
+     * @param \App\Tracking $tracking
      * @return \Illuminate\Http\Response
      */
-    public function trackingOn(TrackingGoliveDxpSite $tracking)
+    public function trackingOn(Tracking $tracking)
     {
-    	$tracking->status = TrackingGoliveDxpSite::ON;
+    	$tracking->status = Tracking::ON;
     	try {
             $tracking->save();
             flashing("The selected tracking has been successfully disabled")
@@ -95,12 +97,12 @@ class TrackingGoliveDxpSiteController extends Controller
     /**
      * Disabling the selected tracking
      *
-     * @param \App\TrackingGoliveDxpSite $tracking
+     * @param \App\Tracking $tracking
      * @return \Illuminate\Http\Response
      */
-    public function trackingOff(TrackingGoliveDxpSite $tracking)
+    public function trackingOff(Tracking $tracking)
     {
-    	$tracking->status = TrackingGoliveDxpSite::OFF;
+    	$tracking->status = Tracking::OFF;
     	try {
             $tracking->save();
             flashing("The selected tracking has been successfully enabled")
@@ -117,10 +119,10 @@ class TrackingGoliveDxpSiteController extends Controller
     /**
      * Destroy the selected tracking
      *
-     * @param \App\TrackingGoliveDxpSite $tracking
+     * @param \App\Tracking $tracking
      * @return \Illuminate\Http\Response
      */
-    public function destroy(TrackingGoliveDxpSite $tracking)
+    public function destroy(Tracking $tracking)
     {
     	try {
             $tracking->delete();
@@ -144,7 +146,7 @@ class TrackingGoliveDxpSiteController extends Controller
     {
     	$Ids = explode(',', request()->input('Ids'));
         try {
-            TrackingGoliveDxpSite::destroy($Ids);
+            Tracking::destroy($Ids);
             flashing('All selected trackings have been removed')
                 ->success()
                 ->flash();
