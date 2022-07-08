@@ -244,17 +244,28 @@ Route::group(
     function () {
         Route::get('trackings', 'TrackingGoliveDxpSiteController@index')
         ->name('trackings.index');
+
         Route::get('trackings/create', 'TrackingGoliveDxpSiteController@create')
-        ->name('trackings.create');
+        ->name('trackings.create')
+        ->middleware('can:trackings.create');
+
         Route::post('trackings', 'TrackingGoliveDxpSiteController@store')
-        ->name('trackings.store');
+        ->name('trackings.store')
+        ->middleware('can:trackings.create');
+
         Route::patch('trackings/{tracking}/on', 'TrackingGoliveDxpSiteController@trackingOn')
-        ->name('trackings.on');
+        ->name('trackings.on')
+        ->middleware('can:trackings.on,tracking');
+
         Route::patch('trackings/{tracking}/off', 'TrackingGoliveDxpSiteController@trackingOff')
-        ->name('trackings.off');
+        ->name('trackings.off')
+        ->middleware('can:trackings.off,tracking');
+
         Route::delete('trackings/{tracking}/destroy', 'TrackingGoliveDxpSiteController@destroy')
-        ->name('trackings.destroy');
+        ->name('trackings.destroy')
+        ->middleware('can:trackings.destroy,tracking');
         Route::delete('trackings', 'TrackingGoliveDxpSiteController@massiveDestroy')
-        ->name('trackings.massiveDestroy');
+        ->name('trackings.massiveDestroy')
+        ->middleware('can:trackings.massiveDestroy');
     }
 );

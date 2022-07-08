@@ -26,6 +26,7 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
+        // SSL
         Gate::define('domains.ssl.check', function ($user) {
             return $user->hasPermission('domains.ssl.check');
         });
@@ -50,6 +51,7 @@ class AuthServiceProvider extends ServiceProvider
             return $user->hasPermission('certificate.pre.replacement.validation.bypass');
         });
 
+        // CF FW rule
         Gate::define('cffwrule.create', function ($user) {
             return $user->hasPermission('cffwrule.create');
         });
@@ -60,6 +62,27 @@ class AuthServiceProvider extends ServiceProvider
 
         Gate::define('cffwrule.delete', function ($user) {
             return $user->hasPermission('cffwrule.delete');
+        });
+
+        // DXP Sites Go-live tracking
+        Gate::define('trackings.create', function ($user) {
+            return $user->hasPermission('trackings.create');
+        });
+
+        Gate::define('trackings.on', function ($user, $track) {
+            return $user->hasPermission('trackings.on') || $user->id == $track->admin_id;
+        });
+
+        Gate::define('trackings.off', function ($user, $track) {
+            return $user->hasPermission('trackings.off') || $user->id == $track->admin_id;
+        });
+
+        Gate::define('trackings.destroy', function ($user, $track) {
+            return $user->hasPermission('trackings.destroy') || $user->id == $track->admin_id;
+        });
+
+        Gate::define('trackings.massiveDestroy', function ($user) {
+            return $user->hasRole(Role::SUPERADMINS);
         });
     }
 }

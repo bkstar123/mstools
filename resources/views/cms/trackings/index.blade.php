@@ -9,13 +9,13 @@
                 <h3 class="card-title">
                     Trackings 
                 </h3>
-                {{-- @can('massiveDelete', App\TrackingGoliveDxpSite::class) --}}
+                @can('trackings.massiveDestroy')
                     {{ CrudView::removeAllBtn(route('trackings.massiveDestroy')) }}
-                {{-- @else
+                @else
                     <button class="btn btn-danger" disabled>
                         Remove all
                     </button>
-                @endcan --}}
+                @endcan
                 <div class="card-tools">
                     {{ CrudView::searchInput(route('trackings.index')) }}
                 </div>
@@ -49,37 +49,37 @@
                             </td>
                             <td>
                                 @if($tracking->status)
-                                    {{-- @can('deactivate', $tracking) --}}
+                                    @can('trackings.off', $tracking)
                                     {{ CrudView::activeStatus($tracking, route('trackings.off', [
                                         'tracking' => $tracking->id
                                         ]), '', 'ON') }}
-                                   {{--  @else
+                                    @else
                                     <button class="btn btn-success" disabled>
                                         Active
                                     </button>
-                                    @endcan --}}
+                                    @endcan
                                 @else
-                                    {{-- @can('activate', $tracking) --}}
+                                    @can('trackings.on', $tracking)
                                     {{ CrudView::disabledStatus($tracking, route('trackings.on', [
                                         'tracking' => $tracking->id
                                         ]), '', 'OFF') }}
-                                    {{-- @else
+                                    @else
                                     <button class="btn btn-secondary" disabled>
                                         Disabled
                                     </button>
-                                    @endcan --}}
+                                    @endcan
                                 @endif
                             </td>
                             <td>
-                                {{-- @can('delete', $tracking) --}}
+                                @can('trackings.destroy', $tracking)
                                 {{ CrudView::removeBtn($tracking, route('trackings.destroy', [
                                     'tracking' => $tracking->id
                                     ])) }}
-                                {{-- @else
+                                @else
                                 <button class="btn btn-danger" disabled>
                                     Remove
                                 </button>
-                                @endcan --}}
+                                @endcan
                             </td>
                             <td>
                                 {{ $tracking->created_at }}

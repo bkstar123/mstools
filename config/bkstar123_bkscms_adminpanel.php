@@ -135,5 +135,29 @@ return [
             'alias' => 'cffwrule.delete',
             'description' => 'This permission allows for deleting a Cloudflare firewall rule'
         ],
+
+        [
+            'permission' => 'Create DXP go-live trackings',
+            'alias' => 'trackings.create',
+            'description' => 'This permission allows for creating a go-live tracking for DXP sites'
+        ],
+
+        [
+            'permission' => 'Turn on DXP go-live trackings',
+            'alias' => 'trackings.on',
+            'description' => 'This permission allows for turning on a go-live tracking for DXP sites'
+        ],
+
+        [
+            'permission' => 'Turn off DXP go-live trackings',
+            'alias' => 'trackings.off',
+            'description' => 'This permission allows for turning off a go-live tracking for DXP sites'
+        ],
+
+        [
+            'permission' => 'Delete DXP go-live trackings',
+            'alias' => 'trackings.destroy',
+            'description' => 'This permission allows for deleting a go-live tracking for DXP sites'
+        ],
     ]
 ];
