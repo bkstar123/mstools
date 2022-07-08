@@ -14,6 +14,6 @@ return [
         'long_ttl'  => env('MSTOOLS_REPORT_LONG_TTL', 720) // How long in minutes to keep long-lived reports on the server
     ],
     'tracking' => [
-    	'dxp'      => env('MSTOOLS_DXP_CNAME_ENDING', '')
+        'dxp'      => env('MSTOOLS_DXP_CNAME_ENDING', '')
     ]
 ];

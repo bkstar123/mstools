@@ -13,14 +13,14 @@ use Illuminate\Http\Request;
 
 class TrackingController extends Controller
 {
-	/**
+    /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
     public function index()
     {
-    	$searchText = request()->input('search');
+        $searchText = request()->input('search');
         try {
             $trackings = Tracking::search($searchText)
                     ->simplePaginate(config('bkstar123_bkscms_adminpanel.pageSize'))
@@ -40,7 +40,7 @@ class TrackingController extends Controller
      */
     public function create()
     {
-    	return view('cms.trackings.create');
+        return view('cms.trackings.create');
     }
 
     /**
@@ -51,21 +51,21 @@ class TrackingController extends Controller
      */
     public function store(Request $request)
     {
-    	$request->validate([
+        $request->validate([
             'sites' => 'required'
         ]);
         try {
-        	Tracking::create([
-        		'sites'         => $request->sites,
-        		'admin_id'      => $request->user()->id,
+            Tracking::create([
+                'sites'         => $request->sites,
+                'admin_id'      => $request->user()->id,
                 'tracking_size' => count(explode(',', $request->sites))
-        	]);
-        	flashing("A go-live tracking has been created")
+            ]);
+            flashing("A go-live tracking has been created")
                 ->success()
                 ->flash();
         } catch (Exception $e) {
             dd($e);
-        	flashing("The submitted action failed to be executed due to some unknown error")
+            flashing("The submitted action failed to be executed due to some unknown error")
                 ->error()
                 ->flash();
         }
@@ -80,8 +80,8 @@ class TrackingController extends Controller
      */
     public function trackingOn(Tracking $tracking)
     {
-    	$tracking->status = Tracking::ON;
-    	try {
+        $tracking->status = Tracking::ON;
+        try {
             $tracking->save();
             flashing("The selected tracking has been successfully disabled")
                 ->success()
@@ -102,8 +102,8 @@ class TrackingController extends Controller
      */
     public function trackingOff(Tracking $tracking)
     {
-    	$tracking->status = Tracking::OFF;
-    	try {
+        $tracking->status = Tracking::OFF;
+        try {
             $tracking->save();
             flashing("The selected tracking has been successfully enabled")
                 ->success()
@@ -124,7 +124,7 @@ class TrackingController extends Controller
      */
     public function destroy(Tracking $tracking)
     {
-    	try {
+        try {
             $tracking->delete();
             flashing("The selected tracking has been successfully removed")
                 ->success()
@@ -144,7 +144,7 @@ class TrackingController extends Controller
      */
     public function massiveDestroy()
     {
-    	$Ids = explode(',', request()->input('Ids'));
+        $Ids = explode(',', request()->input('Ids'));
         try {
             Tracking::destroy($Ids);
             flashing('All selected trackings have been removed')
