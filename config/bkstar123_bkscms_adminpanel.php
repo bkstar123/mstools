@@ -135,7 +135,8 @@ return [
             'alias' => 'cffwrule.delete',
             'description' => 'This permission allows for deleting a Cloudflare firewall rule'
         ],
-
+        
+        // DXP go-live tracking
         [
             'permission' => 'Create DXP go-live trackings',
             'alias' => 'trackings.create',
