@@ -33,9 +33,9 @@ class Kernel extends ConsoleKernel
                  ->everyMinute()
                  ->runInBackground();
 
-        // Run at 00:00 AM on weekdays
+        // Run at 00:00 AM on weekdays (MON->FRI)
         $schedule->command('trackings:scan')
-                 ->cron('0 0 * * 1,2,3,4,5')
+                 ->cron('0 0 * * 1-5')
                  ->runInBackground();
         
         // Run on 1st & 15th of every month at 00:00 AM
