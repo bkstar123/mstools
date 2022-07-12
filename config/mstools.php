@@ -15,5 +15,8 @@ return [
     ],
     'tracking' => [
         'dxp'      => env('MSTOOLS_DXP_CNAME_ENDING', '')
+    ],
+    'pingdom' => [
+        'reference_check_id' => env('MSTOOLS_REFERENCE_PINGDOM_CHECK_ID', '')
     ]
 ];

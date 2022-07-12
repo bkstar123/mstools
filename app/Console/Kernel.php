@@ -43,6 +43,10 @@ class Kernel extends ConsoleKernel
             $schedule->command('universalSSLVerification:check')
                      ->cron('0 0 1,15 * *')
                      ->runInBackground();
+            // Run at 18:00 on weekdays (MON->FRI)
+            $schedule->command('pingdom:scanForNew')
+                     ->cron('0 18 * * 1-5')
+                     ->runInBackground();
         }
     }
 
