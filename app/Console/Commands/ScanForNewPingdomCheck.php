@@ -49,7 +49,7 @@ class ScanForNewPingdomCheck extends Command
             $lastHighestCheckID = file_get_contents(storage_path('app/last_pingdom_check_id.txt')) ?? config('mstools.pingdom.reference_check_id');
         }
         $newChecks = \Arr::where($checks, function ($check) use ($lastHighestCheckID) {
-            return !str_contains($check['hostname'], 'dxcloud.episerver.net') &&
+            return !str_contains($check['hostname'], config('mstools.tracking.dxp')) &&
                    $check['status'] == 'paused' &&
                    !array_key_exists('lasttesttime', $check) &&
                    $check['id'] > $lastHighestCheckID;
