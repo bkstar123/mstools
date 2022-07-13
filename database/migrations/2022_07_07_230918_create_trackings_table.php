@@ -15,7 +15,7 @@ class CreateTrackingsTable extends Migration
     {
         Schema::create('trackings', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->text('sites');
+            $table->text('sites')->nullable();
             $table->bigInteger('admin_id')->unsigned()->index();
             $table->integer('tracking_size');
             $table->boolean('status')->default(true);

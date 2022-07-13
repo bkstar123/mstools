@@ -11,7 +11,7 @@
 		<div class="card-body">
 			<div class="form-group">
 				<label>List of sites <span style="color:red">&midast;</span></label>
-				@error('domains')
+				@error('sites')
 				    <div class="alert alert-danger">{{ $message }}</div>
 				@enderror
 				<textarea class="form-control"

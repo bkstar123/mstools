@@ -43,7 +43,9 @@
                                 {{ CrudView::checkBox($tracking, 'danger') }}
                             </td>
                             <td>
-                                {{ Str::limit($tracking->sites, 50) }}
+                                <a href="{{ route('trackings.show', [
+                                    'tracking' => $tracking->id
+                                    ]) }}">{{ Str::limit($tracking->sites, 50) ?? 'No sites in the tracking' }}</a>
                             </td>
                             <td>
                                 {{ $tracking->admin->email }}
@@ -56,7 +58,7 @@
                                         ]), '', 'ON') }}
                                     @else
                                     <button class="btn btn-success" disabled>
-                                        Active
+                                        ON
                                     </button>
                                     @endcan
                                 @else
@@ -66,7 +68,7 @@
                                         ]), '', 'OFF') }}
                                     @else
                                     <button class="btn btn-secondary" disabled>
-                                        Disabled
+                                        OFF
                                     </button>
                                     @endcan
                                 @endif

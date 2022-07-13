@@ -249,6 +249,12 @@ Route::group(
         ->name('trackings.create')
         ->middleware('can:trackings.create');
 
+        Route::get('trackings/{tracking}', 'TrackingController@show')
+        ->name('trackings.show');
+
+        Route::patch('trackings/{tracking}', 'TrackingController@update')
+        ->name('trackings.update');
+
         Route::post('trackings', 'TrackingController@store')
         ->name('trackings.store')
         ->middleware('can:trackings.create');

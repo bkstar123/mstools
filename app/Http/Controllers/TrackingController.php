@@ -73,6 +73,41 @@ class TrackingController extends Controller
     }
 
     /**
+     * Show a resource
+     *
+     * @param \App\Tracking $tracking
+     * @return \Illuminate\Http\Response
+     */
+    public function show(Tracking $tracking)
+    {
+        return view('cms.trackings.show', compact('tracking'));
+    }
+
+    /**
+     * Show a resource
+     *
+     * @param \Illuminate\Http\Request $request
+     * @param \App\Tracking $tracking
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, Tracking $tracking)
+    {
+        $tracking->sites = $request->sites;
+        $tracking->tracking_size = !empty($request->sites) ? count(explode(',', $request->sites)) : 0;
+        try {
+            $tracking->save();
+            flashing('The tracking has been successfully updated')
+                ->success()
+                ->flash();
+        } catch (Exception $e) {
+            flashing('The submitted action failed to be executed due to some unknown error')
+                ->error()
+                ->flash();
+        }
+        return back();
+    }
+
+    /**
      * Enabling the selected tracking
      *
      * @param \App\Tracking $tracking
