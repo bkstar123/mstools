@@ -19,7 +19,14 @@
 			</div>
 		</div>
 		<div class="card-footer">
-			<button id="submitBtn" type="submit" class="btn btn-success" @cannot('trackings.update', $tracking) disabled @endcan>Update</button>
+			<button id="submitBtn" 
+			        type="submit" 
+			        class="btn btn-success" 
+			        @cannot('trackings.update', $tracking) disabled @endcan>Update</button>
+			<a id="backBtn"
+			   style="color:white" 
+			   href="{{ route('trackings.index') }}"
+			   class="btn btn-primary">Back to tracking list</a>
 		</div>
 	</form>
 </div>
