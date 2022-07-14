@@ -39,21 +39,29 @@ class ScanForNewPingdomCheck extends Command
     public function handle()
     {
         $pingdomCheck = resolve('pingdomCheck');
-        $checks = $pingdomCheck->getChecks();
-        if (empty($checks)) {
-            return;
-        }
+        $page = 1;
+        $limit = 1000;
+        $offset = 0;
+        $newChecks = [];
         if (!file_exists(storage_path('app/last_pingdom_check_id.txt'))) {
             $lastHighestCheckID = config('mstools.pingdom.reference_check_id');
         } else {
             $lastHighestCheckID = file_get_contents(storage_path('app/last_pingdom_check_id.txt')) ?? config('mstools.pingdom.reference_check_id');
         }
-        $newChecks = \Arr::where($checks, function ($check) use ($lastHighestCheckID) {
-            return !str_contains($check['hostname'], config('mstools.tracking.dxp')) &&
-                   $check['status'] == 'paused' &&
-                   !array_key_exists('lasttesttime', $check) &&
-                   $check['id'] > $lastHighestCheckID;
-        });
+        do {
+            $checks = $pingdomCheck->getChecks($offset, $limit);
+            if (empty($checks)) {
+                break;
+            }
+            $newChecks = array_merge($newChecks, \Arr::where($checks, function ($check) use ($lastHighestCheckID) {
+                return !str_contains($check['hostname'], config('mstools.tracking.dxp')) &&
+                       $check['status'] == 'paused' &&
+                       !array_key_exists('lasttesttime', $check) &&
+                       $check['id'] > $lastHighestCheckID;
+            }));
+            ++$page;
+            $offset = ($page - 1) * $limit;
+        } while (!empty($checks));
         if (!empty($newChecks)) {
             $latestCheckID = last(\Arr::sort($newChecks, function ($check) {
                 return $check['id'];

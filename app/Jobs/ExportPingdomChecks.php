@@ -67,8 +67,14 @@ class ExportPingdomChecks implements ShouldQueue
             'Last Check Time (UTC)'
         ]);
         $pingdomCheck = resolve('pingdomCheck');
-        $checks = $pingdomCheck->getChecks();
-        if (!empty($checks)) {
+        $page = 1;
+        $limit = 1000;
+        $offset = 0;
+        do {
+            $checks = $pingdomCheck->getChecks($offset, $limit);
+            if (empty($checks)) {
+                break;
+            }
             foreach ($checks as $key => $check) {
                 fputcsv($fop, [
                     $check['id'],
@@ -82,9 +88,9 @@ class ExportPingdomChecks implements ShouldQueue
                     array_key_exists('lasttesttime', $check) ? Carbon::createFromTimestamp($check['lasttesttime'])->setTimezone('UTC')->toDateTimeString() : '',
                 ]);
             }
-        } else {
-            fputcsv($fop, [null, null, null, null, null, null, null, null, null]);
-        }
+            ++$page;
+            $offset = ($page - 1) * $limit;
+        } while (!empty($checks));
         fclose($fop);
         $report = Report::create([
             'name'     => 'List of pingdom checks ' . Carbon::createFromTimestamp(time())->setTimezone('UTC')->toDateTimeString()."(UTC).csv",
