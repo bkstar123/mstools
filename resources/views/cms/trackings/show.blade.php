@@ -19,7 +19,7 @@
 			</div>
 		</div>
 		<div class="card-footer">
-			<button id="submitBtn" type="submit" class="btn btn-success">Update</button>
+			<button id="submitBtn" type="submit" class="btn btn-success" @cannot('trackings.update', $tracking) disabled @endcan>Update</button>
 		</div>
 	</form>
 </div>
