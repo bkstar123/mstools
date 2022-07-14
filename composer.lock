@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "55981d68ab00918a374f1e457d00a188",
+    "content-hash": "5e0fea5e13e424436bca0dd5fb5d1f59",
     "packages": [
         {
             "name": "arifhp86/laravel-clear-expired-cache-file",
@@ -281,16 +281,16 @@
         },
         {
             "name": "bkstar123/laravel-pingdom-buddy",
-            "version": "1.1.1",
+            "version": "1.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/bkstar123/laravel-pingdom-buddy.git",
-                "reference": "b3f4b88237748c74586dfb8bc402b981db4cf6ce"
+                "reference": "efc1f4383d3b2d46127a93eaeef1dfdafdaa7165"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/bkstar123/laravel-pingdom-buddy/zipball/b3f4b88237748c74586dfb8bc402b981db4cf6ce",
-                "reference": "b3f4b88237748c74586dfb8bc402b981db4cf6ce",
+                "url": "https://api.github.com/repos/bkstar123/laravel-pingdom-buddy/zipball/efc1f4383d3b2d46127a93eaeef1dfdafdaa7165",
+                "reference": "efc1f4383d3b2d46127a93eaeef1dfdafdaa7165",
                 "shasum": ""
             },
             "require": {
@@ -329,9 +329,9 @@
             ],
             "support": {
                 "issues": "https://github.com/bkstar123/laravel-pingdom-buddy/issues",
-                "source": "https://github.com/bkstar123/laravel-pingdom-buddy/tree/1.1.1"
+                "source": "https://github.com/bkstar123/laravel-pingdom-buddy/tree/1.2.0"
             },
-            "time": "2021-10-23T11:53:17+00:00"
+            "time": "2022-07-14T18:59:38+00:00"
         },
         {
             "name": "bkstar123/laravel-recaptcha",
