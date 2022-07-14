@@ -81,6 +81,10 @@ class AuthServiceProvider extends ServiceProvider
             return $user->hasPermission('trackings.destroy') || $user->id == $track->admin_id;
         });
 
+        Gate::define('trackings.update', function ($user, $track) {
+            return $user->hasPermission('trackings.update') || $user->id == $track->admin_id;
+        });
+
         Gate::define('trackings.massiveDestroy', function ($user) {
             return $user->hasRole(Role::SUPERADMINS);
         });

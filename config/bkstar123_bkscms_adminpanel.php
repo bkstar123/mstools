@@ -160,5 +160,11 @@ return [
             'alias' => 'trackings.destroy',
             'description' => 'This permission allows for deleting a go-live tracking for DXP sites'
         ],
+
+        [
+            'permission' => 'Update DXP go-live trackings',
+            'alias' => 'trackings.update',
+            'description' => 'This permission allows for updating a go-live tracking for DXP sites'
+        ],
     ]
 ];

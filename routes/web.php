@@ -253,7 +253,8 @@ Route::group(
         ->name('trackings.show');
 
         Route::patch('trackings/{tracking}', 'TrackingController@update')
-        ->name('trackings.update');
+        ->name('trackings.update')
+        ->middleware('can:trackings.update');
 
         Route::post('trackings', 'TrackingController@store')
         ->name('trackings.store')
