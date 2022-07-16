@@ -1,13 +1,12 @@
 <?php
 /**
- * CheckDNSCompleted event
+ * GetPingdomChecksDetailsCompleted event
  *
  * @author: tuanha
- * @last-mod: 04-July-2022
+ * @last-mod: 16-July-2022
  */
 namespace App\Events;
 
-use App\Report;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Broadcasting\PrivateChannel;
@@ -16,19 +15,9 @@ use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 
-class CheckDNSCompleted implements ShouldBroadcast
+class GetPingdomChecksDetailsCompleted implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
-
-    /**
-     * @var array
-     */
-    public $domains;
-
-    /**
-     * @var \App\Report
-     */
-    public $report;
 
     /**
      * @var \Bkstar123\BksCMS\AdminPanel\Admin
@@ -40,10 +29,8 @@ class CheckDNSCompleted implements ShouldBroadcast
      *
      * @return void
      */
-    public function __construct(Report $report, $domains, $user)
+    public function __construct($user)
     {
-        $this->report = $report;
-        $this->domains = $domains;
         $this->user = $user;
     }
 
@@ -64,7 +51,7 @@ class CheckDNSCompleted implements ShouldBroadcast
      */
     public function broadcastAs()
     {
-        return 'check-dns.completed';
+        return 'get-details-pingdom-checks.completed';
     }
 
     /**
@@ -75,7 +62,7 @@ class CheckDNSCompleted implements ShouldBroadcast
     public function broadcastWith()
     {
         return [
-            'requestor' => $this->user->email,
+            'requestor' => $this->user->email
         ];
     }
 }

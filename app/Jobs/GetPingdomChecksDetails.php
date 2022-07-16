@@ -1,5 +1,10 @@
 <?php
-
+/**
+ * GetPingdomChecksDetails
+ *
+ * @author: tuanha
+ * @date: 16-July-2022
+ */
 namespace App\Jobs;
 
 use Exception;
@@ -12,12 +17,17 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use App\Events\ExportPingdomChecksCompleted;
+use App\Events\GetPingdomChecksDetailsCompleted;
 use App\Http\Components\GenerateCustomUniqueString;
 
-class ExportPingdomChecks implements ShouldQueue
+class GetPingdomChecksDetails implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, GenerateCustomUniqueString;
+
+    /**
+     * @var array
+     */
+    protected $checkIDs;
 
     /**
      * @var \Bkstar123\BksCMS\AdminPanel\Admin
@@ -37,8 +47,9 @@ class ExportPingdomChecks implements ShouldQueue
      *
      * @return void
      */
-    public function __construct($user)
+    public function __construct($checkIDs, $user)
     {
+        $this->checkIDs = $checkIDs;
         $this->user = $user;
     }
 
@@ -62,44 +73,40 @@ class ExportPingdomChecks implements ShouldQueue
             'Hostname',
             'Tags',
             'Type',
-            'Verify Certificate',
             'Status',
-            'Last Check Time (UTC)'
+            'Last Check Time (UTC)',
+            'Last Down Start (UTC)',
+            'Last Down End (UTC)',
         ]);
         $pingdomCheck = resolve('pingdomCheck');
-        $page = 1;
-        $limit = 1000;
-        $offset = 0;
-        do {
-            $checks = $pingdomCheck->getChecks($offset, $limit);
-            if (empty($checks)) {
-                break;
+        foreach ($this->checkIDs as $id) {
+            $check = $pingdomCheck->getCheck($id);
+            if (empty($check)) {
+                fputcsv($fop, [$id, '', '', '', '', '', '', '', '', '']);
+                continue;
             }
-            foreach ($checks as $check) {
-                fputcsv($fop, [
-                    $check['id'],
-                    Carbon::createFromTimestamp($check['created'])->setTimezone('UTC')->toDateTimeString(),
-                    $check['name'],
-                    trim($check['hostname']),
-                    array_key_exists('tags', $check) ? json_encode(array_column($check['tags'], 'name')) : '',
-                    $check['type'],
-                    $check['verify_certificate'],
-                    $check['status'],
-                    array_key_exists('lasttesttime', $check) ? Carbon::createFromTimestamp($check['lasttesttime'])->setTimezone('UTC')->toDateTimeString() : '',
-                ]);
-            }
-            ++$page;
-            $offset = ($page - 1) * $limit;
-        } while (!empty($checks));
+            fputcsv($fop, [
+                $id,
+                Carbon::createFromTimestamp($check['created'])->setTimezone('UTC')->toDateTimeString(),
+                $check['name'],
+                trim($check['hostname']),
+                array_key_exists('tags', $check) ? json_encode(array_column($check['tags'], 'name')) : '',
+                array_key_exists('type', $check) ? json_encode($check['type']) : '',
+                $check['status'],
+                array_key_exists('lasttesttime', $check) ? Carbon::createFromTimestamp($check['lasttesttime'])->setTimezone('UTC')->toDateTimeString() : '',
+                array_key_exists('lastdownstart', $check) ? Carbon::createFromTimestamp($check['lastdownstart'])->setTimezone('UTC')->toDateTimeString() : '',
+                array_key_exists('lastdownend', $check) ? Carbon::createFromTimestamp($check['lastdownend'])->setTimezone('UTC')->toDateTimeString() : ''
+            ]);
+        }
         fclose($fop);
         $report = Report::create([
-            'name'     => 'List of pingdom checks ' . Carbon::createFromTimestamp(time())->setTimezone('UTC')->toDateTimeString()."(UTC).csv",
+            'name'     => 'Details of the given list of pingdom checks ' . Carbon::createFromTimestamp(time())->setTimezone('UTC')->toDateTimeString()."(UTC).csv",
             'admin_id' => $this->user->id,
             'disk'     => $outputFileLocation['disk'],
             'path'     => $outputFileLocation['path'],
             'mime'     => 'text/csv'
         ]);
-        ExportPingdomChecksCompleted::dispatch($report, $this->user);
+        GetPingdomChecksDetailsCompleted::dispatch($this->user);
     }
 
     /**

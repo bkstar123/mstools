@@ -27,8 +27,10 @@ Route::group(
         ]
     ],
     function () {
-        Route::get('export-pingdom-checks', 'PingdomController@exportChecks')
-        ->name('exportpingdomchecks');
+        Route::get('pingdom/checks/export', 'PingdomController@exportChecks')
+        ->name('pingdom.checks.export');
+        Route::post('pingdom/checks', 'PingdomController@getChecks')
+        ->name('pingdom.checks');
     }
 );
 
@@ -228,8 +230,8 @@ Route::group(
         ],
     ],
     function () {
-        Route::post('check-dns', 'DnsController@checkDns')
-        ->name('checkdns');
+        Route::post('dns/query', 'DnsController@queryDns')
+        ->name('dns.query');
     }
 );
 

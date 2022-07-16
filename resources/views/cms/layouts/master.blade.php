@@ -132,7 +132,16 @@
                 });
             Echo.private('user-' + {{ auth()->user()->id }})
                 .listen('.check-dns.completed', (data) => {
-                    $.notify(`MSTool has completed checking DNS A & CNAME for given domain as requested by ${data.requestor}`, {
+                    $.notify(`MSTool has completed checking DNS A & CNAME for given domains as requested by ${data.requestor}`, {
+                        position: "right bottom",
+                        className: "success",
+                        clickToHide: true,
+                        autoHide: false,
+                    })
+                });
+            Echo.private('user-' + {{ auth()->user()->id }})
+                .listen('.get-details-pingdom-checks.completed', (data) => {
+                    $.notify(`MSTool has completed getting details of a list of Pingdom checks as requested by ${data.requestor}`, {
                         position: "right bottom",
                         className: "success",
                         clickToHide: true,

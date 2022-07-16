@@ -11,11 +11,11 @@ class DnsController extends Controller
     use RequestByUserThrottling;
 
     /**
-     * Check DNS A & CNAME records for domains
+     * Query DNS A & CNAME records for domains
      *
      * @param \Illuminate\Http\Request $request
      */
-    public function checkDns(Request $request)
+    public function queryDns(Request $request)
     {
         $request->validate([
             'domains' => 'required'
