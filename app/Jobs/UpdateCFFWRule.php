@@ -156,7 +156,7 @@ class UpdateCFFWRule implements ShouldQueue
             'path'     => $outputFileLocation['path'],
             'mime'     => 'text/csv'
         ]);
-        UpdateCFFWRuleCompleted::dispatch($report, $this->zones, $this->user, $this->request['new_description'] ?? $this->request['description']);
+        UpdateCFFWRuleCompleted::dispatch($this->user);
     }
 
     /**

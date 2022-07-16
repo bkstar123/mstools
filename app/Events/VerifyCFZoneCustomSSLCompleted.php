@@ -7,11 +7,8 @@
  */
 namespace App\Events;
 
-use App\Report;
-use Illuminate\Broadcasting\Channel;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Broadcasting\PrivateChannel;
-use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
@@ -19,16 +16,6 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 class VerifyCFZoneCustomSSLCompleted implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
-
-    /**
-     * @var array
-     */
-    public $zones;
-
-    /**
-     * @var \App\Report
-     */
-    public $report;
 
     /**
      * @var \Bkstar123\BksCMS\AdminPanel\Admin
@@ -40,10 +27,8 @@ class VerifyCFZoneCustomSSLCompleted implements ShouldBroadcast
      *
      * @return void
      */
-    public function __construct(Report $report, $zones, $user)
+    public function __construct($user)
     {
-        $this->report = $report;
-        $this->zones = $zones;
         $this->user = $user;
     }
 
@@ -75,8 +60,7 @@ class VerifyCFZoneCustomSSLCompleted implements ShouldBroadcast
     public function broadcastWith()
     {
         return [
-            'requestor' => $this->user->email,
-            'number_of_zones' => count($this->zones)
+            'requestor' => $this->user->email
         ];
     }
 }

@@ -7,11 +7,8 @@
  */
 namespace App\Events;
 
-use App\Report;
-use Illuminate\Broadcasting\Channel;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Broadcasting\PrivateChannel;
-use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
@@ -21,36 +18,18 @@ class DeleteCFFWRuleCompleted implements ShouldBroadcast
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     /**
-     * @var array
-     */
-    public $zones;
-
-    /**
-     * @var \App\Report
-     */
-    public $report;
-
-    /**
      * @var \Bkstar123\BksCMS\AdminPanel\Admin
      */
     public $user;
-
-    /**
-     * @var string
-     */
-    public $ruleDescription;
 
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct(Report $report, $zones, $user, $ruleDescription)
+    public function __construct($user)
     {
-        $this->report = $report;
-        $this->zones = $zones;
         $this->user = $user;
-        $this->ruleDescription = $ruleDescription;
     }
 
     /**
@@ -81,9 +60,7 @@ class DeleteCFFWRuleCompleted implements ShouldBroadcast
     public function broadcastWith()
     {
         return [
-            'requestor' => $this->user->email,
-            'number_of_zones' => count($this->zones),
-            'rule_description' => $this->ruleDescription
+            'requestor' => $this->user->email
         ];
     }
 }

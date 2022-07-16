@@ -7,12 +7,8 @@
  */
 namespace App\Events;
 
-use App\Report;
-use Illuminate\Broadcasting\Channel;
-use Bkstar123\BksCMS\AdminPanel\Admin;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Broadcasting\PrivateChannel;
-use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
@@ -20,11 +16,6 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 class HttpLogJson2CsvConversionDone implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
-
-    /**
-     * @var \App\Report
-     */
-    public $report;
 
     /**
      * @var \Bkstar123\BksCMS\AdminPanel\Admin
@@ -36,9 +27,8 @@ class HttpLogJson2CsvConversionDone implements ShouldBroadcast
      *
      * @return void
      */
-    public function __construct(Report $report, Admin $user)
+    public function __construct($user)
     {
-        $this->report = $report;
         $this->user = $user;
     }
 
@@ -70,9 +60,7 @@ class HttpLogJson2CsvConversionDone implements ShouldBroadcast
     public function broadcastWith()
     {
         return [
-            'requestor' => $this->user->email,
-            'path' => $this->report->path,
-            'disk' => $this->report->disk
+            'requestor' => $this->user->email
         ];
     }
 }

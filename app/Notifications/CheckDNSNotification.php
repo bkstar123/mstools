@@ -2,11 +2,9 @@
 
 namespace App\Notifications;
 
-use App\Mail\CheckDNSResult;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Messages\SlackMessage;
 
 class CheckDNSNotification extends Notification implements ShouldQueue
@@ -36,19 +34,7 @@ class CheckDNSNotification extends Notification implements ShouldQueue
      */
     public function via($notifiable)
     {
-        return empty($notifiable->profile->slack_webhook_url) ? ['mail'] : ['mail', 'slack'];
-    }
-
-    /**
-     * Get the mail representation of the notification.
-     *
-     * @param  mixed  $notifiable
-     * @return \App\Mail\CheckDNSResult
-     */
-    public function toMail($notifiable)
-    {
-        return (new CheckDNSResult($this->payload->report, $this->payload->domains))
-               ->to($notifiable->email);
+        return empty($notifiable->profile->slack_webhook_url) ? [] : ['slack'];
     }
 
     /**
@@ -69,18 +55,5 @@ class CheckDNSNotification extends Notification implements ShouldQueue
                                'Initiated By' => $this->payload->user->email,
                            ]);
             });
-    }
-
-    /**
-     * Get the array representation of the notification.
-     *
-     * @param  mixed  $notifiable
-     * @return array
-     */
-    public function toArray($notifiable)
-    {
-        return [
-            //
-        ];
     }
 }

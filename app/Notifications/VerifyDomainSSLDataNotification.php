@@ -3,7 +3,6 @@
 namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
-use App\Mail\VerifyDomainSSLDataResult;
 use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\SlackMessage;
@@ -35,19 +34,7 @@ class VerifyDomainSSLDataNotification extends Notification implements ShouldQueu
      */
     public function via($notifiable)
     {
-        return empty($notifiable->profile->slack_webhook_url) ? ['mail'] : ['mail', 'slack'];
-    }
-
-    /**
-     * Get the mail representation of the notification.
-     *
-     * @param  mixed  $notifiable
-     * @return \App\Mail\VerifyDomainSSLDataResult
-     */
-    public function toMail($notifiable)
-    {
-        return (new VerifyDomainSSLDataResult($this->payload->report, $this->payload->domains))
-               ->to($notifiable->email);
+        return empty($notifiable->profile->slack_webhook_url) ? [] : ['slack'];
     }
 
     /**
@@ -64,22 +51,9 @@ class VerifyDomainSSLDataNotification extends Notification implements ShouldQueu
             ->content('A task from MSTool has been completed')
             ->attachment(function ($attachment) {
                 $attachment->fields([
-                               'Task' => 'Verify Domains\' SSL Data',
+                               'Task' => 'Verify SSL information for domains',
                                'Initiated By' => $this->payload->user->email,
                            ]);
             });
-    }
-
-    /**
-     * Get the array representation of the notification.
-     *
-     * @param  mixed  $notifiable
-     * @return array
-     */
-    public function toArray($notifiable)
-    {
-        return [
-            //
-        ];
     }
 }

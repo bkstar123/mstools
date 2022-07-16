@@ -99,7 +99,7 @@ class ExportPingdomChecks implements ShouldQueue
             'path'     => $outputFileLocation['path'],
             'mime'     => 'text/csv'
         ]);
-        ExportPingdomChecksCompleted::dispatch($report, $this->user);
+        ExportPingdomChecksCompleted::dispatch($this->user);
     }
 
     /**

@@ -111,7 +111,7 @@ class VerifyDomainSSLData implements ShouldQueue
             'path'     => $outputFileLocation['path'],
             'mime'     => 'text/csv'
         ]);
-        VerifyDomainSSLDataCompleted::dispatch($report, $this->domains, $this->user);
+        VerifyDomainSSLDataCompleted::dispatch($this->user);
     }
 
     /**

@@ -126,7 +126,7 @@ class VerifyCFZoneCustomSSL implements ShouldQueue
             'path'     => $outputFileLocation['path'],
             'mime'     => 'text/csv'
         ]);
-        VerifyCFZoneCustomSSLCompleted::dispatch($report, $this->zones, $this->user);
+        VerifyCFZoneCustomSSLCompleted::dispatch($this->user);
     }
 
     /**

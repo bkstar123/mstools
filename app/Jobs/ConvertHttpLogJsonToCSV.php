@@ -102,7 +102,7 @@ class ConvertHttpLogJsonToCSV implements ShouldQueue
             'path'     => $outputFileLocation['path'],
             'mime'     => 'text/csv'
         ]);
-        HttpLogJson2CsvConversionDone::dispatch($report, $this->user);
+        HttpLogJson2CsvConversionDone::dispatch($this->user);
         app(FileUpload::class)->delete($this->uploadedFileData['disk'], $this->uploadedFileData['path']);
     }
 

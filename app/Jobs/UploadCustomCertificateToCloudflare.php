@@ -168,7 +168,7 @@ class UploadCustomCertificateToCloudflare implements ShouldQueue
             'path'     => $outputFileLocation['path'],
             'mime'     => 'text/csv'
         ]);
-        UploadCustomCertificateToCloudflareCompleted::dispatch($report, $this->zones, $this->user);
+        UploadCustomCertificateToCloudflareCompleted::dispatch($this->user);
         VerifyCFZoneCustomSSL::dispatch($this->zones, $this->user);
     }
 

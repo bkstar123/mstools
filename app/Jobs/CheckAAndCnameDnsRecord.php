@@ -86,7 +86,7 @@ class CheckAAndCnameDnsRecord implements ShouldQueue
             'path'     => $outputFileLocation['path'],
             'mime'     => 'text/csv'
         ]);
-        CheckDNSCompleted::dispatch($report, $this->domains, $this->user);
+        CheckDNSCompleted::dispatch($this->user);
     }
 
     /**

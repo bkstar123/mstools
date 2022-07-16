@@ -60,7 +60,7 @@
         <script type="text/javascript">
             Echo.private('user-' + {{ auth()->user()->id }})
                 .listen('.upload-certificate-cfzone.completed', (data) => {
-                    $.notify(`MSTool has completed the SSL cert uploading request for ${data.number_of_zones} Cloudflare zones as requested by ${data.requestor}`, {
+                    $.notify(`MSTool has completed the SSL cert uploading request for the given Cloudflare zones as requested by ${data.requestor}`, {
                         position: "right bottom",
                         className: "success",
                         clickToHide: true,
@@ -69,7 +69,7 @@
                 });
             Echo.private('user-' + {{ auth()->user()->id }})
                 .listen('.verify-cfzone-customssl.completed', (data) => {
-                    $.notify(`MSTool has completed checking custom SSL settings for ${data.number_of_zones} Cloudflare zones as requested by ${data.requestor}`, {
+                    $.notify(`MSTool has completed checking custom SSL settings for the given Cloudflare zones as requested by ${data.requestor}`, {
                         position: "right bottom",
                         className: "success",
                         clickToHide: true,
@@ -78,7 +78,7 @@
                 });
             Echo.private('user-' + {{ auth()->user()->id }})
                 .listen('.verify-domain-ssldata.completed', (data) => {
-                    $.notify(`MSTool has completed checking SSL data for ${data.number_of_domains} domains as requested by ${data.requestor}`, {
+                    $.notify(`MSTool has completed checking SSL information for the given domains as requested by ${data.requestor}`, {
                         position: "right bottom",
                         className: "success",
                         clickToHide: true,
@@ -132,7 +132,7 @@
                 });
             Echo.private('user-' + {{ auth()->user()->id }})
                 .listen('.check-dns.completed', (data) => {
-                    $.notify(`MSTool has completed checking DNS A & CNAME for given domains as requested by ${data.requestor}`, {
+                    $.notify(`MSTool has completed checking DNS A & CNAME for the given domains as requested by ${data.requestor}`, {
                         position: "right bottom",
                         className: "success",
                         clickToHide: true,

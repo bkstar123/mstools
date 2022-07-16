@@ -110,7 +110,7 @@ class CreateCFFWRule implements ShouldQueue
             'path'     => $outputFileLocation['path'],
             'mime'     => 'text/csv'
         ]);
-        CreateCFFWRuleCompleted::dispatch($report, $this->zones, $this->user, $this->rule->description);
+        CreateCFFWRuleCompleted::dispatch($this->user);
     }
 
     /**

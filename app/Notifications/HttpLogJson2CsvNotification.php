@@ -8,10 +8,8 @@
 namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
-use App\Mail\HttpLogJson2CsvResult;
 use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Messages\SlackMessage;
 
 class HttpLogJson2CsvNotification extends Notification implements ShouldQueue
@@ -41,19 +39,7 @@ class HttpLogJson2CsvNotification extends Notification implements ShouldQueue
      */
     public function via($notifiable)
     {
-        return empty($notifiable->profile->slack_webhook_url) ? ['mail'] : ['mail', 'slack'];
-    }
-
-    /**
-     * Get the mail representation of the notification.
-     *
-     * @param  mixed  $notifiable
-     * @return \App\Mail\HttpLogJson2CsvResult
-     */
-    public function toMail($notifiable)
-    {
-        return (new HttpLogJson2CsvResult($this->payload->report))
-               ->to($notifiable->email);
+        return empty($notifiable->profile->slack_webhook_url) ? [] : ['slack'];
     }
 
     /**
@@ -74,18 +60,5 @@ class HttpLogJson2CsvNotification extends Notification implements ShouldQueue
                     'Initiated By' => $this->payload->user->email,
                 ]);
             });
-    }
-
-    /**
-     * Get the array representation of the notification.
-     *
-     * @param  mixed  $notifiable
-     * @return array
-     */
-    public function toArray($notifiable)
-    {
-        return [
-            //
-        ];
     }
 }

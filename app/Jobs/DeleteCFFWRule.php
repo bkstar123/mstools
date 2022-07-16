@@ -139,7 +139,7 @@ class DeleteCFFWRule implements ShouldQueue
             'path'     => $outputFileLocation['path'],
             'mime'     => 'text/csv'
         ]);
-        DeleteCFFWRuleCompleted::dispatch($report, $this->zones, $this->user, $this->ruleDescription);
+        DeleteCFFWRuleCompleted::dispatch($this->user);
     }
 
     /**

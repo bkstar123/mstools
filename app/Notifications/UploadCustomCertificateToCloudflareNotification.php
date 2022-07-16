@@ -11,7 +11,6 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\SlackMessage;
-use App\Mail\UploadCustomCertificateToCloudflareResult;
 
 class UploadCustomCertificateToCloudflareNotification extends Notification implements ShouldQueue
 {
@@ -40,19 +39,7 @@ class UploadCustomCertificateToCloudflareNotification extends Notification imple
      */
     public function via($notifiable)
     {
-        return empty($notifiable->profile->slack_webhook_url) ? ['mail'] : ['mail', 'slack'];
-    }
-
-    /**
-     * Get the mail representation of the notification.
-     *
-     * @param  mixed  $notifiable
-     * @return \Illuminate\Notifications\Messages\MailMessage
-     */
-    public function toMail($notifiable)
-    {
-        return (new UploadCustomCertificateToCloudflareResult($this->payload->report, $this->payload->zones))
-               ->to($notifiable->email);
+        return empty($notifiable->profile->slack_webhook_url) ? [] : ['slack'];
     }
 
     /**
@@ -70,23 +57,8 @@ class UploadCustomCertificateToCloudflareNotification extends Notification imple
             ->attachment(function ($attachment) {
                 $attachment->fields([
                                'Task' => 'Upload certificate for Cloudflare zones',
-                               'Number of zones' => count($this->payload->zones),
-                               'First zone in the list' => head($this->payload->zones),
                                'Initiated By' => $this->payload->user->email,
                            ]);
             });
-    }
-
-    /**
-     * Get the array representation of the notification.
-     *
-     * @param  mixed  $notifiable
-     * @return array
-     */
-    public function toArray($notifiable)
-    {
-        return [
-            //
-        ];
     }
 }
