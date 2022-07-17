@@ -13,7 +13,9 @@ use App\Events\VerifyDomainSSLDataCompleted;
 use App\Events\HttpLogJson2CsvConversionDone;
 use App\Events\VerifyCFZoneCustomSSLCompleted;
 use App\Events\GetPingdomChecksDetailsCompleted;
+use App\Events\GetPingdomChecksAvgSummaryCompleted;
 use App\Listeners\SendNotificationCheckDNSCompleted;
+use App\Listeners\SendNotificationChecksAvgSumCompleted;
 use App\Listeners\SendNotificationCreateCFFWRuleCompleted;
 use App\Listeners\SendNotificationDeleteCFFWRuleCompleted;
 use App\Listeners\SendNotificationDomainSSLDataCompletion;
@@ -67,6 +69,9 @@ class EventServiceProvider extends ServiceProvider
         ],
         GetPingdomChecksDetailsCompleted::class => [
             SendNotificationGetPingdomChecksDetailsCompleted::class
+        ],
+        GetPingdomChecksAvgSummaryCompleted::class => [
+            SendNotificationChecksAvgSumCompleted::class
         ]
     ];
 

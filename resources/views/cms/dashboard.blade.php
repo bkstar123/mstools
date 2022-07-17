@@ -56,11 +56,70 @@
 				                  name="checks"
 				                  required
 				                  rows="5" 
-				                  placeholder="Paste the comma-seperated Pingdom check id here">{{ old('checks') }}</textarea>
+				                  placeholder="Paste the comma-seperated Pingdom check ids here">{{ old('checks') }}</textarea>
 				    </div>
 				</div>
 				<div class="card-footer">
 					<button id="submitBtnForGetDetailsPingdomChecks" type="submit" class="btn btn-success">Proceed</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+<hr>
+<div class="row">
+	<div class="col col-md-12">
+		<div class="card card-success">
+			<div class="card-header">
+				<h3 class="card-title">Get average uptime summary for Pingdom checks</h3>
+			</div>
+			<form id="get-pingdom-check-average-summary-form" 
+			      role="form" 
+			      action="{{ route('pingdom.checks.avg.summary') }}" 
+			      method="post">
+				@csrf
+				<div class="card-body">
+					<div class="form-group">
+						<label>List of Pingdom check IDs for average uptime summary<span style="color:red">&midast;</span></label>
+						@error('avgsmChecks')
+						    <div class="alert alert-danger">{{ $message }}</div>
+						@enderror
+						<textarea class="form-control"
+						          name="avgsmChecks"
+				                  required
+				                  rows="5" 
+				                  placeholder="Paste the comma-seperated Pingdom check ids here">{{ old('avgsmChecks') }}</textarea>
+				    </div>
+				    <div class="row">
+				        <div class="form-group col-md-3">
+						    <label for="avgsmFrom">From (UTC) </label>
+						    <div class="input-group">
+							    <input type="date" 
+							           required 
+							           id="avgsmFrom" 
+							           name="avgsmFrom" 
+							           value="{{ Carbon\Carbon::now()->subWeek()->setTimezone('UTC')->format("Y-m-d") }}" 
+							           class="form-control" />
+                            </div>
+				        </div>
+				        <div class="form-group col-md-3">
+						    <label for="avgsmTo">To (UTC) </label>
+						    @error('avgsmTo')
+						        <div class="alert alert-danger">{{ $message }}</div>
+						    @enderror
+						    <div class="input-group">
+							    <input type="date" 
+							           required
+							           id="avgsmTo" 
+							           name="avgsmTo" 
+							           value="{{ Carbon\Carbon::now()->setTimezone('UTC')->format("Y-m-d") }}" 
+							           class="form-control" />
+                            </div>
+				        </div>
+				    </div>
+				</div>
+				<div class="card-footer">
+					<button id="submitBtnForGetPingdomCheckAverageSummary" type="submit" class="btn btn-success">Proceed</button>
 				</div>
 			</form>
 		</div>
@@ -77,6 +136,18 @@
 		$("#get-details-pingdom-checks-form").submit(function () {
 			$("#submitBtnForGetDetailsPingdomChecks").attr('disabled', true);
 		});
+		$("#get-pingdom-check-average-summary-form").submit(function () {
+			$("#submitBtnForGetPingdomCheckAverageSummary").attr('disabled', true);
+		});
+		$.datetimepicker.setLocale('en');
+        let settings = {
+            inline:true,
+            weeks: true,
+            format: 'Y-m-d',
+            timepicker : false,
+        }
+        $("#avgsmFrom").datetimepicker(settings);
+        $("#avgsmTo").datetimepicker(settings);
 	});
 </script>
 @endpush

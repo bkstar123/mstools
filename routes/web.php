@@ -51,6 +51,8 @@ Route::group(
         ->name('pingdom.checks.export');
         Route::post('pingdom/checks', 'PingdomController@getChecks')
         ->name('pingdom.checks');
+        Route::post('pingdom/checks/avg-summary', 'PingdomController@getAverageSummary')
+        ->name('pingdom.checks.avg.summary');
     }
 );
 

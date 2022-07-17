@@ -150,6 +150,15 @@
                     })
                 });
             Echo.private('user-' + {{ auth()->user()->id }})
+                .listen('.pingdom-checks.avg.summary.completed', (data) => {
+                    $.notify(`MSTool has completed getting average uptime summary of a list of Pingdom checks as requested by ${data.requestor}`, {
+                        position: "right bottom",
+                        className: "success",
+                        clickToHide: true,
+                        autoHide: false,
+                    })
+                });
+            Echo.private('user-' + {{ auth()->user()->id }})
                 .listen('.a.job.failed', (data) => {
                     $.notify('You may get incompleted outcome because MSTool has failed to perform one of necessary jobs while proceeding your requests', {
                         position: "right bottom",

@@ -16,7 +16,7 @@ class CustomCKFinderAuth
      */
     public function handle($request, Closure $next)
     {
-        config(['ckfinder.authentication' => function() {
+        config(['ckfinder.authentication' => function () {
             return auth()->user()->hasRole(Role::SUPERADMINS);
         }]);
         return $next($request);
