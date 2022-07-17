@@ -9,6 +9,7 @@
         {{ config('app.name') }} | @yield('title')
     </title>
     <link href="{{ mix('/cms-assets/css/app.css') }}" rel="stylesheet">
+    <link href="{{ mix('/cms-assets/css/plugins.css') }}" rel="stylesheet">
     @stack('css')
     <script src="{{ mix('/cms-assets/js/app.js') }}"></script>
     <script src="{{ mix('/cms-assets/js/plugins.js') }}"></script>

@@ -13,6 +13,11 @@
                 class="nav-link">Dashboard
             </a>
         </li>
+        <li class="nav-item">
+            <a href="{{ route('about.edit') }}" 
+                class="nav-link">Edit About Page
+            </a>
+        </li>
     </ul>
     <!-- Right navbar links -->
     <ul class="navbar-nav ml-auto">

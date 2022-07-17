@@ -18,6 +18,16 @@ Route::get('/cms/dashboard', function () {
 })->name('dashboard.index')
   ->middleware('bkscms-auth:admins');
 
+Route::get('/cms/about-me', 'AboutController@show')->name('about.show')
+  ->middleware('bkscms-auth:admins');
+
+Route::get('/cms/about-me/edit', 'AboutController@edit')->name('about.edit')
+  ->middleware('bkscms-auth:admins');
+
+Route::match(['post', 'patch', 'put'], '/cms/about-me/store', 'AboutController@store')
+->name('about.store')
+->middleware('bkscms-auth:admins');
+
 // Pingdom routes
 Route::group(
     [

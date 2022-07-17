@@ -146,6 +146,11 @@ return [
         'icon' => 'fa fa-file',
     ],
     [
+        'name' => 'About Me',
+        'path' => '/cms/about-me',
+        'icon' => 'fa fa-envelope-open',
+    ],
+    [
         'name' => 'Website',
         'path' => env('APP_WEBSITE'),
         'icon' => 'fa fa-globe',
