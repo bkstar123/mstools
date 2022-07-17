@@ -22,19 +22,21 @@ Route::get('/cms/about-me', 'AboutController@show')->name('about.show')
   ->middleware('bkscms-auth:admins');
 
 Route::get('/cms/about-me/edit', 'AboutController@edit')->name('about.edit')
-  ->middleware('bkscms-auth:admins');
+  ->middleware('bkscms-auth:admins')
+  ->middleware('can:aboutpage.create');
 
 Route::match(['post', 'patch', 'put'], '/cms/about-me/store', 'AboutController@store')
-->name('about.store')
-->middleware('bkscms-auth:admins');
+  ->name('about.store')
+  ->middleware('bkscms-auth:admins')
+  ->middleware('can:aboutpage.create');
 
 Route::any('/ckfinder/connector', '\CKSource\CKFinderBridge\Controller\CKFinderController@requestAction')
-    ->name('ckfinder_connector')
-    ->middleware('bkscms-auth:admins');
+  ->name('ckfinder_connector')
+  ->middleware('bkscms-auth:admins');
 
 Route::any('/ckfinder/browser', '\CKSource\CKFinderBridge\Controller\CKFinderController@browserAction')
-    ->name('ckfinder_browser')
-    ->middleware('bkscms-auth:admins');
+  ->name('ckfinder_browser')
+  ->middleware('bkscms-auth:admins');
 
 // Pingdom routes
 Route::group(

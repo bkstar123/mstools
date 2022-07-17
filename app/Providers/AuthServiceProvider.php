@@ -88,5 +88,9 @@ class AuthServiceProvider extends ServiceProvider
         Gate::define('trackings.massiveDestroy', function ($user) {
             return $user->hasRole(Role::SUPERADMINS);
         });
+
+        Gate::define('aboutpage.create', function ($user) {
+            return $user->hasRole(Role::SUPERADMINS);
+        });
     }
 }
