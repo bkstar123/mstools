@@ -11,7 +11,7 @@
                 </h3>
             </div>
             <div class="box-body">
-                <div class="article-contents">
+                <div class="about-contents">
                     <p class="text-muted">
                         {!! $about->content ?? '' !!}
                     </p>
@@ -21,3 +21,12 @@
     </div>
 </div>   
 @endsection
+
+@push('scriptBottom')
+<script type="text/javascript">
+    $(function(){
+        $('div.about-contents img').attr('width','100%');
+        $('div.about-contents img').attr('height','auto');
+    });
+</script>
+@endpush

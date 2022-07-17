@@ -32,9 +32,14 @@
 @endsection
 
 @push('scriptBottom')
+@include('ckfinder::setup')
 <script>
     ClassicEditor
         .create(document.querySelector('#content'), {
+            ckfinder: {
+                // Use named route for CKFinder connector entry point
+                uploadUrl: '{{ route('ckfinder_connector') }}?command=QuickUpload&type=Files'
+            },
             toolbar: {
                 items: [
                     'heading',
