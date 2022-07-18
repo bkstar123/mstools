@@ -6,7 +6,6 @@ use Exception;
 use App\Report;
 use Carbon\Carbon;
 use App\Events\JobFailing;
-use Carbon\CarbonInterval;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Storage;
@@ -82,7 +81,7 @@ class GetPingdomChecksAvgSummary implements ShouldQueue
             'Total Uptime',
             'Total Unknown',
             '% Uptime',
-            '% Unknown'
+            'Average Response Time (ms)'
         ]);
         $pingdomCheck = resolve('pingdomCheck');
         foreach ($this->checkIDs as $id) {
@@ -94,11 +93,11 @@ class GetPingdomChecksAvgSummary implements ShouldQueue
                     $this->from,
                     $this->to,
                     $id,
-                    CarbonInterval::seconds($report['status']['totaldown'])->cascade()->forHumans(),
-                    CarbonInterval::seconds($report['status']['totalup'])->cascade()->forHumans(),
-                    CarbonInterval::seconds($report['status']['totalunknown'])->cascade()->forHumans(),
-                    round($report['status']['totalup'] * 100 / ($toTS - $fromTS), 2),
-                    round($report['status']['totalunknown'] * 100 / ($toTS - $fromTS), 2),
+                    convertSecondsForHuman($report['status']['totaldown']),
+                    convertSecondsForHuman($report['status']['totalup']),
+                    convertSecondsForHuman($report['status']['totalunknown']),
+                    round($report['status']['totalup'] * 100 / ($toTS - $fromTS - $report['status']['totalunknown']), 2),
+                    $report['responsetime']['avgresponse'],
                 ]);
             } else {
                 fputcsv($fop, [$this->from, $this->to, $id, '', '', '', '', '']);
