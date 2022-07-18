@@ -77,6 +77,8 @@ class GetPingdomChecksAvgSummary implements ShouldQueue
             'From (UTC)',
             'To (UTC)',
             'Check ID',
+            'Hostname',
+            'Name',
             'Total Downtime',
             'Total Uptime',
             'Total Unknown',
@@ -88,11 +90,14 @@ class GetPingdomChecksAvgSummary implements ShouldQueue
             $fromTS = Carbon::parse($this->from, 'UTC')->timestamp;
             $toTS = Carbon::parse($this->to, 'UTC')->timestamp;
             $report = $pingdomCheck->getCheckSummaryAverage($id, $fromTS, $toTS);
-            if ($report) {
+            $check = $pingdomCheck->getCheck($id);
+            if ($report && $check) {
                 fputcsv($fop, [
                     $this->from,
                     $this->to,
                     $id,
+                    $check['hostname'],
+                    $check['name'],
                     convertSecondsForHuman($report['status']['totaldown']),
                     convertSecondsForHuman($report['status']['totalup']),
                     convertSecondsForHuman($report['status']['totalunknown']),
@@ -100,7 +105,7 @@ class GetPingdomChecksAvgSummary implements ShouldQueue
                     $report['responsetime']['avgresponse'],
                 ]);
             } else {
-                fputcsv($fop, [$this->from, $this->to, $id, '', '', '', '', '']);
+                fputcsv($fop, [$this->from, $this->to, $id, '', '', '', '', '', '', '']);
             }
         }
         fclose($fop);
