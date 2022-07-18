@@ -101,7 +101,7 @@ class GetPingdomChecksAvgSummary implements ShouldQueue
                     convertSecondsForHuman($report['status']['totaldown']),
                     convertSecondsForHuman($report['status']['totalup']),
                     convertSecondsForHuman($report['status']['totalunknown']),
-                    round($report['status']['totalup'] * 100 / ($toTS - $fromTS - $report['status']['totalunknown']), 2),
+                    ($toTS - $fromTS - $report['status']['totalunknown']) > 0 ? round($report['status']['totalup'] * 100 / ($toTS - $fromTS - $report['status']['totalunknown']), 2) : "",
                     $report['responsetime']['avgresponse'],
                 ]);
             } else {
