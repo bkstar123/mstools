@@ -2,15 +2,30 @@
 @section('title', 'Dashboard')
 
 @section('content')
-<form id="export-pingdom-check" 
-      action="{{ route('pingdom.checks.export') }}"
-      method="GET"></form>
-<button id="btn-export" 
-        onclick="event.preventDefault(); $('#export-pingdom-check').submit(); $('#btn-export').prop('disabled', true)"
-        type="button"
-        class="btn btn-primary">
-    Export Pingdom Checks
-</button>
+<div class="row">
+	<div class="col col-md-12">
+		<div class="card card-success">
+			<div class="card-header">
+				<h3 class="card-title">Export Pingdom checks</h3>
+			</div>
+			<form id="pingdom-checks-export-form" role="form" action="{{ route('pingdom.checks.export') }}" method="post">
+				@csrf
+				<div class="card-body">
+					<div class="form-group">
+						<label>List of tags (optional)</label>
+						<textarea class="form-control"
+						          name="tags"
+				                  rows="5" 
+				                  placeholder="Paste the comma-seperated tags here (no spaces)"></textarea>
+				    </div>
+				</div>
+				<div class="card-footer">
+					<button id="submitBtnForPingdomCheckExport" type="submit" class="btn btn-success">Export</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
 <hr>
 <div class="row">
 	<div class="col col-md-6">
@@ -138,6 +153,9 @@
 		});
 		$("#get-pingdom-check-average-summary-form").submit(function () {
 			$("#submitBtnForGetPingdomCheckAverageSummary").attr('disabled', true);
+		});
+		$("#pingdom-checks-export-form").submit(function () {
+			$("#submitBtnForPingdomCheckExport").attr('disabled', true);
 		});
 		$.datetimepicker.setLocale('en');
         let settings = {

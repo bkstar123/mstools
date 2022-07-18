@@ -25,6 +25,11 @@ class ExportPingdomChecks implements ShouldQueue
     protected $user;
 
     /**
+     * @var string
+     */
+    protected $tags;
+
+    /**
      * The number of seconds the job can run before timing out
      * must be on several seconds less than the queue connection's retry_after defined in the config/queue.php
      *
@@ -37,9 +42,10 @@ class ExportPingdomChecks implements ShouldQueue
      *
      * @return void
      */
-    public function __construct($user)
+    public function __construct($user, $tags)
     {
         $this->user = $user;
+        $this->tags = $tags;
     }
 
     /**
@@ -71,7 +77,7 @@ class ExportPingdomChecks implements ShouldQueue
         $limit = 1000;
         $offset = 0;
         do {
-            $checks = $pingdomCheck->getChecks($offset, $limit);
+            $checks = $pingdomCheck->getChecks($offset, $limit, trim($this->tags));
             if (empty($checks)) {
                 break;
             }

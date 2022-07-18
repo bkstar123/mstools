@@ -47,7 +47,7 @@ Route::group(
         ]
     ],
     function () {
-        Route::get('pingdom/checks/export', 'PingdomController@exportChecks')
+        Route::post('pingdom/checks/export', 'PingdomController@exportChecks')
         ->name('pingdom.checks.export');
         Route::post('pingdom/checks', 'PingdomController@getChecks')
         ->name('pingdom.checks');

@@ -20,13 +20,14 @@ class PingdomController extends Controller
     /**
      * Export all Pingdom Checks
      *
+     * @param Illuminate\Http\Request
      * @return Illuminate\Http\Response
      */
-    public function exportChecks()
+    public function exportChecks(Request $request)
     {
         if (!$this->isThrottled()) {
             $this->setRequestThrottling(20);
-            ExportPingdomChecks::dispatch(auth()->user());
+            ExportPingdomChecks::dispatch(auth()->user(), (string) $request->tags);
             flashing('MSTool is exporting Pingdom checks and will mail the result to you')
             ->flash();
         } else {
