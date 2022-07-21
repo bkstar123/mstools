@@ -54,10 +54,8 @@ class ScanForNewPingdomCheck extends Command
                 break;
             }
             $newChecks = array_merge($newChecks, \Arr::where($checks, function ($check) use ($lastHighestCheckID) {
-                return !str_contains($check['hostname'], config('mstools.tracking.dxp')) &&
-                       $check['status'] == 'paused' &&
-                       !array_key_exists('lasttesttime', $check) &&
-                       $check['id'] > $lastHighestCheckID;
+                return $check['id'] > $lastHighestCheckID &&
+                       !str_contains($check['hostname'], config('mstools.tracking.dxp'));
             }));
             ++$page;
             $offset = ($page - 1) * $limit;
