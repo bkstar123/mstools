@@ -6,7 +6,7 @@
 
 return [
     // default page to redirect an authenticated admin user
-    'default_authenticated_page' => '/cms/about-me',
+    'default_authenticated_page' => '/cms/dashboard',
 
     // default page to redirect an unauthenticated admin user
     'default_unauthenticated_page' => '/cms/admins/login',
