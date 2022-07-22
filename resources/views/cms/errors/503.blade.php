@@ -14,8 +14,11 @@
                 	<i class="fas fa-exclamation-triangle text-danger"></i> Oops! Service is unavailble.
                 </h3>
                 <p>
-                    The system is now under maintenance mode. Please come back later.
-                    We apologize for the inconvenience.
+                    @if($exception->getMessage())
+                        {{ $exception->getMessage() }}
+                    @else
+                        The system is now under maintenance mode. Please come back later, we apologize for the inconvenience.
+                    @endif
                 </p>
             </div><!-- /.error-content -->
         </div><!-- /.error-page -->
