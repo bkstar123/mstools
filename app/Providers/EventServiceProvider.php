@@ -13,6 +13,7 @@ use App\Events\VerifyDomainSSLDataCompleted;
 use App\Events\HttpLogJson2CsvConversionDone;
 use App\Events\VerifyCFZoneCustomSSLCompleted;
 use App\Events\GetPingdomChecksDetailsCompleted;
+use App\Events\VerifyExistenceCFFWRuleCompleted;
 use App\Events\GetPingdomChecksAvgSummaryCompleted;
 use App\Listeners\SendNotificationCheckDNSCompleted;
 use App\Listeners\SendNotificationChecksAvgSumCompleted;
@@ -27,6 +28,7 @@ use App\Listeners\SendNotificationPingdomCheckExportCompletion;
 use App\Listeners\SendNotificationHttpLogJson2CsvConversionDone;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use App\Listeners\SendNotificationGetPingdomChecksDetailsCompleted;
+use App\Listeners\SendNotificationVerifyExistenceCFFWRuleCompleted;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 
 class EventServiceProvider extends ServiceProvider
@@ -60,6 +62,9 @@ class EventServiceProvider extends ServiceProvider
         ],
         DeleteCFFWRuleCompleted::class => [
             SendNotificationDeleteCFFWRuleCompleted::class
+        ],
+        VerifyExistenceCFFWRuleCompleted::class => [
+            SendNotificationVerifyExistenceCFFWRuleCompleted::class
         ],
         HttpLogJson2CsvConversionDone::class => [
             SendNotificationHttpLogJson2CsvConversionDone::class

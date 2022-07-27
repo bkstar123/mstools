@@ -152,6 +152,24 @@ Route::group(
     }
 );
 
+// Check rule existence for zones
+Route::group(
+    [
+        'prefix' => 'cms',
+        'middleware' => [
+            'bkscms-auth:admins',
+        ],
+    ],
+    function () {
+        Route::get('verify-firewall-rule-existence', function () {
+            return view('cms.verifyruleexistence');
+        })->name('verifyruleexistence');
+        
+        Route::post('verify-firewall-rule-existence', 'CFFirewallController@verifyFWRuleExistence')
+        ->name('verifyruleexistence');
+    }
+);
+
 // Create Cloudflare Firewall Rule
 Route::group(
     [

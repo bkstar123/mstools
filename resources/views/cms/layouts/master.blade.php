@@ -123,6 +123,15 @@
                     })
                 });
             Echo.private('user-' + {{ auth()->user()->id }})
+                .listen('.verify-existence-cf-fwrule.completed', (data) => {
+                    $.notify(`MSTool has completed verifying existence of the given Cloudflare firewall rule for multiple zones as requested by ${data.requestor}`, {
+                        position: "right bottom",
+                        className: "success",
+                        clickToHide: true,
+                        autoHide: false,
+                    })
+                });
+            Echo.private('user-' + {{ auth()->user()->id }})
                 .listen('.convert-httplog-json-to-csv.completed', (data) => {
                     $.notify(`MSTool has completed converting the JSON log file to CSV as requested by ${data.requestor}`, {
                         position: "right bottom",

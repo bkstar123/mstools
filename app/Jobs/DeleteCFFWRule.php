@@ -96,7 +96,7 @@ class DeleteCFFWRule implements ShouldQueue
                 fputcsv($fop, [
                     $zone,
                     'No',
-                    'There is no firewall rule with the given description for this zone'
+                    'There is no firewall rule matching the given description for this zone'
                 ]);
                 continue;
             }
@@ -104,7 +104,7 @@ class DeleteCFFWRule implements ShouldQueue
                 fputcsv($fop, [
                     $zone,
                     'No',
-                    'Found more than one rule with the given description. You must give a more specific description to only operate on your concerned rule'
+                    'Found more than one rule matching the given description. You must give a more specific description to only operate on your concerned rule'
                 ]);
                 continue;
             }

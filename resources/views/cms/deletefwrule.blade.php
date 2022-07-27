@@ -31,7 +31,7 @@
                           name="description"
                           required
                           value="{{ old('description') }}" 
-                          placeholder="Enter the description to identidy the rule that is to be updated" />
+                          placeholder="Enter the description to identidy the rule that is to be deleted" />
             </div>
         </div>
 		<div class="card-footer">

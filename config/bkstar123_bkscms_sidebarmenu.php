@@ -95,6 +95,11 @@ return [
         'icon' => 'fa fa-lock',
         'children' => [
             [
+                'name' => 'Check rule existence for zones',
+                'path' => '/cms/verify-firewall-rule-existence',
+                'icon' => 'fa fa-camera-retro',
+            ],
+            [
                 'name' => 'Create firewall rule for zones',
                 'path' => '/cms/create-firewall-rule',
                 'icon' => 'fa fa-plus',

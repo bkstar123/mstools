@@ -10,6 +10,8 @@ namespace App\Http\Controllers;
 use App\Jobs\CreateCFFWRule;
 use App\Jobs\DeleteCFFWRule;
 use App\Jobs\UpdateCFFWRule;
+use Illuminate\Http\Request;
+use App\Jobs\VerifyExistenceCFFWRule;
 use App\Http\Requests\CFFWRuleRequest;
 use App\Http\Requests\DeleteCFFWRuleRequest;
 use App\Http\Requests\UpdateCFFWRuleRequest;
@@ -20,6 +22,28 @@ use Bkstar123\CFBuddy\Components\CFFWRule\CFFWRuleFilter;
 class CFFirewallController extends Controller
 {
     use RequestByUserThrottling;
+    
+    /**
+     * Verify the existence of a rule for zones
+     *
+     * @param \Illuminate\Http\Request
+     */
+    public function verifyFWRuleExistence(Request $request)
+    {
+        $request->validate([
+            'zones' => 'required',
+            'description' => 'required',
+        ]);
+        if (!$this->isThrottled()) {
+            $this->setRequestThrottling();
+            $zones = explode(",", $request->zones);
+            VerifyExistenceCFFWRule::dispatch($zones, $request->description, $request->user());
+            flashing('MSTool is processing the request')->flash();
+        } else {
+            flashing('MSTool is busy processing your first request, please wait for 10 seconds before sending another one')->warning()->flash();
+        }
+        return back();
+    }
 
     /**
      * Create firewall rule for Cloudflare zones
