@@ -117,6 +117,18 @@ return [
         ]
     ],
     [
+        'name' => 'Cloudflare DNS Tools',
+        'path' => '#',
+        'icon' => 'fa fa-lock',
+        'children' => [
+            [
+                'name' => 'Get DNS records for hostnames',
+                'path' => '/cms/cf-dns-records',
+                'icon' => 'fa fa-id-card',
+            ],
+        ]
+    ],
+    [
         'name' => 'Go-live tracking DXP sites',
         'path' => '#',
         'icon' => 'fa fa-lock',

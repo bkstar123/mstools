@@ -12,27 +12,37 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use App\Events\VerifyExistenceCFFWRuleCompleted;
 use App\Http\Components\GenerateCustomUniqueString;
+use App\Events\FetchDNSHostnameRecordsForZonesCompleted;
 
-class VerifyExistenceCFFWRule implements ShouldQueue
+class FetchDNSHostnameRecordsForZones implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, GenerateCustomUniqueString;
 
     /**
      * @var array
      */
-    public $zones;
+    protected $zones;
+
+    /**
+     * @var \Bkstar123\BksCMS\AdminPanel\Admin
+     */
+    protected $user;
 
     /**
      * @var string
      */
-    public $ruleDescription;
+    protected $onlyDNSName;
 
     /**
-     * @var Bkstar123\BksCMS\AdminPanel\Admin
+     * @var string
      */
-    public $user;
+    protected $onlyProd;
+
+    /**
+     * @var string
+     */
+    protected $onlyProxied;
 
     /**
      * The number of seconds the job can run before timing out
@@ -45,13 +55,18 @@ class VerifyExistenceCFFWRule implements ShouldQueue
     /**
      * Create a new job instance.
      *
+     * @param $zones array
+     * @param $user \Bkstar123\BksCMS\AdminPanel\Admin
+     * @param $onlyProd string ('on' | null)
+     * @param $onlyProxied string ('on' | null)
      * @return void
      */
-    public function __construct(array $zones, $ruleDescription, $user)
+    public function __construct($zones, $user, $onlyProd, $onlyProxied)
     {
         $this->zones = $zones;
-        $this->ruleDescription = $ruleDescription;
         $this->user = $user;
+        $this->onlyProd = (bool) $onlyProd;
+        $this->onlyProxied = !is_null($onlyProxied) ? (bool) $onlyProxied : $onlyProxied;
     }
 
     /**
@@ -68,55 +83,37 @@ class VerifyExistenceCFFWRule implements ShouldQueue
         Storage::disk($outputFileLocation['disk'])->makeDirectory(dirname($outputFileLocation['path']));
         $fop = fopen(Storage::disk($outputFileLocation['disk'])->path($outputFileLocation['path']), 'w');
         fputcsv($fop, [
-            'Zone',
-            'Rule Description',
-            'Comment',
+            'Hostname',
+            'Cloudflare DNS Type',
+            'Target',
+            'Note'
         ]);
         $zoneMgmt = resolve('zoneMgmt');
-        $zoneFW = resolve('cfZoneFW');
+        $entries = [];
         foreach ($this->zones as $zone) {
-            $zone = idn_to_ascii(strtolower(trim($zone)), IDNA_DEFAULT, INTL_IDNA_VARIANT_UTS46);
+            $zone = idn_to_ascii(trim($zone), IDNA_DEFAULT, INTL_IDNA_VARIANT_UTS46);
             $zoneID = $zoneMgmt->getZoneID($zone);
             if (empty($zoneID)) {
                 fputcsv($fop, [
                     $zone,
-                    $this->ruleDescription,
+                    '',
+                    '',
                     "Failed to check this zone's data on Cloudflare"
                 ]);
                 continue;
             }
-            $rules = $zoneFW->getFWRuleForZone($zoneID, [
-                'description' => $this->ruleDescription
-            ]);
-            if (!$rules) {
-                fputcsv($fop, [
-                    $zone,
-                    $this->ruleDescription,
-                    'There is no firewall rule matching the given description under this zone'
-                ]);
-            } elseif (count($rules) == 1) {
-                fputcsv($fop, [
-                    $zone,
-                    $this->ruleDescription,
-                    'Found 01 firewall rule matching the given description under this zone'
-                ]);
-            } elseif (count($rules) > 1) {
-                fputcsv($fop, [
-                    $zone,
-                    $this->ruleDescription,
-                    'Found some firewall rules matching the given description under this zone'
-                ]);
-            }
+            $entries = array_merge($entries, $zoneMgmt->getZoneSubDomains($zoneMgmt->getZoneID($zone), null, false, $this->onlyProd, null, $this->onlyProxied));
         }
+        fwrite($fop, implode("\n", $entries) . "\n");
         fclose($fop);
         $report = Report::create([
-            'name'     => 'Verify Existence of Cloudflare firewall rule for multiple zones ' . Carbon::createFromTimestamp(time())->setTimezone('UTC')->toDateTimeString()."(UTC).csv",
+            'name'     => 'Cloudflare DNS hostname entries for zones ' . Carbon::createFromTimestamp(time())->setTimezone('UTC')->toDateTimeString()."(UTC).csv",
             'admin_id' => $this->user->id,
             'disk'     => $outputFileLocation['disk'],
             'path'     => $outputFileLocation['path'],
             'mime'     => 'text/csv'
         ]);
-        VerifyExistenceCFFWRuleCompleted::dispatch($this->user);
+        FetchDNSHostnameRecordsForZonesCompleted::dispatch($this->user);
     }
 
     /**

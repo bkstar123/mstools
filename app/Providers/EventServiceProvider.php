@@ -16,6 +16,7 @@ use App\Events\GetPingdomChecksDetailsCompleted;
 use App\Events\VerifyExistenceCFFWRuleCompleted;
 use App\Events\GetPingdomChecksAvgSummaryCompleted;
 use App\Listeners\SendNotificationCheckDNSCompleted;
+use App\Events\FetchDNSHostnameRecordsForZonesCompleted;
 use App\Listeners\SendNotificationChecksAvgSumCompleted;
 use App\Listeners\SendNotificationCreateCFFWRuleCompleted;
 use App\Listeners\SendNotificationDeleteCFFWRuleCompleted;
@@ -29,6 +30,7 @@ use App\Listeners\SendNotificationHttpLogJson2CsvConversionDone;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use App\Listeners\SendNotificationGetPingdomChecksDetailsCompleted;
 use App\Listeners\SendNotificationVerifyExistenceCFFWRuleCompleted;
+use App\Listeners\SendNotificationFetchDNSHostnameRecordsForZonesCompleted;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 
 class EventServiceProvider extends ServiceProvider
@@ -77,6 +79,9 @@ class EventServiceProvider extends ServiceProvider
         ],
         GetPingdomChecksAvgSummaryCompleted::class => [
             SendNotificationChecksAvgSumCompleted::class
+        ],
+        FetchDNSHostnameRecordsForZonesCompleted::class => [
+            SendNotificationFetchDNSHostnameRecordsForZonesCompleted::class
         ]
     ];
 

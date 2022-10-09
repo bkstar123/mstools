@@ -318,3 +318,21 @@ Route::group(
         ->middleware('can:trackings.massiveDestroy');
     }
 );
+
+// Cloudflare DNS Tools
+Route::group(
+    [
+        'prefix' => 'cms',
+        'middleware' => [
+            'bkscms-auth:admins',
+        ],
+    ],
+    function () {
+        Route::get('cf-dns-records', function () {
+            return view('cms.cfdns.showform');
+        })->name('cfdnsrecords.show.form');
+        
+        Route::post('cf-dns-records', 'CFDNSController@getDNSRecords')
+        ->name('cfdnsrecords.get');
+    }
+);

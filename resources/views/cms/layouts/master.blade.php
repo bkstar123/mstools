@@ -176,6 +176,15 @@
                         autoHide: false,
                     })
                 });
+            Echo.private('user-' + {{ auth()->user()->id }})
+                .listen('.fetch.cf.dns.hostname.entries.completed', (data) => {
+                    $.notify(`MSTool has completed fetching CF DNS hostname entries for the given zones as requested by ${data.requestor}`, {
+                        position: "right bottom",
+                        className: "success",
+                        clickToHide: true,
+                        autoHide: false,
+                    })
+                });
         </script>
         @stack('scriptBottom')
     </body>
