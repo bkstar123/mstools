@@ -47,3 +47,35 @@ if (! function_exists('convertSecondsForHuman')) {
         }
     }
 }
+
+if (! function_exists('getApexRootDomains')) {
+    /**
+     * Extract APEX root domains from the given array of hostnames
+     * For instance, ['www.vnexpress.net'] => ['vnexpress.net']
+     *
+     * @param  $domains array
+     * @return array
+     */
+    function getApexRootDomains(array $domains)
+    {
+        $zones = [];
+        if (count($domains) > 0) {
+            $TLDs = explode(',', file_get_contents(asset('/sources/tlds.txt')));
+            foreach ($domains as $domain) {
+                $domainParts = explode('.', trim($domain));
+                $i = count($domainParts) - 1;
+                $zone = $domainParts[$i];
+                while ($i >= 0 && in_array($zone, $TLDs)) {
+                    --$i;
+                    $zone = $domainParts[$i] . '.' . $zone;
+                }
+                $zones[] = $zone;
+            }
+            $zones = array_map(function ($zone) {
+                return strtolower($zone);
+            }, $zones);
+            $zones = array_merge([], array_unique($zones));
+        }
+        return $zones;
+    }
+}

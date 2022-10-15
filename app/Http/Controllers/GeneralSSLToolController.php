@@ -139,31 +139,13 @@ class GeneralSSLToolController extends Controller
     protected function getZonesForCertUpload(Request $request)
     {
         if (empty($request->zones)) {
-            $zones = [];
             try {
                 $ssl = SslCertificate::createFromString($request->cert);
             } catch (Exception $e) {
-                return $zones;
+                return [];
             }
             $domains = $ssl->getAdditionalDomains();
-            if (count($domains) > 0) {
-                $TLDs = explode(',', file_get_contents(asset('/sources/tlds.txt')));
-                foreach ($domains as $domain) {
-                    $domainParts = explode('.', trim($domain));
-                    $i = count($domainParts) - 1;
-                    $zone = $domainParts[$i];
-                    while ($i >= 0 && in_array($zone, $TLDs)) {
-                        --$i;
-                        $zone = $domainParts[$i].'.'.$zone;
-                    }
-                    $zones[] = $zone;
-                }
-                $zones = array_map(function ($zone) {
-                    return strtolower($zone);
-                }, $zones);
-                $zones = array_merge([], array_unique($zones));
-            }
-            return $zones;
+            return getApexRootDomains($domains);
         } else {
             $zones = array_map(function ($zone) {
                 return strtolower(trim($zone));
