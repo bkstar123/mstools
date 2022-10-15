@@ -329,10 +329,17 @@ Route::group(
     ],
     function () {
         Route::get('cf-dns-records', function () {
-            return view('cms.cfdns.showform');
+            return view('cms.cfdns.showdnsform');
         })->name('cfdnsrecords.show.form');
         
         Route::post('cf-dns-records', 'CFDNSController@getDNSRecords')
         ->name('cfdnsrecords.get');
+
+        Route::get('cf-dns-target-hostnames', function () {
+            return view('cms.cfdns.showtargetform');
+        })->name('cfdnstargets.show.form');
+
+        Route::post('cf-dns-target-hostnames', 'CFDNSController@getCFDNSTargets')
+        ->name('cfdnstargets.get');
     }
 );

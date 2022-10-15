@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Events\CheckDNSCompleted;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Auth\Events\Registered;
 use App\Events\CreateCFFWRuleCompleted;
@@ -30,6 +31,7 @@ use App\Listeners\SendNotificationHttpLogJson2CsvConversionDone;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use App\Listeners\SendNotificationGetPingdomChecksDetailsCompleted;
 use App\Listeners\SendNotificationVerifyExistenceCFFWRuleCompleted;
+use App\Listeners\SendNotificationFetchCFDNSTargetsForHostnamesCompleted;
 use App\Listeners\SendNotificationFetchDNSHostnameRecordsForZonesCompleted;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 
@@ -82,6 +84,9 @@ class EventServiceProvider extends ServiceProvider
         ],
         FetchDNSHostnameRecordsForZonesCompleted::class => [
             SendNotificationFetchDNSHostnameRecordsForZonesCompleted::class
+        ],
+        FetchCFDNSTargetsForHostnamesCompleted::class => [
+            SendNotificationFetchCFDNSTargetsForHostnamesCompleted::class
         ]
     ];
 

@@ -122,9 +122,14 @@ return [
         'icon' => 'fa fa-lock',
         'children' => [
             [
-                'name' => 'Get DNS records for hostnames',
+                'name' => 'DNS hostname entries for zones',
                 'path' => '/cms/cf-dns-records',
                 'icon' => 'fa fa-id-card',
+            ],
+            [
+                'name' => 'CF DNS targets for hostnames',
+                'path' => '/cms/cf-dns-target-hostnames',
+                'icon' => 'fa fa-book',
             ],
         ]
     ],
