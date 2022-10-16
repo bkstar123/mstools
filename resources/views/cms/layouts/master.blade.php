@@ -79,7 +79,7 @@
                 });
             Echo.private('user-' + {{ auth()->user()->id }})
                 .listen('.verify-domain-ssldata.completed', (data) => {
-                    $.notify(`MSTool has completed checking SSL information for the given domains as requested by ${data.requestor}`, {
+                    $.notify(`MSTool has completed checking SSL information for the given domains as requested by ${data.requestor}. There will be ${data.count} report(s) of completion`, {
                         position: "right bottom",
                         className: "success",
                         clickToHide: true,
@@ -142,7 +142,7 @@
                 });
             Echo.private('user-' + {{ auth()->user()->id }})
                 .listen('.check-dns.completed', (data) => {
-                    $.notify(`MSTool has completed checking DNS A & CNAME for the given domains as requested by ${data.requestor}`, {
+                    $.notify(`MSTool has completed checking DNS A & CNAME for the given domains as requested by ${data.requestor}. There will be ${data.count} report(s) of completion`, {
                         position: "right bottom",
                         className: "success",
                         clickToHide: true,
@@ -187,7 +187,7 @@
                 });
             Echo.private('user-' + {{ auth()->user()->id }})
                 .listen('.fetch.cf.dns.targets.for.hostnames.completed', (data) => {
-                    $.notify(`MSTool has completed fetching CF DNS targets for the given hostnames as requested by ${data.requestor}`, {
+                    $.notify(`MSTool has completed fetching CF DNS targets for the given hostnames as requested by ${data.requestor}. There will be ${data.count} report(s) of completion`, {
                         position: "right bottom",
                         className: "success",
                         clickToHide: true,

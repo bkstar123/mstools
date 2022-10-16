@@ -33,8 +33,21 @@ class GeneralSSLToolController extends Controller
         ]);
         if (!$this->isThrottled()) {
             $this->setRequestThrottling();
-            $domains = explode(',', $request->domains);
-            VerifyDomainSSLData::dispatch($domains, auth()->user());
+            $domains = array_merge(
+                [],
+                array_unique(
+                    array_map(
+                        function ($domain) {
+                            return strtolower(trim($domain));
+                        },
+                        explode(',', $request->domains)
+                    )
+                )
+            );
+            $chunks = collect($domains)->chunk(config('mstools.chunk_size.medium'));
+            foreach ($chunks as $chunk) {
+                VerifyDomainSSLData::dispatch($chunk, auth()->user(), $chunks->count());
+            }
             flashing('MSTool is processing the request')->flash();
         } else {
             flashing('MSTool is busy processing your first request, please wait for 10 seconds before sending another one')->warning()->flash();

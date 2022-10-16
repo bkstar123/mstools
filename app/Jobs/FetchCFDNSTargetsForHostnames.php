@@ -30,16 +30,31 @@ class FetchCFDNSTargetsForHostnames implements ShouldQueue
     protected $user;
 
     /**
+     * @var integer
+     */
+    protected $chunkCount;
+
+    /**
+     * The number of seconds the job can run before timing out
+     * must be on several seconds less than the queue connection's retry_after defined in the config/queue.php
+     *
+     * @var int
+     */
+    public $timeout = 1190;
+
+    /**
      * Create a new job instance.
      *
      * @param $hostnames array
      * @param $user \Bkstar123\BksCMS\AdminPanel\Admin
+     * @param $chunkCount integer
      * @return void
      */
-    public function __construct($hostnames, $user)
+    public function __construct($hostnames, $user, $chunkCount)
     {
         $this->hostnames = $hostnames;
         $this->user = $user;
+        $this->chunkCount = $chunkCount;
     }
 
     /**
@@ -90,7 +105,7 @@ class FetchCFDNSTargetsForHostnames implements ShouldQueue
             'path'     => $outputFileLocation['path'],
             'mime'     => 'text/csv'
         ]);
-        FetchCFDNSTargetsForHostnamesCompleted::dispatch($this->user);
+        FetchCFDNSTargetsForHostnamesCompleted::dispatch($this->user, $this->chunkCount);
     }
 
     /**

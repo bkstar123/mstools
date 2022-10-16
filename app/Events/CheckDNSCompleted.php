@@ -23,13 +23,21 @@ class CheckDNSCompleted implements ShouldBroadcast
     public $user;
 
     /**
+     * @var integer
+     */
+    public $chunkCount;
+
+    /**
      * Create a new event instance.
      *
+     * @param $user \Bkstar123\BksCMS\AdminPanel\Admin
+     * @param $chunkCount integer
      * @return void
      */
-    public function __construct($user)
+    public function __construct($user, $chunkCount)
     {
         $this->user = $user;
+        $this->chunkCount = $chunkCount;
     }
 
     /**
@@ -61,6 +69,7 @@ class CheckDNSCompleted implements ShouldBroadcast
     {
         return [
             'requestor' => $this->user->email,
+            'count'     => $this->chunkCount
         ];
     }
 }

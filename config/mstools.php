@@ -18,5 +18,10 @@ return [
     ],
     'pingdom' => [
         'reference_check_id' => env('MSTOOLS_REFERENCE_PINGDOM_CHECK_ID', '')
+    ],
+    'chunk_size' => [
+        'small' => env('MSTOOLS_CHUNK_SIZE_SMALL', 10),
+        'medium' => env('MSTOOLS_CHUNK_SIZE_MEDIUM', 50),
+        'large' => env('MSTOOLS_CHUNK_SIZE_LARGE', 500)
     ]
 ];

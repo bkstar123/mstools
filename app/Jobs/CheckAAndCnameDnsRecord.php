@@ -31,6 +31,11 @@ class CheckAAndCnameDnsRecord implements ShouldQueue
     protected $user;
 
     /**
+     * @var integer
+     */
+    protected $chunkCount;
+
+    /**
      * The number of seconds the job can run before timing out
      * must be on several seconds less than the queue connection's retry_after defined in the config/queue.php
      *
@@ -43,12 +48,14 @@ class CheckAAndCnameDnsRecord implements ShouldQueue
      *
      * @param $domains array
      * @param $user \Bkstar123\BksCMS\AdminPanel\Admin
+     * @param $chunkCount integer
      * @return void
      */
-    public function __construct($domains, $user)
+    public function __construct($domains, $user, $chunkCount)
     {
         $this->domains = $domains;
         $this->user = $user;
+        $this->chunkCount = $chunkCount;
     }
 
     /**
@@ -86,7 +93,7 @@ class CheckAAndCnameDnsRecord implements ShouldQueue
             'path'     => $outputFileLocation['path'],
             'mime'     => 'text/csv'
         ]);
-        CheckDNSCompleted::dispatch($this->user);
+        CheckDNSCompleted::dispatch($this->user, $this->chunkCount);
     }
 
     /**

@@ -28,8 +28,8 @@ class CFDNSController extends Controller
                 array_unique(
                     array_map(
                         function ($zone) {
-                        return strtolower(trim($zone));
-                    },
+                            return strtolower(trim($zone));
+                        },
                         explode(',', $request->zones)
                     )
                 )
@@ -61,13 +61,16 @@ class CFDNSController extends Controller
                 array_unique(
                     array_map(
                         function ($hostname) {
-                        return strtolower(trim($hostname));
-                    },
+                            return strtolower(trim($hostname));
+                        },
                         explode(',', $request->hostnames)
                     )
                 )
             );
-            FetchCFDNSTargetsForHostnames::dispatch($hostnames, $request->user());
+            $chunks = collect($hostnames)->chunk(config('mstools.chunk_size.small'));
+            foreach ($chunks as $chunk) {
+                FetchCFDNSTargetsForHostnames::dispatch($chunk, $request->user(), $chunks->count());
+            }
             flashing('MSTool is processing the request')->flash();
         } else {
             flashing('MSTool is busy processing your first request, please wait for 10 seconds before sending another one')->flash();
