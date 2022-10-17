@@ -17,6 +17,7 @@ use App\Events\GetPingdomChecksDetailsCompleted;
 use App\Events\VerifyExistenceCFFWRuleCompleted;
 use App\Events\GetPingdomChecksAvgSummaryCompleted;
 use App\Listeners\SendNotificationCheckDNSCompleted;
+use App\Events\FetchCFDNSTargetsForHostnamesCompleted;
 use App\Events\FetchDNSHostnameRecordsForZonesCompleted;
 use App\Listeners\SendNotificationChecksAvgSumCompleted;
 use App\Listeners\SendNotificationCreateCFFWRuleCompleted;
