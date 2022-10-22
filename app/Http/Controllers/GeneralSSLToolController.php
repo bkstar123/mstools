@@ -108,6 +108,7 @@ class GeneralSSLToolController extends Controller
             'cert' => ['required', new SslCertValid],
             'privateKey' => ['required', new SslKeyMatch($request->cert)]
         ]);
+        $useDeepValidation = (bool) $request->useDeepValidation ?? false;
         if (!$this->isThrottled()) {
             $this->setRequestThrottling();
             $zones = $this->getZonesForCertUpload($request);
@@ -116,7 +117,7 @@ class GeneralSSLToolController extends Controller
                 ->error()
                 ->flash();
             } else {
-                UploadCustomCertificateToCloudflare::dispatch($zones, $request->cert, $request->privateKey, auth()->user());
+                UploadCustomCertificateToCloudflare::dispatch($zones, $request->cert, $request->privateKey, auth()->user(), $useDeepValidation);
                 flashing('MSTool is processing the request')
                 ->flash();
             }

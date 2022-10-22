@@ -46,6 +46,20 @@
                           placeholder="Paste the content of the private key here">{{ old('privateKey') }}</textarea>
             </div>
         </div>
+        <div class="card-body">
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="icheck-warning">
+                            <input class="form-control"
+                                   type="checkbox"
+                                   id="useDeepValidation"
+                                   name="useDeepValidation"><label for="useDeepValidation"> Use deep validation (will take longer time)</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 		<div class="card-footer">
 			<button type="button" class="btn btn-success" data-toggle="modal" data-target="#uploadCertCFModal">Proceed</button>
 		</div>

@@ -47,6 +47,11 @@ class UploadCustomCertificateToCloudflare implements ShouldQueue
     protected $user;
 
     /**
+     * @var bool
+     */
+    protected $useDeepValidation;
+
+    /**
      * The number of seconds the job can run before timing out
      * must be on several seconds less than the queue connection's retry_after defined in the config/queue.php
      *
@@ -59,12 +64,13 @@ class UploadCustomCertificateToCloudflare implements ShouldQueue
      *
      * @return void
      */
-    public function __construct($zones, $cert, $key, $user)
+    public function __construct($zones, $cert, $key, $user, $useDeepValidation)
     {
         $this->zones = $zones;
         $this->cert = $cert;
         $this->key = $key;
         $this->user = $user;
+        $this->useDeepValidation = $useDeepValidation;
     }
 
     /**
@@ -127,7 +133,7 @@ class UploadCustomCertificateToCloudflare implements ShouldQueue
                     ]);
                 }
             } else {
-                $validate = $this->preReplaceValidate($zoneID, $currentCertID, $this->cert, $customSSL);
+                $validate = $this->preReplaceValidate($zoneID, $currentCertID, $this->cert, $customSSL, $this->useDeepValidation);
                 if ($validate['isOK']) {
                     if (!$customSSL->updateCustomCert($zoneID, $currentCertID, $this->cert, $this->key)) {
                         fputcsv($fop, [
@@ -201,9 +207,10 @@ class UploadCustomCertificateToCloudflare implements ShouldQueue
      * @param string $certID
      * @param string $cert
      * @param \Bkstar123\CFBuddy\Services\CustomSSL $customSSL
+     * @param bool $useDeepValidation
      * @return array
      */
-    protected function preReplaceValidate($zoneID, $certID, $cert, $customSSL)
+    protected function preReplaceValidate($zoneID, $certID, $cert, $customSSL, $useDeepValidation = false)
     {
         if ($this->user->can('certificate.pre.replacement.validation.bypass')) {
             return [
@@ -227,10 +234,20 @@ class UploadCustomCertificateToCloudflare implements ShouldQueue
             return strtolower(idn_to_ascii(trim($hostname), IDNA_DEFAULT, INTL_IDNA_VARIANT_UTS46));
         }, $newCertDomains);
         $diffHostnames = array_merge([], array_diff($normalizedExistingCertDomains, $normalizedNewCertDomains));
-        $diffHostnames = array_filter($diffHostnames, function ($hostname) use ($normalizedNewCertDomains) {
-            return !in_array(toWildcardHostname($hostname), $normalizedNewCertDomains);
-        });
-        $diffHostnames = array_merge([], $diffHostnames);
+        if (count($diffHostnames) > 0) {
+            $diffHostnames = array_filter($diffHostnames, function ($hostname) use ($normalizedNewCertDomains) {
+                return !in_array(toWildcardHostname($hostname), $normalizedNewCertDomains);
+            });
+            $diffHostnames = array_merge([], $diffHostnames);
+            if (count($diffHostnames) > 0 && $useDeepValidation) {
+                $zoneMgmt = resolve('zoneMgmt');
+                $zoneCurrentProductionHostnames = $zoneMgmt->getZoneSubDomains($zoneID, null, true, true);
+                $diffHostnames = array_filter($diffHostnames, function ($hostname) use ($zoneCurrentProductionHostnames) {
+                    return in_array($hostname, $zoneCurrentProductionHostnames);
+                });
+                $diffHostnames = array_merge([], $diffHostnames);
+            }
+        }
         return [
             'isOK' => empty($diffHostnames),
             'diff' => $diffHostnames
