@@ -6,7 +6,10 @@
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card">
-                <div class="card-header">Upload HTTP Log JSON file for conversion</div>
+                <div class="card-header">
+                    Upload HTTP Log JSON file for conversion<br>
+                    <i>(The tool is not designed for handling application log)</i>
+                </div>
                 <div id="card-body" class="card-body">
                     <div class="form-group">
                         <label for="file-upload">Upload HTTP Log JSON File</label>
