@@ -34,6 +34,6 @@ class CFJDCloudIPChangeNotify extends Mailable implements ShouldQueue
     public function build()
     {
         return $this->markdown('emails.cfjdcloudipchanged')
-                    ->subject('Cloudflare IP change detected on JDCloud network');
+                    ->subject('Cloudflare IP change detected);
     }
 }
