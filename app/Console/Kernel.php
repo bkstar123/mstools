@@ -33,19 +33,22 @@ class Kernel extends ConsoleKernel
                  ->everyMinute()
                  ->runInBackground();
 
-        // Run at 00:00 AM on weekdays (MON->FRI)
-        $schedule->command('trackings:scan')
-                 ->cron('0 0 * * 1-5')
-                 ->runInBackground();
-        
-        // Run on 1st & 15th of every month at 00:00 AM
         if (App::environment('production')) {
+            // Run at 00:00 AM on weekdays (MON->FRI)
+            $schedule->command('trackings:scan')
+                     ->cron('0 0 * * 1-5')
+                     ->runInBackground();
+            // Run on 1st & 15th of every month at 00:00 AM
             $schedule->command('universalSSLVerification:check')
                      ->cron('0 0 1,15 * *')
                      ->runInBackground();
             // Run at 18:00 on weekdays (MON->FRI)
             $schedule->command('pingdom:scanForNew')
                      ->cron('0 18 * * 1-5')
+                     ->runInBackground();
+            // Every 15 minutes
+            $schedule->command('cloudflare:scanForIPChangeOnJDCloud')
+                     ->everyFifteenMinutes()
                      ->runInBackground();
         }
     }
