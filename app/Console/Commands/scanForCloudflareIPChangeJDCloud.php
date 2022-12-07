@@ -9,6 +9,8 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use App\Mail\CFJDCloudIPChangeNotify;
+use Bkstar123\BksCMS\AdminPanel\Admin;
+use App\Notifications\CloudflareIPChangeNotification;
 
 class scanForCloudflareIPChangeJDCloud extends Command
 {
@@ -49,7 +51,7 @@ class scanForCloudflareIPChangeJDCloud extends Command
             \Arr::forget($contents, 'etag');
             $contents = json_encode($contents);
             $newHashed = \Hash::make($contents);
-            if (!file_exists(storage_path('app/last_cloudflare_ips_hash.txt'))) {      
+            if (!file_exists(storage_path('app/last_cloudflare_ips_hash.txt'))) {
                 file_put_contents(storage_path('app/last_cloudflare_ips_hash.txt'), $newHashed);
                 file_put_contents(storage_path('app/last_cloudflare_ips.txt'), $contents);
             } else {
@@ -69,6 +71,11 @@ class scanForCloudflareIPChangeJDCloud extends Command
                     ];
                     file_put_contents(storage_path('app/last_cloudflare_ips_hash.txt'), $newHashed);
                     file_put_contents(storage_path('app/last_cloudflare_ips.txt'), $contents);
+                    // Send Slack Notification 
+                    $superadmin = Admin::find(1)->first();
+                    if (!empty($superadmin)) {
+                        $superadmin->notify(new CloudflareIPChangeNotification(json_encode($addedIPs), json_encode($removedIPs)));
+                    }
                     $subsribers = env('CF_JDCLOUD_IP_CHANGE_SUBSCRIBER', 'tuan.hoang@optimizely.com');
                     $subsribers = explode(",", $subsribers);
                     foreach ($subsribers as $subsriber) {
