@@ -48,8 +48,7 @@ class Kernel extends ConsoleKernel
                      ->runInBackground();
             // Every 15 minutes
             $schedule->command('cloudflare:scanForIPChangeOnJDCloud')
-                     ->everyMinute()
-                     //->everyFifteenMinutes()
+                     ->everyFifteenMinutes()
                      ->runInBackground();
         }
     }
