@@ -14,16 +14,22 @@ class CFJDCloudIPChangeNotify extends Mailable implements ShouldQueue
     /**
      * @var string
      */
-    public $changedIPs;
+    public $addedIPs;
+
+    /**
+     * @var string
+     */
+    public $removedIPs;
 
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct($changedIPs)
+    public function __construct($addedIPs, $removedIPs)
     {
-        $this->changedIPs = $changedIPs;
+        $this->addedIPs = $addedIPs;
+        $this->removedIPs = $removedIPs;
     }
 
     /**

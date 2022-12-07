@@ -48,8 +48,8 @@ class scanForCloudflareIPChangeJDCloud extends Command
         if (is_array($contents) && !empty($contents)) {
             \Arr::forget($contents, 'etag');
             $contents = json_encode($contents);
-            if (!file_exists(storage_path('app/last_cloudflare_ips_hash.txt'))) {
-                $newHashed = \Hash::make($contents);
+            $newHashed = \Hash::make($contents);
+            if (!file_exists(storage_path('app/last_cloudflare_ips_hash.txt'))) {      
                 file_put_contents(storage_path('app/last_cloudflare_ips_hash.txt'), $newHashed);
                 file_put_contents(storage_path('app/last_cloudflare_ips.txt'), $contents);
             } else {
@@ -57,15 +57,22 @@ class scanForCloudflareIPChangeJDCloud extends Command
                 if (!\Hash::check($contents, $currentHash)) {
                     $currentContents = json_decode(file_get_contents(storage_path('app/last_cloudflare_ips.txt')), true);
                     $newContents = json_decode($contents, true);
-                    $changeIPs = [
+                    $addedIPs = [
                         'ipv4_cidrs' => array_merge([], array_diff($newContents['ipv4_cidrs'], $currentContents['ipv4_cidrs'])),
                         'ipv6_cidrs' => array_merge([], array_diff($newContents['ipv6_cidrs'], $currentContents['ipv6_cidrs'])),
                         'jdcloud_cidrs' => array_merge([], array_diff($newContents['jdcloud_cidrs'], $currentContents['jdcloud_cidrs']))
                     ];
-                    $subsribers = env('CF_JDCLOUD_IP_CHANGE_SUBSCRIBER', 'tuan.hoang@episerver.com');
+                    $removedIPs = [
+                        'ipv4_cidrs' => array_merge([], array_diff($currentContents['ipv4_cidrs'], $newContents['ipv4_cidrs'])),
+                        'ipv6_cidrs' => array_merge([], array_diff($currentContents['ipv6_cidrs'], $newContents['ipv6_cidrs'])),
+                        'jdcloud_cidrs' => array_merge([], array_diff($currentContents['jdcloud_cidrs'], $newContents['jdcloud_cidrs']))
+                    ];
+                    file_put_contents(storage_path('app/last_cloudflare_ips_hash.txt'), $newHashed);
+                    file_put_contents(storage_path('app/last_cloudflare_ips.txt'), $contents);
+                    $subsribers = env('CF_JDCLOUD_IP_CHANGE_SUBSCRIBER', 'tuan.hoang@optimizely.com');
                     $subsribers = explode(",", $subsribers);
                     foreach ($subsribers as $subsriber) {
-                        \Mail::to($subsriber)->send(new CFJDCloudIPChangeNotify(json_encode($changeIPs)));
+                        \Mail::to($subsriber)->send(new CFJDCloudIPChangeNotify(json_encode($addedIPs), json_encode($removedIPs)));
                     }
                 }
             }
