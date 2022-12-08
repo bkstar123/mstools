@@ -48,15 +48,14 @@ class scanForCloudflareIPChangeJDCloud extends Command
         $cfip = resolve('cfip');
         $contents = $cfip->getCloudflareIP('jdcloud');
         if (is_array($contents) && !empty($contents)) {
-            \Arr::forget($contents, 'etag');
+            $newHashed = $contents['etag'];
             $contents = json_encode($contents);
-            $newHashed = \Hash::make($contents);
             if (!file_exists(storage_path('app/last_cloudflare_ips_hash.txt'))) {
                 file_put_contents(storage_path('app/last_cloudflare_ips_hash.txt'), $newHashed);
                 file_put_contents(storage_path('app/last_cloudflare_ips.txt'), $contents);
             } else {
                 $currentHash = file_get_contents(storage_path('app/last_cloudflare_ips_hash.txt'));
-                if (!\Hash::check($contents, $currentHash)) {
+                if ($newHashed != $currentHash) {
                     $currentContents = json_decode(file_get_contents(storage_path('app/last_cloudflare_ips.txt')), true);
                     $newContents = json_decode($contents, true);
                     $addedIPs = [
