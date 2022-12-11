@@ -12,7 +12,7 @@ use App\Mail\CFJDCloudIPChangeNotify;
 use Bkstar123\BksCMS\AdminPanel\Admin;
 use App\Notifications\CloudflareIPChangeNotification;
 
-class scanForCloudflareIPChangeJDCloud extends Command
+class ScanForCloudflareIPChangeJDCloud extends Command
 {
     /**
      * The name and signature of the console command.
@@ -70,7 +70,7 @@ class scanForCloudflareIPChangeJDCloud extends Command
                     ];
                     file_put_contents(storage_path('app/last_cloudflare_ips_hash.txt'), $newHashed);
                     file_put_contents(storage_path('app/last_cloudflare_ips.txt'), $contents);
-                    // Send Slack Notification 
+                    // Send Slack Notification
                     $superadmin = Admin::find(1)->first();
                     if (!empty($superadmin)) {
                         $superadmin->notify(new CloudflareIPChangeNotification(json_encode($addedIPs), json_encode($removedIPs)));

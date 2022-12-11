@@ -140,6 +140,24 @@
 		</div>
 	</div>
 </div>
+<hr>
+@if(file_exists(storage_path('app/last_cloudflare_jdcloud_zones.txt')))
+<div class="row">
+	<div class="col col-md-12">
+		<div class="card card-success">
+			<div class="card-header">
+				<h3 class="card-title">
+				    China Network enabled zones on Cloudflare 
+				    captured by {{ Carbon\Carbon::createFromTimestamp(filemtime(storage_path('app/last_cloudflare_jdcloud_zones.txt')))->timezone('UTC')->format('Y-m-d H:m:s') }} UTC  
+				</h3>
+			</div>
+			<div class="card-body">
+				{{ implode(",", json_decode(file_get_contents(storage_path('app/last_cloudflare_jdcloud_zones.txt')), true)) }}
+			</div>
+		</div>
+	</div>
+</div>
+@endif
 @endsection
 
 @push('scriptBottom')

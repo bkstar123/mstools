@@ -50,6 +50,10 @@ class Kernel extends ConsoleKernel
             $schedule->command('cloudflare:scanForIPChangeOnJDCloud')
                      ->everyFifteenMinutes()
                      ->runInBackground();
+            // Twice a day 08:00 AM & )5:00 PM
+            $schedule->command('cloudflare:scanForChinaNetworkZones')
+                     ->twiceDaily(8, 17)
+                     ->runInBackground();
         }
     }
 
