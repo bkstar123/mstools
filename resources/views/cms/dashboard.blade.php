@@ -148,7 +148,7 @@
 			<div class="card-header">
 				<h3 class="card-title">
 				    China Network enabled zones on Cloudflare 
-				    captured by {{ Carbon\Carbon::createFromTimestamp(filemtime(storage_path('app/last_cloudflare_jdcloud_zones.txt')))->timezone('UTC')->format('Y-m-d H:m:s') }} UTC  
+				    captured by {{ Carbon\Carbon::createFromTimestamp(filemtime(storage_path('app/last_cloudflare_jdcloud_zones.txt')))->timezone('UTC')->toDateTimeString() }} UTC  
 				</h3>
 			</div>
 			<div class="card-body">
