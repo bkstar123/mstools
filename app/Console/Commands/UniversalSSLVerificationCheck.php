@@ -83,7 +83,7 @@ class UniversalSSLVerificationCheck extends Command
                             $comment = 'No custom certificate found to cover all hostnames which are pending for renewing universal certificate';
                         } else {
                             $data = $customSSL->fetchCertData($zone['id'], $customCertID);
-                            $sanDomains = json_decode($data['hosts'], true);
+                            $sanDomains = (array) json_decode($data['hosts'], true);
                             $normalizedSanDomains = array_map(function ($hostname) {
                                 return strtolower(idn_to_ascii(trim($hostname), IDNA_DEFAULT, INTL_IDNA_VARIANT_UTS46));
                             }, $sanDomains);

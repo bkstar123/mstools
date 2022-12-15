@@ -225,7 +225,7 @@ class UploadCustomCertificateToCloudflare implements ShouldQueue
                 'diff' => []
             ];
         }
-        $existingCertDomains = json_decode($data['hosts'], true);
+        $existingCertDomains = (array) json_decode($data['hosts'], true);
         $normalizedExistingCertDomains = array_map(function ($hostname) {
             return strtolower(idn_to_ascii(trim($hostname), IDNA_DEFAULT, INTL_IDNA_VARIANT_UTS46));
         }, $existingCertDomains);
