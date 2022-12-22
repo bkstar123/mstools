@@ -64,31 +64,29 @@ class ScanForChinaNetworkZones extends Command
             $jdcloudZones = array_merge($jdcloudZones, $data);
             ++$page;
         } while (!empty($zones));
-        if (!empty($jdcloudZones)) {
-            $contents = json_encode($jdcloudZones);
-            $newHashed = md5($contents);
-            if (!file_exists(storage_path('app/last_cloudflare_jdcloud_zone_hash.txt'))) {
+        $contents = json_encode($jdcloudZones);
+        $newHashed = md5($contents);
+        if (!file_exists(storage_path('app/last_cloudflare_jdcloud_zone_hash.txt'))) {
+            file_put_contents(storage_path('app/last_cloudflare_jdcloud_zone_hash.txt'), $newHashed);
+            file_put_contents(storage_path('app/last_cloudflare_jdcloud_zones.txt'), $contents);
+        } else {
+            $currentHash = file_get_contents(storage_path('app/last_cloudflare_jdcloud_zone_hash.txt'));
+            if ($newHashed != $currentHash) {
+                $currentContents = json_decode(file_get_contents(storage_path('app/last_cloudflare_jdcloud_zones.txt')), true);
+                $newContents = json_decode($contents, true);
+                $addedZones = array_merge([], array_diff($newContents, $currentContents));
+                $removedZones = array_merge([], array_diff($currentContents, $newContents));
                 file_put_contents(storage_path('app/last_cloudflare_jdcloud_zone_hash.txt'), $newHashed);
                 file_put_contents(storage_path('app/last_cloudflare_jdcloud_zones.txt'), $contents);
-            } else {
-                $currentHash = file_get_contents(storage_path('app/last_cloudflare_jdcloud_zone_hash.txt'));
-                if ($newHashed != $currentHash) {
-                    $currentContents = json_decode(file_get_contents(storage_path('app/last_cloudflare_jdcloud_zones.txt')), true);
-                    $newContents = json_decode($contents, true);
-                    $addedZones = array_merge([], array_diff($newContents, $currentContents));
-                    $removedZones = array_merge([], array_diff($currentContents, $newContents));
-                    file_put_contents(storage_path('app/last_cloudflare_jdcloud_zone_hash.txt'), $newHashed);
-                    file_put_contents(storage_path('app/last_cloudflare_jdcloud_zones.txt'), $contents);
-                    // Send Slack Notification
-                    $superadmin = Admin::find(1)->first();
-                    if (!empty($superadmin)) {
-                        $superadmin->notify(new CloudflareJDCloudZoneChangeNotification(json_encode($addedZones), json_encode($removedZones)));
-                    }
-                    $subsribers = env('CF_JDCLOUD_IP_CHANGE_SUBSCRIBER', 'tuan.hoang@optimizely.com');
-                    $subsribers = explode(",", $subsribers);
-                    foreach ($subsribers as $subsriber) {
-                        \Mail::to($subsriber)->send(new CFJDCloudZoneChangedNotify(json_encode($addedZones), json_encode($removedZones)));
-                    }
+                // Send Slack Notification
+                $superadmin = Admin::find(1)->first();
+                if (!empty($superadmin)) {
+                    $superadmin->notify(new CloudflareJDCloudZoneChangeNotification(json_encode($addedZones), json_encode($removedZones)));
+                }
+                $subsribers = env('CF_JDCLOUD_IP_CHANGE_SUBSCRIBER', 'tuan.hoang@optimizely.com');
+                $subsribers = explode(",", $subsribers);
+                foreach ($subsribers as $subsriber) {
+                    \Mail::to($subsriber)->send(new CFJDCloudZoneChangedNotify(json_encode($addedZones), json_encode($removedZones)));
                 }
             }
         }

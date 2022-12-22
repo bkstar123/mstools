@@ -19,7 +19,7 @@ class UniversalSSLVerificationCheck extends Command
      *
      * @var string
      */
-    protected $signature = 'universalSSLVerification:check';
+    protected $signature = 'cloudflare:checkUniversalSSLVerification';
 
     /**
      * The console command description.
