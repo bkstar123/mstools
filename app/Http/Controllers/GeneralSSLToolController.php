@@ -161,8 +161,9 @@ class GeneralSSLToolController extends Controller
             $domains = array_map(function ($domain) {
                 return idn_to_ascii(strtolower(trim($domain)), IDNA_DEFAULT, INTL_IDNA_VARIANT_UTS46);
             }, $ssl->getAdditionalDomains());
+            $domains = array_merge([], $domains);
             $useSmartCFZoneDetection = (bool) $request->useSmartCFZoneDetection ?? false;
-            if (true) {
+            if ($useSmartCFZoneDetection) {
                 $cfCachedZones = getAllCFZonesFromCache();
                 // Hostnames in the cert's SAN list that are also Cloudflare zones
                 $certZones = array_filter($domains, function ($domain) use ($cfCachedZones) {
@@ -184,7 +185,7 @@ class GeneralSSLToolController extends Controller
             $zones = array_map(function ($zone) {
                 return idn_to_ascii(strtolower(trim($zone)), IDNA_DEFAULT, INTL_IDNA_VARIANT_UTS46);
             }, explode(',', $request->zones));
-            return array_unique($zones);
+            return array_merge([], array_unique($zones));
         }
     }
 }
