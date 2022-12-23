@@ -15,6 +15,7 @@
                     <div class="alert alert-danger">{{ $message }}</div>
                 @enderror
                 <textarea class="form-control"
+                          id="zones"
                           name="zones"
                           rows="5" 
                           placeholder="Paste the comma-seperated zones here">{{ old('zones') }}</textarea>
@@ -117,6 +118,16 @@
     $(document).ready(function () {
         $("#uploadCertCFForm").submit(function () {
             $("#submitBtn").attr('disabled', true);
+        });
+        $("#zones").on('change', function () {
+            if ($('#zones').val().length > 0) {
+                $("#useSmartCFZoneDetection").attr('disabled', true);
+            } else {
+                $("#useSmartCFZoneDetection").attr('disabled', false);
+            }
+        });
+        $("#useSmartCFZoneDetection").on('change', function (e) {
+            $("#zones").attr('disabled') == undefined ? $("#zones").attr('disabled', true) : $("#zones").attr('disabled', false);
         });
     });
 </script>
