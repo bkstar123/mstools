@@ -69,7 +69,7 @@
                             <input class="form-control"
                                    type="checkbox"
                                    id="useSmartCFZoneDetection"
-                                   name="useSmartCFZoneDetection"><label for="useSmartCFZoneDetection"> Use Smart Auto-Detectipn of Cloudflare Zones</label>
+                                   name="useSmartCFZoneDetection"><label for="useSmartCFZoneDetection"> Use Smart Auto-Detection of Cloudflare Zones</label>
                         </div>
                     </div>
                 </div>
