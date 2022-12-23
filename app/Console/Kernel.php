@@ -54,6 +54,10 @@ class Kernel extends ConsoleKernel
             $schedule->command('cloudflare:scanForChinaNetworkZones')
                      ->twiceDaily(8, 17)
                      ->runInBackground();
+            // Hourly
+            $schedule->command('cloudflare:scanForAllZones')
+                     ->hourly()
+                     ->runInBackground();
         }
     }
 
