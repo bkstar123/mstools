@@ -9,21 +9,21 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 
-class ScanForFullZones extends Command
+class ScanForAllZones extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'cloudflare:scanForFullZones';
+    protected $signature = 'cloudflare:scanForAllZones';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Scan for all Cloudflare full zones';
+    protected $description = 'Scan for all Cloudflare zones and cache them on the server';
 
     /**
      * Create a new command instance.
@@ -43,24 +43,21 @@ class ScanForFullZones extends Command
     public function handle()
     {
         $zoneMgmt = resolve('zoneMgmt');
-        $fullZones = [];
+        $allZones = [];
         $page = 1;
         do {
             $zones = $zoneMgmt->getPaginatedZones($page, 1000);
             if (empty($zones)) {
                 break;
             }
-            $data = array_filter($zones, function ($zone) {
-                return isset($zone['type']) && $zone['type'] == 'full';
-            });
-            if (!empty($data)) {
+            if (!empty($zones)) {
                 $data = array_merge([], array_map(function ($zone) {
-                    return $zone['name'];
-                }, $data));
+                    return idn_to_ascii(strtolower(trim($zone['name'])), IDNA_DEFAULT, INTL_IDNA_VARIANT_UTS46);
+                }, $zones));
             }
-            $fullZones = array_merge($fullZones, $data);
+            $allZones = array_merge($allZones, $data);
             ++$page;
         } while (!empty($zones));
-        file_put_contents(storage_path('app/cloudflare_full_zones.txt'), json_encode($fullZones));
+        file_put_contents(storage_path('app/cloudflare_all_zones.txt'), json_encode($allZones));
     }
 }

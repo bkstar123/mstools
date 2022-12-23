@@ -158,11 +158,31 @@ class GeneralSSLToolController extends Controller
             } catch (Exception $e) {
                 return [];
             }
-            $domains = $ssl->getAdditionalDomains();
-            return getApexRootDomains($domains);
+            $domains = array_map(function ($domain) {
+                return idn_to_ascii(strtolower(trim($domain)), IDNA_DEFAULT, INTL_IDNA_VARIANT_UTS46);
+            }, $ssl->getAdditionalDomains());
+            $useSmartCFZoneDetection = (bool) $request->useSmartCFZoneDetection ?? false;
+            if (true) {
+                $cfCachedZones = getAllCFZonesFromCache();
+                // Hostnames in the cert's SAN list that are also Cloudflare zones
+                $certZones = array_filter($domains, function ($domain) use ($cfCachedZones) {
+                    return in_array($domain, $cfCachedZones);
+                });
+                $certZones = array_merge([], $certZones);
+                // Hostnames in the cert's SAN list that are not Cloudflare zones
+                $certNonZones = array_merge([], array_diff($domains, $certZones));
+                // Extract apex root domains from the cert's SAN list that are also Cloudflare zones
+                $apexRootDomains = array_filter(getApexRootDomains($certNonZones), function ($apexRootDomain) use ($cfCachedZones) {
+                    return in_array($apexRootDomain, $cfCachedZones);
+                });
+                $apexRootDomains = array_merge([], $apexRootDomains);
+                return array_merge([], array_unique(array_merge($apexRootDomains, $certZones)));
+            } else {
+                return getApexRootDomains($domains);
+            }
         } else {
             $zones = array_map(function ($zone) {
-                return strtolower(trim($zone));
+                return idn_to_ascii(strtolower(trim($zone)), IDNA_DEFAULT, INTL_IDNA_VARIANT_UTS46);
             }, explode(',', $request->zones));
             return array_unique($zones);
         }

@@ -79,3 +79,19 @@ if (! function_exists('getApexRootDomains')) {
         return $zones;
     }
 }
+
+if (! function_exists('getAllCFZonesFromCache')) {
+    /**
+     * Get all Cloudflare zones
+     *
+     * @return array
+     */
+    function getAllCFZonesFromCache()
+    {
+        if (file_exists(storage_path('app/cloudflare_all_zones.txt'))) {
+            return json_decode(file_get_contents(storage_path('app/cloudflare_all_zones.txt')), true);
+        } else {
+            return [];
+        }
+    }
+}

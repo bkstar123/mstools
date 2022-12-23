@@ -58,7 +58,7 @@ class ScanForChinaNetworkZones extends Command
             });
             if (!empty($data)) {
                 $data = array_merge([], array_map(function ($zone) {
-                    return $zone['name'];
+                    return idn_to_ascii(strtolower(trim($zone['name'])), IDNA_DEFAULT, INTL_IDNA_VARIANT_UTS46);
                 }, $data));
             }
             $jdcloudZones = array_merge($jdcloudZones, $data);

@@ -95,7 +95,7 @@ class UploadCustomCertificateToCloudflare implements ShouldQueue
         $zoneMgmt = resolve('zoneMgmt');
         $customSSL = resolve('customSSL');
         foreach ($this->zones as $zone) {
-            $zone = idn_to_ascii(trim($zone), IDNA_DEFAULT, INTL_IDNA_VARIANT_UTS46);
+            $zone = idn_to_ascii(strtolower(trim($zone)), IDNA_DEFAULT, INTL_IDNA_VARIANT_UTS46);
             $zoneID = $zoneMgmt->getZoneID($zone);
             if (empty($zoneID)) {
                 fputcsv($fop, [

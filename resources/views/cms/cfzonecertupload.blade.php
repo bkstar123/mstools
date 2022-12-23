@@ -60,6 +60,20 @@
                 </div>
             </div>
         </div>
+        <div class="card-body">
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="icheck-warning">
+                            <input class="form-control"
+                                   type="checkbox"
+                                   id="useSmartCFZoneDetection"
+                                   name="useSmartCFZoneDetection"><label for="useSmartCFZoneDetection"> Use Smart Auto-Detectipn of Cloudflare Zones</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 		<div class="card-footer">
 			<button type="button" class="btn btn-success" data-toggle="modal" data-target="#uploadCertCFModal">Proceed</button>
 		</div>
