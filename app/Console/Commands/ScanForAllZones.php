@@ -49,13 +49,12 @@ class ScanForAllZones extends Command
             $zones = $zoneMgmt->getPaginatedZones($page, 1000);
             if (empty($zones)) {
                 break;
-            }
-            if (!empty($zones)) {
+            } else {
                 $data = array_merge([], array_map(function ($zone) {
                     return idn_to_ascii(strtolower(trim($zone['name'])), IDNA_DEFAULT, INTL_IDNA_VARIANT_UTS46);
                 }, $zones));
+                $allZones = array_merge($allZones, $data);
             }
-            $allZones = array_merge($allZones, $data);
             ++$page;
         } while (!empty($zones));
         file_put_contents(storage_path('app/cloudflare_all_zones.txt'), json_encode($allZones));
