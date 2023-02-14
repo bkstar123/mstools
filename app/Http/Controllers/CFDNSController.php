@@ -34,9 +34,12 @@ class CFDNSController extends Controller
                     )
                 )
             );
+            $chunks = collect($zones)->chunk(config('mstools.chunk_size.small'));
             $onlyProd = $request->onlyProd ?? null;
             $onlyProxied = $request->onlyProxied ?? null;
-            FetchDNSHostnameRecordsForZones::dispatch($zones, $request->user(), $onlyProd, $onlyProxied);
+            foreach ($chunks as $chunk) {
+                FetchDNSHostnameRecordsForZones::dispatch($chunk, $request->user(), $onlyProd, $onlyProxied);
+            }
             flashing('MSTool is processing the request')->flash();
         } else {
             flashing('MSTool is busy processing your first request, please wait for 10 seconds before sending another one')->flash();

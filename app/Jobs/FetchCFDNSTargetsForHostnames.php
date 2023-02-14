@@ -80,19 +80,16 @@ class FetchCFDNSTargetsForHostnames implements ShouldQueue
         $entries = [];
         foreach ($this->hostnames as $hostname) {
             $hostname = idn_to_ascii(trim($hostname), IDNA_DEFAULT, INTL_IDNA_VARIANT_UTS46);
-            $zoneID = $zoneMgmt->getZoneID($hostname);
+            $zone = array_first(detectCFZonesFromHostnames((array) $hostname));
+            $zoneID = $zoneMgmt->getZoneID($zone);
             if (empty($zoneID)) {
-                $zone = array_first(getApexRootDomains((array) $hostname));
-                $zoneID = $zoneMgmt->getZoneID($zone);
-                if (empty($zoneID)) {
-                    fputcsv($fop, [
-                        $hostname,
-                        '',
-                        '',
-                        "Not found any zone on Cloudflare associated with this hostname"
-                    ]);
-                    continue;
-                }
+                fputcsv($fop, [
+                    $hostname,
+                    '',
+                    '',
+                    "Not found any zone on Cloudflare associated with this hostname"
+                ]);
+                continue;
             }
             $entries = array_merge($entries, $zoneMgmt->getZoneSubDomains($zoneID, $hostname, false, false, null, null));
         }

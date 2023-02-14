@@ -102,7 +102,7 @@ class FetchDNSHostnameRecordsForZones implements ShouldQueue
                 ]);
                 continue;
             }
-            $entries = array_merge($entries, $zoneMgmt->getZoneSubDomains($zoneMgmt->getZoneID($zone), null, false, $this->onlyProd, null, $this->onlyProxied));
+            $entries = array_merge($entries, $zoneMgmt->getZoneSubDomains($zoneID, null, false, $this->onlyProd, null, $this->onlyProxied));
         }
         fwrite($fop, implode("\n", $entries) . "\n");
         fclose($fop);
