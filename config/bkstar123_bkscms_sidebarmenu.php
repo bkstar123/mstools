@@ -117,23 +117,6 @@ return [
         ]
     ],
     [
-        'name' => 'Cloudflare DNS Tools',
-        'path' => '#',
-        'icon' => 'fa fa-lock',
-        'children' => [
-            [
-                'name' => 'DNS hostname entries for zones',
-                'path' => '/cms/cf-dns-records',
-                'icon' => 'fa fa-id-card',
-            ],
-            [
-                'name' => 'CF DNS targets for hostnames',
-                'path' => '/cms/cf-dns-target-hostnames',
-                'icon' => 'fa fa-book',
-            ],
-        ]
-    ],
-    [
         'name' => 'Go-live tracking DXP sites',
         'path' => '#',
         'icon' => 'fa fa-lock',
@@ -147,6 +130,23 @@ return [
                 'name' => 'Create tracking',
                 'path' => '/cms/trackings/create',
                 'icon' => 'fa fa-plus',
+            ],
+        ]
+    ],
+    [
+        'name' => 'Cloudflare DNS Tools',
+        'path' => '#',
+        'icon' => 'fa fa-cubes',
+        'children' => [
+            [
+                'name' => 'DNS hostname entries for zones',
+                'path' => '/cms/cf-dns-records',
+                'icon' => 'fa fa-id-card',
+            ],
+            [
+                'name' => 'CF DNS targets for hostnames',
+                'path' => '/cms/cf-dns-target-hostnames',
+                'icon' => 'fa fa-book',
             ],
         ]
     ],
