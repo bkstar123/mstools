@@ -67,7 +67,7 @@ class GeneralSSLToolController extends Controller
         ]);
         if (!$this->isThrottled()) {
             $this->setRequestThrottling();
-            $zones = explode(',', $request->zones);
+            $zones = detectCFZonesFromHostnames(explode(',', $request->zones));
             VerifyCFZoneCustomSSL::dispatch($zones, auth()->user());
             flashing('MSTool is processing the request')->flash();
         } else {

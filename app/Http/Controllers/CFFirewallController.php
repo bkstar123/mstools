@@ -36,7 +36,7 @@ class CFFirewallController extends Controller
         ]);
         if (!$this->isThrottled()) {
             $this->setRequestThrottling();
-            $zones = explode(",", $request->zones);
+            $zones = detectCFZonesFromHostnames(explode(",", $request->zones));
             VerifyExistenceCFFWRule::dispatch($zones, $request->description, $request->user());
             flashing('MSTool is processing the request')->flash();
         } else {
@@ -54,7 +54,7 @@ class CFFirewallController extends Controller
     {
         if (!$this->isThrottled()) {
             $this->setRequestThrottling();
-            $zones = explode(",", $request->zones);
+            $zones = detectCFZonesFromHostnames(explode(",", $request->zones));
             $filter = new CFFWRuleFilter($request->expression);
             $rule = new CFFWRule($request->description, false, $filter, $request->action, $request->products ?? []);
             CreateCFFWRule::dispatch($zones, $rule, auth()->user());
@@ -74,7 +74,7 @@ class CFFirewallController extends Controller
     {
         if (!$this->isThrottled()) {
             $this->setRequestThrottling();
-            $zones = explode(",", $request->zones);
+            $zones = detectCFZonesFromHostnames(explode(",", $request->zones));
             UpdateCFFWRule::dispatch($zones, $request->all(), $request->user());
             flashing('MSTool is processing the request')->flash();
         } else {
@@ -92,7 +92,7 @@ class CFFirewallController extends Controller
     {
         if (!$this->isThrottled()) {
             $this->setRequestThrottling();
-            $zones = explode(",", $request->zones);
+            $zones = detectCFZonesFromHostnames(explode(",", $request->zones));
             DeleteCFFWRule::dispatch($zones, $request->description, $request->user());
             flashing('MSTool is processing the request')->flash();
         } else {
