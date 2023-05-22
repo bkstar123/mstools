@@ -12,13 +12,17 @@ use Exception;
 trait DNSQueryable
 {
     /**
+     * Get DNS A, CNAME records associate with the given domains, if the $extra is set True, then it will try to fetch NS record as well
+     *
      * @param string $domain
+     * @param bool $extra
      * @return array (nested)
      */
-    protected function getDNSRecords(string $domain)
+    protected function getDNSRecords(string $domain, bool $extra = false)
     {
         $IPs = [];
         $Aliases = [];
+        $NSs = [];
         try {
             $a_records = dns_get_record($domain, DNS_A);
         } catch (Exception $e) {
@@ -39,9 +43,22 @@ trait DNSQueryable
                 array_push($Aliases, $record['target']);
             }
         }
+        if ($extra) {
+            try {
+                $ns_records = dns_get_record($domain, DNS_NS);
+            } catch (Exception $e) {
+                $ns_records = [];
+            }
+            if (!empty($ns_records)) {
+                foreach ($ns_records as $record) {
+                    array_push($NSs, $record['target']);
+                }
+            }
+        }
         return [
             'A' => $IPs,
-            'CNAME' => $Aliases
+            'CNAME' => $Aliases,
+            'NS' => $NSs
         ];
     }
 }

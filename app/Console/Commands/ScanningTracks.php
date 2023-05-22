@@ -60,7 +60,8 @@ class ScanningTracks extends Command
         fputcsv($fop, [
             'Site',
             'A',
-            'CNAME'
+            'CNAME',
+            'NS'
         ]);
         foreach ($trackings as $tracking) {
             $goneLivedSites = $this->scan($tracking);
@@ -68,7 +69,8 @@ class ScanningTracks extends Command
                 fputcsv($fop, [
                     $site['site'],
                     $site['A'],
-                    $site['CNAME']
+                    $site['CNAME'],
+                    $site['NS']
                 ]);
             }
         }
@@ -94,20 +96,38 @@ class ScanningTracks extends Command
         $goneLivedSites = [];
         $sites = array_map(function ($site) {
             $site = idn_to_ascii(trim($site), IDNA_DEFAULT, INTL_IDNA_VARIANT_UTS46);
-            $dnsRecords = $this->getDNSRecords($site);
+            $dnsRecords = $this->getDNSRecords($site, true);
             return [
                 'site'  => $site,
                 'A'     => implode(',', $dnsRecords['A']),
-                'CNAME' => implode(',', $dnsRecords['CNAME'])
+                'CNAME' => implode(',', $dnsRecords['CNAME']),
+                'NS' => implode(',', $dnsRecords['NS'])
             ];
         }, array_merge([], array_unique(explode(',', $tracking->sites))));
         $goneLivedSites = \Arr::where($sites, function ($site) {
-            return (!empty($site['CNAME']) && str_contains($site['CNAME'], config('mstools.tracking.dxp')));
+            return (!empty($site['CNAME']) && str_contains($site['CNAME'], config('mstools.tracking.dxp'))) ||
+                   (!empty($site['NS']) && $this->validateDXPLiberateZoneNS($site['NS']));
         });
         $remainingSites = array_merge([], array_diff(\Arr::pluck($sites, 'site'), \Arr::pluck($goneLivedSites, 'site')));
         $tracking->sites = implode(",", $remainingSites);
         $tracking->tracking_size = count($remainingSites);
         $tracking->save();
         return array_merge([], $goneLivedSites);
+    }
+
+    /**
+     * Validate if the NS records of a liberate zone belong to DXP NS pairs
+     *
+     * @param string $nsRecords
+     * @return bool
+     */
+    protected function validateDXPLiberateZoneNS($nsRecords)
+    {
+        $haystack = explode(',', config('mstools.tracking.dxp_liberate_zone_ns'));
+        $needle = explode(',', $nsRecords);
+        if (empty(array_diff($needle, $haystack))) {
+            return true;
+        }
+        return false;
     }
 }
