@@ -41,6 +41,9 @@ class Kernel extends ConsoleKernel
             // Run on 1st & 15th of every month at 00:00 AM
             $schedule->command('cloudflare:checkUniversalSSLVerification')
                      ->cron('0 0 1,15 * *')
+            // Run on 14th & 28th of every month at 00:00 AM
+            $schedule->command('cloudflare:scanUniversalSSLSettingsForZones')
+                     ->cron('0 0 14,28 * *')
                      ->runInBackground();
             // Run at 18:00 on weekdays (MON->FRI)
             $schedule->command('pingdom:scanForNew')
