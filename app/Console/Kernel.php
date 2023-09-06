@@ -40,7 +40,7 @@ class Kernel extends ConsoleKernel
                      ->runInBackground();
             // Run on 1st & 15th of every month at 00:00 AM
             $schedule->command('cloudflare:checkUniversalSSLVerification')
-                     ->cron('0 0 1,15 * *')
+                     ->cron('0 0 1,15 * *');
             // Run on 14th & 28th of every month at 00:00 AM
             $schedule->command('cloudflare:scanUniversalSSLSettingsForZones')
                      ->cron('0 0 14,28 * *')
