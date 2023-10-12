@@ -74,20 +74,22 @@ class CheckAAndCnameDnsRecord implements ShouldQueue
         fputcsv($fop, [
             'URL',
             'A',
-            'CNAME'
+            'CNAME',
+            'NS'
         ]);
         foreach ($this->domains as $domain) {
             $domain = idn_to_ascii(trim($domain), IDNA_DEFAULT, INTL_IDNA_VARIANT_UTS46);
-            $dnsRecords = $this->getDNSRecords($domain);
+            $dnsRecords = $this->getDNSRecords($domain, true);
             fputcsv($fop, [
                 $domain,
                 implode(',', $dnsRecords['A']),
-                implode(',', $dnsRecords['CNAME'])
+                implode(',', $dnsRecords['CNAME']),
+                implode(',', $dnsRecords['NS'])
             ]);
         }
         fclose($fop);
         $report = Report::create([
-            'name'     => 'DNS A and CNAME records for domains ' . Carbon::createFromTimestamp(time())->setTimezone('UTC')->toDateTimeString()."(UTC).csv",
+            'name'     => 'DNS A, CNAME and NS records for domains ' . Carbon::createFromTimestamp(time())->setTimezone('UTC')->toDateTimeString()."(UTC).csv",
             'admin_id' => $this->user->id,
             'disk'     => $outputFileLocation['disk'],
             'path'     => $outputFileLocation['path'],
