@@ -107,7 +107,7 @@
 				                  placeholder="Paste the comma-seperated Pingdom check ids here">{{ old('avgsmChecks') }}</textarea>
 				    </div>
 				    <div class="row">
-				        <div class="form-group col-md-3">
+				        <div class="form-group col-md-6">
 						    <label for="avgsmFrom">From (UTC) </label>
 						    <div class="input-group">
 							    <input type="datetime" 
@@ -118,7 +118,7 @@
 							           class="form-control" />
                             </div>
 				        </div>
-				        <div class="form-group col-md-3">
+				        <div class="form-group col-md-6">
 						    <label for="avgsmTo">To (UTC) </label>
 						    @error('avgsmTo')
 						        <div class="alert alert-danger">{{ $message }}</div>
