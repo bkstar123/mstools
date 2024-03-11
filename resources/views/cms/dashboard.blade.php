@@ -100,6 +100,7 @@
 						    <div class="alert alert-danger">{{ $message }}</div>
 						@enderror
 						<textarea class="form-control"
+						          id="avgsmChecks"
 						          name="avgsmChecks"
 				                  required
 				                  rows="5" 
@@ -109,11 +110,11 @@
 				        <div class="form-group col-md-3">
 						    <label for="avgsmFrom">From (UTC) </label>
 						    <div class="input-group">
-							    <input type="date" 
+							    <input type="datetime" 
 							           required 
 							           id="avgsmFrom" 
 							           name="avgsmFrom" 
-							           value="{{ Carbon\Carbon::now()->subWeek()->setTimezone('UTC')->format("Y-m-d") }}" 
+							           value="{{ Carbon\Carbon::now()->subWeek()->setTimezone('UTC')->format("Y-m-d H:i") }}" 
 							           class="form-control" />
                             </div>
 				        </div>
@@ -123,23 +124,26 @@
 						        <div class="alert alert-danger">{{ $message }}</div>
 						    @enderror
 						    <div class="input-group">
-							    <input type="date" 
+							    <input type="datetime" 
 							           required
 							           id="avgsmTo" 
 							           name="avgsmTo" 
-							           value="{{ Carbon\Carbon::now()->setTimezone('UTC')->format("Y-m-d") }}" 
+							           value="{{ Carbon\Carbon::now()->setTimezone('UTC')->format("Y-m-d H:i") }}" 
 							           class="form-control" />
                             </div>
 				        </div>
 				    </div>
 				</div>
 				<div class="card-footer">
-					<button id="submitBtnForGetPingdomCheckAverageSummary" type="submit" class="btn btn-success">Proceed</button>
+					<button id="submitBtnForGetPingdomCheckAverageSummary" type="submit" class="btn btn-success">Generate Report</button>
+					<button id="submitBtnForGetPingdomCheckAverageSummaryUI" class="btn btn-success">See in UI</button>
 				</div>
 			</form>
 		</div>
 	</div>
 </div>
+<hr>
+<div id="avgSummaryContainer"></div>
 <hr>
 @if(file_exists(storage_path('app/last_cloudflare_jdcloud_zones.txt')))
 <div class="row">
@@ -161,6 +165,8 @@
 @endsection
 
 @push('scriptBottom')
+<script src="{{ url('/js/vendor/highcharts/highcharts.js') }}"></script>
+<script src="https://code.highcharts.com/modules/variwide.js"></script>
 <script type="text/javascript">
 	$(document).ready(function () {
 		$("#check-dns-form").submit(function () {
@@ -175,12 +181,80 @@
 		$("#pingdom-checks-export-form").submit(function () {
 			$("#submitBtnForPingdomCheckExport").attr('disabled', true);
 		});
+		$("#submitBtnForGetPingdomCheckAverageSummaryUI").click(function (e) {
+			e.preventDefault();
+			$("#avgSummaryContainer").empty();
+			$("#submitBtnForGetPingdomCheckAverageSummaryUI").prop('disabled', true);
+			setTimeout(function() {
+				$("#submitBtnForGetPingdomCheckAverageSummaryUI").prop('disabled', false);
+			}, 10000);
+			let avgsmChecks = $("#avgsmChecks").val();
+			let avgsmFrom = $("#avgsmFrom").val();
+			let avgsmTo = $("#avgsmTo").val();
+			let settings = {
+				'url': @json(route('pingdom.avg.summary.ui')),
+				'method': 'GET',
+				'data': {
+					'avgsmFrom': avgsmFrom,
+					'avgsmTo': avgsmTo,
+					'avgsmChecks': avgsmChecks
+				}
+			};
+			$.ajax(settings)
+			 .done(function(res) {
+			 	const data = JSON.parse(res);
+			 	let seriesData = [];
+				data.summary.states.forEach(function (state) {
+				    let color;
+				    switch(state.status) {
+				        case 'up':
+				            color = '#0ac210';
+				            break;
+				        case 'down':
+				            color = '#f70000';
+				            break;
+				        case 'unknown':
+				            color = '#b0aeae';
+				            break;
+				    };	5
+				    seriesData.push({
+				        name: moment.unix(state.timefrom).utc().format("YYYY-MM-DD HH:mm"),
+				        y: 1,
+				        z: state.timeto - state.timefrom,
+				        color: color
+				    });
+				});
+				let chart = Highcharts.chart('avgSummaryContainer', {
+				    chart: {
+				        type: 'variwide'
+				    },
+				    title: {
+				        text: 'Outage Summary'
+				    },				    
+				    xAxis: {
+				        type: 'category',
+				        visible: false
+				    },
+				    yAxis: {
+				        visible: false
+				    },				    
+				    series: [{
+				        name: 'Outage Summary',
+				        data: seriesData,
+				        borderRadius: 3,
+				        borderWidth: 0,
+				        minPointLength: 10
+				    }]
+				});
+
+			});
+		});
 		$.datetimepicker.setLocale('en');
         let settings = {
             inline:true,
             weeks: true,
-            format: 'Y-m-d',
-            timepicker : false,
+            format: 'Y-m-d H:i',
+            timepicker : true,
         }
         $("#avgsmFrom").datetimepicker(settings);
         $("#avgsmTo").datetimepicker(settings);

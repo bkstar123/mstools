@@ -18,6 +18,10 @@ Route::get('/cms/dashboard', function () {
 })->name('dashboard.index')
   ->middleware('bkscms-auth:admins');
 
+Route::get('/cms/pingdom/get-avg-summary-ui-for-check', 'PingdomController@getAverageSummaryUI')
+  ->name('pingdom.avg.summary.ui')
+  ->middleware('bkscms-auth:admins');
+
 Route::get('/cms/about-me', 'AboutController@show')->name('about.show')
   ->middleware('bkscms-auth:admins');
 

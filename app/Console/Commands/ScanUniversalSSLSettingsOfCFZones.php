@@ -51,8 +51,8 @@ class ScanUniversalSSLSettingsOfCFZones extends Command
         Storage::disk($outputFileLocation['disk'])->makeDirectory(dirname($outputFileLocation['path']));
         $fop = fopen(Storage::disk($outputFileLocation['disk'])->path($outputFileLocation['path']), 'w');
         fputcsv($fop, [
-            'Zone', 
-            'Universal SSL Enabled', 
+            'Zone',
+            'Universal SSL Enabled',
             'CA'
         ]);
         $page = 1;
@@ -67,8 +67,8 @@ class ScanUniversalSSLSettingsOfCFZones extends Command
                     fputcsv($fop, [$zone['name'], '', '']);
                 } else {
                     fputcsv($fop, [
-                        $zone['name'], 
-                        $result['enabled'] ? 'true' : 'false', 
+                        $zone['name'],
+                        $result['enabled'] ? 'true' : 'false',
                         $result['certificate_authority'] ?? ''
                     ]);
                 }

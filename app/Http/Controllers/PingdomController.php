@@ -7,6 +7,8 @@
  */
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
+use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use App\Jobs\ExportPingdomChecks;
 use App\Jobs\GetPingdomChecksDetails;
@@ -88,5 +90,44 @@ class PingdomController extends Controller
             flashing('MSTool is busy processing your first request, please wait for 10 seconds before sending another one')->warning()->flash();
         }
         return back();
+    }
+
+    /**
+     * Get average uptime summary of a Pingdom check (if given a list, only the first one in the list is shown)
+     *
+     * @param Illuminate\Http\Request
+     * @return Illuminate\Http\Response
+     */
+    public function getAverageSummaryUI(Request $request)
+    {
+        $request->validate([
+            'avgsmChecks' => 'required',
+            'avgsmFrom'   => 'required|date',
+            'avgsmTo'     => 'required|date|after:avgsmFrom'
+        ], [
+            'avgsmTo.after' => "The To (UTC) field must be a date after the one in the From (UTC) field"
+        ]);
+        if (!$this->isThrottled()) {
+            $this->setRequestThrottling();
+            $checkIDs = array_map(function ($checkID) {
+                return trim($checkID);
+            }, explode(',', $request->avgsmChecks));
+            $pingdomCheck = resolve('pingdomCheck');
+            $httpClient = new Client([
+                'base_uri' => config('bkstar123_laravel_pingdombuddy.pingdom.base_url'),
+                'headers'  => [
+                    "Authorization"   => "Bearer " . config('bkstar123_laravel_pingdombuddy.pingdom.api_token'),
+                    "Cache-Control"   => "no-cache",
+                    "Accept-Encoding" => "gzip"
+                ]
+            ]);
+            $data = [];
+            $checkID = $checkIDs[0];
+            $fromTS = Carbon::parse($request->avgsmFrom, 'UTC')->timestamp;
+            $toTS = Carbon::parse($request->avgsmTo, 'UTC')->timestamp;
+            $path = config('bkstar123_laravel_pingdombuddy.pingdom.base_url') . "summary.outage/$checkID?from=$fromTS&to=$toTS&order=asc";
+            $res = $httpClient->request('GET', $path);
+            return $res->getBody()->getContents();
+        }
     }
 }
