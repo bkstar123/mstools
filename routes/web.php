@@ -22,8 +22,12 @@ Route::get('/cms/pingdom/get-avg-summary-ui-for-check', 'PingdomController@getAv
   ->name('pingdom.avg.summary.ui')
   ->middleware('bkscms-auth:admins');
 
-Route::get('/cms/cf-for-saas/get-custon-origin-server', 'CF4SaaSGeneralController@getCustomOriginServer')
+Route::post('/cms/cf-for-saas/get-custon-origin-server', 'CF4SaaSGeneralController@getCustomOriginServer')
   ->name('cf4saas.getcustomoriginserver')
+  ->middleware('bkscms-auth:admins');
+
+Route::post('/cms/cf-for-saas/export-hostnames', 'CF4SaaSGeneralController@exportCF4SaaSHostnames')
+  ->name('cf4saas.exporthostnames')
   ->middleware('bkscms-auth:admins');
 
 Route::get('/cms/about-me', 'AboutController@show')->name('about.show')

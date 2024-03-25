@@ -194,6 +194,15 @@
                         autoHide: false,
                     })
                 });
+            Echo.private('user-' + {{ auth()->user()->id }})
+                .listen('.export.cf4sass.hostnames.completed', (data) => {
+                    $.notify(`MSTool has completed fetching details for the given CF for SaaS hostnames as requested by ${data.requestor}`, {
+                        position: "right bottom",
+                        className: "success",
+                        clickToHide: true,
+                        autoHide: false,
+                    })
+                });
         </script>
         @stack('scriptBottom')
     </body>

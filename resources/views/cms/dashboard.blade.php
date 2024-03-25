@@ -180,7 +180,8 @@
 				    class="form-control"></input>
 			</div>
 			<div class="card-footer">
-				<button id="submitBtnForSearchSaaSHostname" class="btn btn-success">Get Custom Origin Server</button>
+				<button id="submitBtnForExportSaaSHostnames" class="btn btn-success">Export to CSV</button>
+				<button id="submitBtnForSearchSaaSHostnames" class="btn btn-success">Get Custom Origin Server</button>
 			</div>
 		</div>
 	</div>
@@ -281,16 +282,22 @@
         }
         $("#avgsmFrom").datetimepicker(datetimeSettings);
         $("#avgsmTo").datetimepicker(datetimeSettings);
-        $("#submitBtnForSearchSaaSHostname").click(function (e) {
+        $("#submitBtnForSearchSaaSHostnames").click(function (e) {
         	e.preventDefault();
-        	$("#submitBtnForSearchSaaSHostname").prop('disabled', true);
+        	$("#submitBtnForSearchSaaSHostnames").prop('disabled', true);
 			setTimeout(function() {
-				$("#submitBtnForSearchSaaSHostname").prop('disabled', false);
+				$("#submitBtnForSearchSaaSHostnames").prop('disabled', false);
 			}, 10000);
         	let saasHostnames = $("#saasHostnames").val();
+        	if (saasHostnames.length <= 0) {
+        		alert("You must provide the list of hostnames");
+        	}
         	let settings = {
 				'url': @json(route('cf4saas.getcustomoriginserver')),
-				'method': 'GET',
+				'method': 'POST',
+				'headers': {
+					'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+				},
 				'data': {
 					'saasHostnames': saasHostnames
 				}
@@ -300,7 +307,39 @@
 					let html = `<hr/><table class="table table-striped" id="cf4SaasSearchDisplayTable"
 					<thead><tr><th>Hostname</th><th>Custom Origin Server</th><th>Status</th><th>Created At</th></tr></thead>
 					<tbody id="cf4SaasSearchDisplayBody"></tbody></table>`;
-					$(html).insertAfter('#submitBtnForSearchSaaSHostname');
+					$(html).insertAfter('#submitBtnForSearchSaaSHostnames');
+				}
+				res.forEach(function (item) {
+					$("#cf4SaasSearchDisplayBody").append(`<tr><td>${item.hostname}</td><td>${item.custom_origin_server}</td><td>${item.status}</td><td>${item.created_at}</td></tr>`);
+				});
+			});
+        });
+        $("#submitBtnForExportSaaSHostnames").click(function (e) {
+        	e.preventDefault();
+        	$("#submitBtnForExportSaaSHostnames").prop('disabled', true);
+			setTimeout(function() {
+				$("#submitBtnForExportSaaSHostnames").prop('disabled', false);
+			}, 10000);
+        	let saasHostnames = $("#saasHostnames").val();
+        	if (saasHostnames.length <= 0) {
+        		alert("You must provide the list of hostnames");
+        	}
+        	let settings = {
+				'url': @json(route('cf4saas.exporthostnames')),
+				'method': 'POST',
+				'headers': {
+					'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+				},
+				'data': {
+					'saasHostnames': saasHostnames
+				}
+			};
+			$.ajax(settings).done(function (res) {
+				if ($("#cf4SaasSearchDisplayTable").length <= 0) {
+					let html = `<hr/><table class="table table-striped" id="cf4SaasSearchDisplayTable"
+					<thead><tr><th>Hostname</th><th>Custom Origin Server</th><th>Status</th><th>Created At</th></tr></thead>
+					<tbody id="cf4SaasSearchDisplayBody"></tbody></table>`;
+					$(html).insertAfter('#submitBtnForSearchSaaSHostnames');
 				}
 				res.forEach(function (item) {
 					$("#cf4SaasSearchDisplayBody").append(`<tr><td>${item.hostname}</td><td>${item.custom_origin_server}</td><td>${item.status}</td><td>${item.created_at}</td></tr>`);

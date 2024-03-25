@@ -13,6 +13,7 @@ use App\Events\ExportPingdomChecksCompleted;
 use App\Events\VerifyDomainSSLDataCompleted;
 use App\Events\HttpLogJson2CsvConversionDone;
 use App\Events\VerifyCFZoneCustomSSLCompleted;
+use App\Events\ExportCF4SaaSHostnamesCompleted;
 use App\Events\GetPingdomChecksDetailsCompleted;
 use App\Events\VerifyExistenceCFFWRuleCompleted;
 use App\Events\GetPingdomChecksAvgSummaryCompleted;
@@ -30,6 +31,7 @@ use App\Listeners\SendNotificationCFZoneCustomSSLCompletion;
 use App\Listeners\SendNotificationPingdomCheckExportCompletion;
 use App\Listeners\SendNotificationHttpLogJson2CsvConversionDone;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
+use App\Listeners\SendNotificationExportCF4SaaSHostnamesCompleted;
 use App\Listeners\SendNotificationGetPingdomChecksDetailsCompleted;
 use App\Listeners\SendNotificationVerifyExistenceCFFWRuleCompleted;
 use App\Listeners\SendNotificationFetchCFDNSTargetsForHostnamesCompleted;
@@ -88,6 +90,9 @@ class EventServiceProvider extends ServiceProvider
         ],
         FetchCFDNSTargetsForHostnamesCompleted::class => [
             SendNotificationFetchCFDNSTargetsForHostnamesCompleted::class
+        ],
+        ExportCF4SaaSHostnamesCompleted::class => [
+            SendNotificationExportCF4SaaSHostnamesCompleted::class
         ]
     ];
 
