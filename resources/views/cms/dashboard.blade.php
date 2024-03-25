@@ -181,7 +181,7 @@
 			</div>
 			<div class="card-footer">
 				<button id="submitBtnForExportSaaSHostnames" class="btn btn-success">Export to CSV</button>
-				<button id="submitBtnForSearchSaaSHostnames" class="btn btn-success">Get Custom Origin Server</button>
+				<button id="submitBtnForSearchSaaSHostnames" class="btn btn-success">View on browser</button>
 			</div>
 		</div>
 	</div>
