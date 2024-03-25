@@ -173,9 +173,9 @@
 			<div class="card-body">
 				<input type="text"
 				    required
-				    id="saasHostname"
-				    name="saasHostname"
-				    value="{{ old('saasHostname') }}"
+				    id="saasHostnames"
+				    name="saasHostnames"
+				    value="{{ old('saasHostnames') }}"
 				    placeholder="Enter your inquired CF-for-SaaS hostname"
 				    class="form-control"></input>
 			</div>
@@ -287,12 +287,12 @@
 			setTimeout(function() {
 				$("#submitBtnForSearchSaaSHostname").prop('disabled', false);
 			}, 10000);
-        	let saasHostname = $("#saasHostname").val();
+        	let saasHostnames = $("#saasHostnames").val();
         	let settings = {
 				'url': @json(route('cf4saas.getcustomoriginserver')),
 				'method': 'GET',
 				'data': {
-					'saasHostname': saasHostname
+					'saasHostnames': saasHostnames
 				}
 			};
 			$.ajax(settings).done(function (res) {
@@ -302,7 +302,9 @@
 					<tbody id="cf4SaasSearchDisplayBody"></tbody></table>`;
 					$(html).insertAfter('#submitBtnForSearchSaaSHostname');
 				}
-				$("#cf4SaasSearchDisplayBody").append(`<tr><td>${res.hostname}</td><td>${res.custom_origin_server}</td><td>${res.status}</td><td>${res.created_at}</td></tr>`);
+				res.forEach(function (item) {
+					$("#cf4SaasSearchDisplayBody").append(`<tr><td>${item.hostname}</td><td>${item.custom_origin_server}</td><td>${item.status}</td><td>${item.created_at}</td></tr>`);
+				});
 			});
         });
 	});

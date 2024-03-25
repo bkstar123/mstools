@@ -127,16 +127,19 @@ if (! function_exists('detectCFZonesFromHostnames')) {
 if (! function_exists('getOriginServerOfCF4SaasHostname')) {
     /**
      * Get origin server of the given Cloudflare for SaaS hostname
+     * @param $hostnames string (e.g: "domain1,domain2,domain3")
+     * @param $status string
      *
      * @return array
      */
-    function getOriginServerOfCF4SaasHostname($hostname = null, $status = null)
+    function getOriginServerOfCF4SaasHostname($hostnames = null, $status = null)
     {
         $saasHostnames = file_exists(storage_path('app/cloudflare_saas_hostnames.txt')) ? json_decode(file_get_contents(storage_path('app/cloudflare_saas_hostnames.txt')), true) : [];
         $saasHostnames = collect($saasHostnames);
-        if (!is_null($hostname)) {
-            $saasHostnames = $saasHostnames->filter(function ($host) use ($hostname) {
-                return $host['hostname'] == $hostname;
+        $hostnames = explode(",", $hostnames);
+        if (!empty($hostnames)) {
+            $saasHostnames = $saasHostnames->filter(function ($host) use ($hostnames) {
+                return in_array($host['hostname'], $hostnames);
             });
         }
         if (!is_null($status)) {

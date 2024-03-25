@@ -18,11 +18,11 @@ class CF4SaaSGeneralController extends Controller
     public function getCustomOriginServer(Request $request)
     {
         $request->validate([
-            'saasHostname' => 'required',
+            'saasHostnames' => 'required',
         ]);
         if (!$this->isThrottled()) {
             $this->setRequestThrottling();
-            return array_first(getOriginServerOfCF4SaasHostname($request->saasHostname));
+            return getOriginServerOfCF4SaasHostname($request->saasHostnames);
         }
     }
 }
