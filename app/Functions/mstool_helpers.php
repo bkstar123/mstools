@@ -1,4 +1,7 @@
 <?php
+
+use Illuminate\Support\Arr;
+
 /**
  * mstools helper functions
  *
@@ -118,5 +121,29 @@ if (! function_exists('detectCFZonesFromHostnames')) {
         });
         $apexRootDomains = array_merge([], $apexRootDomains);
         return array_merge([], array_unique(array_merge($apexRootDomains, $certZones)));
+    }
+}
+
+if (! function_exists('getOriginServerOfCF4SaasHostname')) {
+    /**
+     * Get origin server of the given Cloudflare for SaaS hostname
+     *
+     * @return array
+     */
+    function getOriginServerOfCF4SaasHostname($hostname = null, $status = null)
+    {
+        $saasHostnames = file_exists(storage_path('app/cloudflare_saas_hostnames.txt')) ? json_decode(file_get_contents(storage_path('app/cloudflare_saas_hostnames.txt')), true) : [];
+        $saasHostnames = collect($saasHostnames);
+        if (!is_null($hostname)) {
+            $saasHostnames = $saasHostnames->filter(function ($host) use ($hostname) {
+                return $host['hostname'] == $hostname;
+            });
+        }
+        if (!is_null($status)) {
+            $saasHostnames = $saasHostnames->filter(function ($host) use ($status) {
+                return $host['status'] == $status;
+            });
+        }
+        return array_merge([], $saasHostnames->toArray());
     }
 }

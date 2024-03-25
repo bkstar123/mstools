@@ -162,6 +162,29 @@
 	</div>
 </div>
 @endif
+<div class="row">
+	<div class="col col-md-12">
+		<div class="card card-success">
+			<div class="card-header">
+				<h3 class="card-title">
+				    Search for Custom Origin Server of the given CF-for-SaaS hostname 
+				</h3>
+			</div>
+			<div class="card-body">
+				<input type="text"
+				    required
+				    id="saasHostname"
+				    name="saasHostname"
+				    value="{{ old('saasHostname') }}"
+				    placeholder="Enter your inquired CF-for-SaaS hostname"
+				    class="form-control"></input>
+			</div>
+			<div class="card-footer">
+				<button id="submitBtnForSearchSaaSHostname" class="btn btn-success">Get Custom Origin Server</button>
+			</div>
+		</div>
+	</div>
+</div>
 @endsection
 
 @push('scriptBottom')
@@ -250,14 +273,38 @@
 			});
 		});
 		$.datetimepicker.setLocale('en');
-        let settings = {
+        let datetimeSettings = {
             inline:true,
             weeks: true,
             format: 'Y-m-d H:i',
             timepicker : true,
         }
-        $("#avgsmFrom").datetimepicker(settings);
-        $("#avgsmTo").datetimepicker(settings);
+        $("#avgsmFrom").datetimepicker(datetimeSettings);
+        $("#avgsmTo").datetimepicker(datetimeSettings);
+        $("#submitBtnForSearchSaaSHostname").click(function (e) {
+        	e.preventDefault();
+        	$("#submitBtnForSearchSaaSHostname").prop('disabled', true);
+			setTimeout(function() {
+				$("#submitBtnForSearchSaaSHostname").prop('disabled', false);
+			}, 10000);
+        	let saasHostname = $("#saasHostname").val();
+        	let settings = {
+				'url': @json(route('cf4saas.getcustomoriginserver')),
+				'method': 'GET',
+				'data': {
+					'saasHostname': saasHostname
+				}
+			};
+			$.ajax(settings).done(function (res) {
+				if ($("#cf4SaasSearchDisplayTable").length <= 0) {
+					let html = `<hr/><table class="table table-striped" id="cf4SaasSearchDisplayTable"
+					<thead><tr><th>Hostname</th><th>Custom Origin Server</th><th>Status</th><th>Created At</th></tr></thead>
+					<tbody id="cf4SaasSearchDisplayBody"></tbody></table>`;
+					$(html).insertAfter('#submitBtnForSearchSaaSHostname');
+				}
+				$("#cf4SaasSearchDisplayBody").append(`<tr><td>${res.hostname}</td><td>${res.custom_origin_server}</td><td>${res.status}</td><td>${res.created_at}</td></tr>`);
+			});
+        });
 	});
 </script>
 @endpush

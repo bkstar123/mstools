@@ -57,6 +57,9 @@ class ScanForAllZones extends Command
             }
             ++$page;
         } while (!empty($zones));
+        if (empty($allZones)) {
+            return;
+        }
         file_put_contents(storage_path('app/cloudflare_all_zones.txt'), json_encode($allZones));
     }
 }
