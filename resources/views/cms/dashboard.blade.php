@@ -176,7 +176,7 @@
 				    id="saasHostnames"
 				    name="saasHostnames"
 				    value="{{ old('saasHostnames') }}"
-				    placeholder="Enter your inquired CF-for-SaaS hostname"
+				    placeholder="Enter your inquired CF-for-SaaS hostnames (seperated by comma)"
 				    class="form-control"></input>
 			</div>
 			<div class="card-footer">
