@@ -137,6 +137,9 @@ if (! function_exists('getOriginServerOfCF4SaasHostname')) {
         $saasHostnames = file_exists(storage_path('app/cloudflare_saas_hostnames.txt')) ? json_decode(file_get_contents(storage_path('app/cloudflare_saas_hostnames.txt')), true) : [];
         $saasHostnames = collect($saasHostnames);
         $hostnames = explode(",", $hostnames);
+        $hostnames = array_map(function ($hostname) {
+            return idn_to_ascii(trim($hostname), IDNA_DEFAULT, INTL_IDNA_VARIANT_UTS46);
+        }, $hostnames);
         if (!empty($hostnames)) {
             $saasHostnames = $saasHostnames->filter(function ($host) use ($hostnames) {
                 return in_array($host['hostname'], $hostnames);
