@@ -127,7 +127,7 @@ if (! function_exists('detectCFZonesFromHostnames')) {
 if (! function_exists('getOriginServerOfCF4SaasHostname')) {
     /**
      * Get origin server of the given Cloudflare for SaaS hostname
-     * @param $hostnames array 
+     * @param $hostnames array
      * @param $status string
      *
      * @return array

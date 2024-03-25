@@ -5,7 +5,6 @@ namespace App\Listeners;
 use App\Events\ExportCF4SaaSHostnamesCompleted;
 use App\Notifications\ExportCF4SaaSHostnamesNotification;
 
-
 class SendNotificationExportCF4SaaSHostnamesCompleted
 {
     /**

@@ -32,7 +32,7 @@ class CF4SaaSGeneralController extends Controller
     }
 
     /**
-     * Get custom origin server of a given CF-for-SaaS hostname
+     * Export details of the given CF4SaaS hostnames
      *
      * @param Illuminate\Http\Request
      * @return Illuminate\Http\Response
@@ -44,10 +44,14 @@ class CF4SaaSGeneralController extends Controller
         ]);
         if (!$this->isThrottled()) {
             $this->setRequestThrottling();
-            $hostnames = explode(",", $request->saasHostnames);
-            $hostnames = array_map(function ($hostname) {
-                return idn_to_ascii(trim($hostname), IDNA_DEFAULT, INTL_IDNA_VARIANT_UTS46);
-            }, $hostnames);
+            if ($request->saasHostnames == "*") {
+                $hostnames = []; // if given "*", then export full list of CF4SaaS hostnames
+            } else {
+                $hostnames = explode(",", $request->saasHostnames);
+                $hostnames = array_map(function ($hostname) {
+                    return idn_to_ascii(trim($hostname), IDNA_DEFAULT, INTL_IDNA_VARIANT_UTS46);
+                }, $hostnames);
+            }
             ExportCF4SaaSHostnames::dispatch(auth()->user(), $hostnames);
         }
     }

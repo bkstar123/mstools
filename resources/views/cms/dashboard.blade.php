@@ -322,7 +322,7 @@
 			}, 10000);
         	let saasHostnames = $("#saasHostnames").val();
         	if (saasHostnames.length <= 0) {
-        		alert("You must provide the list of hostnames");
+        		alert("You must provide the list of hostnames, or enter '*' to export all");
         	}
         	let settings = {
 				'url': @json(route('cf4saas.exporthostnames')),
@@ -335,15 +335,7 @@
 				}
 			};
 			$.ajax(settings).done(function (res) {
-				if ($("#cf4SaasSearchDisplayTable").length <= 0) {
-					let html = `<hr/><table class="table table-striped" id="cf4SaasSearchDisplayTable"
-					<thead><tr><th>Hostname</th><th>Custom Origin Server</th><th>Status</th><th>Created At</th></tr></thead>
-					<tbody id="cf4SaasSearchDisplayBody"></tbody></table>`;
-					$(html).insertAfter('#submitBtnForSearchSaaSHostnames');
-				}
-				res.forEach(function (item) {
-					$("#cf4SaasSearchDisplayBody").append(`<tr><td>${item.hostname}</td><td>${item.custom_origin_server}</td><td>${item.status}</td><td>${item.created_at}</td></tr>`);
-				});
+				alert("MSTools is processing your request, close this dialog and wait for notification of completion")
 			});
         });
 	});
