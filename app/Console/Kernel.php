@@ -61,6 +61,9 @@ class Kernel extends ConsoleKernel
             $schedule->command('cloudflare:scanForAllZones')
                      ->hourly()
                      ->runInBackground();
+            $schedule->command('cloudflare:scanCF4SaaSHostnames')
+                     ->hourly()
+                     ->runInBackground();
         }
     }
 
