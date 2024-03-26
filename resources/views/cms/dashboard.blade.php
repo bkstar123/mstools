@@ -304,9 +304,9 @@
 			};
 			$.ajax(settings).done(function (res) {
 				if ($("#cf4SaasSearchDisplayTable").length <= 0) {
-					let html = `<hr/><table class="table table-striped" id="cf4SaasSearchDisplayTable"
+					let html = `<hr/><div class="card-body table-responsive p-0"><table class="table table-hover table-bordered" id="cf4SaasSearchDisplayTable"
 					<thead><tr><th>Hostname</th><th>Custom Origin Server</th><th>Status</th><th>Created At</th></tr></thead>
-					<tbody id="cf4SaasSearchDisplayBody"></tbody></table>`;
+					<tbody id="cf4SaasSearchDisplayBody"></tbody></table></div>`;
 					$(html).insertAfter('#submitBtnForSearchSaaSHostnames');
 				}
 				res.forEach(function (item) {
