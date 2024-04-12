@@ -61,8 +61,7 @@ class ScanningTracks extends Command
             'Site',
             'A',
             'CNAME',
-            'NS',
-            'CF4SaaS Custom Origin Server'
+            'NS'
         ]);
         foreach ($trackings as $tracking) {
             $goneLivedSites = $this->scan($tracking);
@@ -71,8 +70,7 @@ class ScanningTracks extends Command
                     $site['site'],
                     $site['A'],
                     $site['CNAME'],
-                    $site['NS'],
-                    $site['CF4SaaS Custom Origin Server']
+                    $site['NS']
                 ]);
             }
         }
@@ -96,45 +94,25 @@ class ScanningTracks extends Command
     protected function scan(Tracking $tracking)
     {
         $goneLivedSites = [];
-        $sites = array_merge([], array_unique(explode(',', $tracking->sites)));
         $sites = array_map(function ($site) {
-            return idn_to_ascii(trim($site), IDNA_DEFAULT, INTL_IDNA_VARIANT_UTS46);
-        }, $sites);
-        // Filter active Cloudflare for SaaS hostnames
-        $cf4saasGoneLiveSites = getOriginServerOfCF4SaasHostname($sites, 'active'); 
-        $cf4saasGoneLiveSites = array_map(function ($site) {
-            return [
-                'site'  => $site['hostname'],
-                'A'     => 'No need to check as this is a CF for SaaS hostname',
-                'CNAME' => 'No need to check as this is a CF for SaaS hostname',
-                'NS'    => 'No need to check as this is a CF for SaaS hostname',
-                'CF4SaaS Custom Origin Server' => $site['custom_origin_server']
-            ];
-        }, $cf4saasGoneLiveSites);
-        // Filter non Cloudflare for SaaS hostnames
-        $nonCF4SaaSSites = array_merge([], array_diff($sites, \Arr::pluck(getOriginServerOfCF4SaasHostname($sites), 'hostname')));
-        // Transform to an associative array
-        $nonCF4SaaSSites = array_map(function ($site) {
+            $site = idn_to_ascii(trim($site), IDNA_DEFAULT, INTL_IDNA_VARIANT_UTS46);
             $dnsRecords = $this->getDNSRecords($site, true);
             return [
                 'site'  => $site,
                 'A'     => implode(',', $dnsRecords['A']),
                 'CNAME' => implode(',', $dnsRecords['CNAME']),
-                'NS' => implode(',', $dnsRecords['NS']),
-                'CF4SaaS Custom Origin Server' => ''
+                'NS' => implode(',', $dnsRecords['NS'])
             ];
-        }, $nonCF4SaaSSites);
-        $goneLivedSites = \Arr::where($nonCF4SaaSSites, function ($site) {
+        }, array_merge([], array_unique(explode(',', $tracking->sites))));
+        $goneLivedSites = \Arr::where($sites, function ($site) {
             return (!empty($site['CNAME']) && str_contains($site['CNAME'], config('mstools.tracking.dxp'))) ||
                    (!empty($site['NS']) && $this->validateDXPLiberateZoneNS($site['NS']));
         });
-        $goneLivedSites = array_merge($goneLivedSites, $cf4saasGoneLiveSites); // Full list of gone-live sites (i.e both standard DXP sites and CF for SaaS sites)
-        $goneLivedSites = array_merge([], $goneLivedSites);  // Reset array indices
-        $remainingSites = array_merge([], array_diff($sites, \Arr::pluck($goneLivedSites, 'site')));
+        $remainingSites = array_merge([], array_diff(\Arr::pluck($sites, 'site'), \Arr::pluck($goneLivedSites, 'site')));
         $tracking->sites = implode(",", $remainingSites);
         $tracking->tracking_size = count($remainingSites);
         $tracking->save();
-        return $goneLivedSites;
+        return array_merge([], $goneLivedSites);
     }
 
     /**
