@@ -56,10 +56,6 @@ class ScanCF4SaaSHostnames extends Command
                 $saasHostnames = array_merge($saasHostnames, $data);
             }
         }
-        $notActiveHostnames = array_merge([], array_filter($saasHostnames, function ($hostname) {
-            return $hostname["status"] != "active";
-        }));
         file_put_contents(storage_path('app/cloudflare_saas_hostnames.txt'), json_encode($saasHostnames));
-        file_put_contents(storage_path('app/cloudflare_saas_hostnames_not_active.txt'), json_encode($notActiveHostnames));
     }
 }
