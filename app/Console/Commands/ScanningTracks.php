@@ -93,7 +93,6 @@ class ScanningTracks extends Command
      */
     protected function scan(Tracking $tracking)
     {
-        $goneLivedSites = [];
         $sites = array_map(function ($site) {
             $site = idn_to_ascii(trim($site), IDNA_DEFAULT, INTL_IDNA_VARIANT_UTS46);
             $dnsRecords = $this->getDNSRecords($site, true);
@@ -101,17 +100,32 @@ class ScanningTracks extends Command
                 'site'  => $site,
                 'A'     => implode(',', $dnsRecords['A']),
                 'CNAME' => implode(',', $dnsRecords['CNAME']),
-                'NS' => implode(',', $dnsRecords['NS'])
+                'NS' => implode(',', $dnsRecords['NS']),
+                'saas_custom_orifin_server' => '',
+                'saas_ssl_type' => '',
+                'saas_ssl_status' => ''
             ];
         }, array_merge([], array_unique(explode(',', $tracking->sites))));
-        $goneLivedSites = \Arr::where($sites, function ($site) {
-            return (!empty($site['CNAME']) && str_contains($site['CNAME'], config('mstools.tracking.dxp'))) ||
-                   (!empty($site['NS']) && $this->validateDXPLiberateZoneNS($site['NS']));
-        });
+        $goneLivedSites = $this->scanByDNS($sites);
         $remainingSites = array_merge([], array_diff(\Arr::pluck($sites, 'site'), \Arr::pluck($goneLivedSites, 'site')));
         $tracking->sites = implode(",", $remainingSites);
         $tracking->tracking_size = count($remainingSites);
         $tracking->save();
+        return array_merge([], $goneLivedSites);
+    }
+
+    /**
+     * Scan the given sites to detect go-live according to DNS records
+     *
+     * @param $sites array  
+     * @return array
+     */
+    protected function scanByDNS($sites)
+    {
+        $goneLivedSites = \Arr::where($sites, function ($site) {
+            return (!empty($site['CNAME']) && str_contains($site['CNAME'], config('mstools.tracking.dxp'))) ||
+                   (!empty($site['NS']) && $this->validateDXPLiberateZoneNS($site['NS']));
+        });
         return array_merge([], $goneLivedSites);
     }
 
