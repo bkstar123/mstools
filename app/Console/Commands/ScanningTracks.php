@@ -61,7 +61,11 @@ class ScanningTracks extends Command
             'Site',
             'A',
             'CNAME',
-            'NS'
+            'NS',
+            'saas_custom_origin_server',
+            'saas_ssl_type',
+            'saas_ssl_status',
+            'Note'
         ]);
         foreach ($trackings as $tracking) {
             $goneLivedSites = $this->scan($tracking);
@@ -70,7 +74,11 @@ class ScanningTracks extends Command
                     $site['site'],
                     $site['A'],
                     $site['CNAME'],
-                    $site['NS']
+                    $site['NS'],
+                    $site['saas_custom_origin_server'],
+                    $site['saas_ssl_type'],
+                    $site['saas_ssl_status'],
+                    $site['saas_custom_origin_server'] != "N/A" && $site['saas_ssl_type'] != "dv" ? "This hostname uses custom certificate, please check further" : ''
                 ]);
             }
         }
@@ -94,20 +102,14 @@ class ScanningTracks extends Command
     protected function scan(Tracking $tracking)
     {
         $sites = array_map(function ($site) {
-            $site = idn_to_ascii(trim($site), IDNA_DEFAULT, INTL_IDNA_VARIANT_UTS46);
-            $dnsRecords = $this->getDNSRecords($site, true);
-            return [
-                'site'  => $site,
-                'A'     => implode(',', $dnsRecords['A']),
-                'CNAME' => implode(',', $dnsRecords['CNAME']),
-                'NS' => implode(',', $dnsRecords['NS']),
-                'saas_custom_orifin_server' => '',
-                'saas_ssl_type' => '',
-                'saas_ssl_status' => ''
-            ];
+            return idn_to_ascii(trim($site), IDNA_DEFAULT, INTL_IDNA_VARIANT_UTS46);
         }, array_merge([], array_unique(explode(',', $tracking->sites))));
-        $goneLivedSites = $this->scanByDNS($sites);
-        $remainingSites = array_merge([], array_diff(\Arr::pluck($sites, 'site'), \Arr::pluck($goneLivedSites, 'site')));
+        $cf4SaaSSites = \Arr::pluck(getOriginServerOfCF4SaasHostname($sites), 'hostname');
+        $standardSites = array_merge([], array_diff($sites, $cf4SaaSSites));
+        $goneLivedStandardSites = $this->scanByDNS($standardSites);
+        $goneLivedCF4SaaSSites = $this->scanCF4SaaSHostnameBySSLStatus($cf4SaaSSites);
+        $goneLivedSites = array_merge($goneLivedStandardSites, $goneLivedCF4SaaSSites);
+        $remainingSites = array_merge([], array_diff($sites, \Arr::pluck($goneLivedSites, 'site')));
         $tracking->sites = implode(",", $remainingSites);
         $tracking->tracking_size = count($remainingSites);
         $tracking->save();
@@ -117,16 +119,54 @@ class ScanningTracks extends Command
     /**
      * Scan the given sites to detect go-live according to DNS records
      *
-     * @param $sites array  
+     * @param $sites array
      * @return array
      */
     protected function scanByDNS($sites)
     {
+        $sites = array_map(function ($site) {
+            $dnsRecords = $this->getDNSRecords($site, true);
+            return [
+                'site'  => $site,
+                'A'     => implode(',', $dnsRecords['A']),
+                'CNAME' => implode(',', $dnsRecords['CNAME']),
+                'NS' => implode(',', $dnsRecords['NS']),
+                'saas_custom_origin_server' => 'N/A',
+                'saas_ssl_type' => '',
+                'saas_ssl_status' => ''
+            ];
+        }, $sites);
         $goneLivedSites = \Arr::where($sites, function ($site) {
             return (!empty($site['CNAME']) && str_contains($site['CNAME'], config('mstools.tracking.dxp'))) ||
                    (!empty($site['NS']) && $this->validateDXPLiberateZoneNS($site['NS']));
         });
         return array_merge([], $goneLivedSites);
+    }
+
+    /**
+     * Scan the given sites for CF4SaaS Hostnames that have active SSL status
+     *
+     * @param $sites array
+     * @return array
+     */
+    protected function scanCF4SaaSHostnameBySSLStatus($sites)
+    {
+        $activeCF4SaaSHostnames = getOriginServerOfCF4SaasHostname($sites, 'active');
+        $goneLivedHostnames = \Arr::where($activeCF4SaaSHostnames, function ($hostname) {
+            return $hostname['ssl_status'] == 'active';
+        });
+        $goneLivedHostnames = array_map(function ($hostname) {
+            return [
+                'site'  => $hostname['hostname'],
+                'A'     => '',
+                'CNAME' => '',
+                'NS' => '',
+                'saas_custom_origin_server' => $hostname['custom_origin_server'],
+                'saas_ssl_type' => $hostname['ssl_type'],
+                'saas_ssl_status' => $hostname['ssl_status']
+            ];
+        }, $goneLivedHostnames);
+        return $goneLivedHostnames;
     }
 
     /**
