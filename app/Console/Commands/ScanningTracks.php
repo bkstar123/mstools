@@ -104,10 +104,12 @@ class ScanningTracks extends Command
         $sites = array_map(function ($site) {
             return idn_to_ascii(trim($site), IDNA_DEFAULT, INTL_IDNA_VARIANT_UTS46);
         }, array_merge([], array_unique(explode(',', $tracking->sites))));
-        $cf4SaaSSites = \Arr::pluck(getOriginServerOfCF4SaasHostname($sites), 'hostname');
+        // $cf4SaaSSites = \Arr::pluck(getOriginServerOfCF4SaasHostname($sites), 'hostname');
+        $cf4SaaSSites = [];
         $standardSites = array_merge([], array_diff($sites, $cf4SaaSSites));
         $goneLivedStandardSites = $this->scanByDNS($standardSites);
-        $goneLivedCF4SaaSSites = $this->scanCF4SaaSHostnameBySSLStatus($cf4SaaSSites);
+        // $goneLivedCF4SaaSSites = $this->scanCF4SaaSHostnameBySSLStatus($cf4SaaSSites);
+        $goneLivedCF4SaaSSites = [];
         $goneLivedSites = array_merge($goneLivedStandardSites, $goneLivedCF4SaaSSites);
         $remainingSites = array_merge([], array_diff($sites, \Arr::pluck($goneLivedSites, 'site')));
         $tracking->sites = implode(",", $remainingSites);
