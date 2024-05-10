@@ -88,11 +88,11 @@ class PingdomHostnameAvailabilityTest implements ShouldQueue
             }
             fputcsv($fop, [
                 $hostname,
-                $res['responsetime'],
-                $res['status'],
-                $res['probedesc'],
-                $res['statusdesc'],
-                $res['statusdesclong']
+                $res['responsetime'] ?? '',
+                $res['status'] ?? '',
+                $res['probedesc'] ?? '',
+                $res['statusdesc'] ?? '',
+                $res['statusdesclong'] ?? ''
             ]);
         }
         fclose($fop);
