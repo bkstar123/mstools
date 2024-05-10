@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use App\Jobs\ExportPingdomChecks;
 use App\Jobs\GetPingdomChecksDetails;
 use App\Jobs\GetPingdomChecksAvgSummary;
+use App\Jobs\PingdomHostnameAvailabilityTest;
 use App\Http\Components\RequestByUserThrottling;
 
 class PingdomController extends Controller
@@ -129,5 +130,29 @@ class PingdomController extends Controller
             $res = $httpClient->request('GET', $path);
             return $res->getBody()->getContents();
         }
+    }
+
+    /**
+     * Perform availability test for hostnames
+     *
+     * @param Illuminate\Http\Request
+     * @return Illuminate\Http\Response
+     */
+    public function testAvailability(Request $request)
+    {
+        $request->validate([
+            'hostnames' => 'required',
+            'ssldowndaysbefore' => 'nullable|integer',
+        ], [
+            'ssldowndaysbefore.integer' => "This field only accepts number"
+        ]);
+        if (!$this->isThrottled()) {
+            $this->setRequestThrottling();
+            PingdomHostnameAvailabilityTest::dispatch($request->all(), auth()->user());
+            flashing('MSTool is processing the request')->flash();
+        } else {
+            flashing('MSTool is busy processing your first request, please wait for 10 seconds before sending another one')->warning()->flash();
+        }
+        return back();
     }
 }

@@ -18,18 +18,7 @@ Route::get('/cms/dashboard', function () {
 })->name('dashboard.index')
   ->middleware('bkscms-auth:admins');
 
-Route::get('/cms/pingdom/get-avg-summary-ui-for-check', 'PingdomController@getAverageSummaryUI')
-  ->name('pingdom.avg.summary.ui')
-  ->middleware('bkscms-auth:admins');
-
-Route::post('/cms/cf-for-saas/get-custon-origin-server', 'CF4SaaSGeneralController@getCustomOriginServer')
-  ->name('cf4saas.getcustomoriginserver')
-  ->middleware('bkscms-auth:admins');
-
-Route::post('/cms/cf-for-saas/export-hostnames', 'CF4SaaSGeneralController@exportCF4SaaSHostnames')
-  ->name('cf4saas.exporthostnames')
-  ->middleware('bkscms-auth:admins');
-
+// About Me
 Route::get('/cms/about-me', 'AboutController@show')->name('about.show')
   ->middleware('bkscms-auth:admins');
 
@@ -42,6 +31,7 @@ Route::match(['post', 'patch', 'put'], '/cms/about-me/store', 'AboutController@s
   ->middleware('bkscms-auth:admins')
   ->middleware('can:aboutpage.create');
 
+// CKFinder
 Route::any('/ckfinder/connector', '\CKSource\CKFinderBridge\Controller\CKFinderController@requestAction')
   ->name('ckfinder_connector')
   ->middleware('bkscms-auth:admins');
@@ -50,21 +40,34 @@ Route::any('/ckfinder/browser', '\CKSource\CKFinderBridge\Controller\CKFinderCon
   ->name('ckfinder_browser')
   ->middleware('bkscms-auth:admins');
 
+// Cloudflare for SaaS
+Route::post('/cms/cf-for-saas/get-custon-origin-server', 'CF4SaaSGeneralController@getCustomOriginServer')
+  ->name('cf4saas.getcustomoriginserver')
+  ->middleware('bkscms-auth:admins');
+
+Route::post('/cms/cf-for-saas/export-hostnames', 'CF4SaaSGeneralController@exportCF4SaaSHostnames')
+  ->name('cf4saas.exporthostnames')
+  ->middleware('bkscms-auth:admins');
+
 // Pingdom routes
 Route::group(
     [
-        'prefix' => 'cms',
+        'prefix' => 'cms/pingdom/',
         'middleware' => [
             'bkscms-auth:admins',
         ]
     ],
     function () {
-        Route::post('pingdom/checks/export', 'PingdomController@exportChecks')
-        ->name('pingdom.checks.export');
-        Route::post('pingdom/checks', 'PingdomController@getChecks')
-        ->name('pingdom.checks');
-        Route::post('pingdom/checks/avg-summary', 'PingdomController@getAverageSummary')
-        ->name('pingdom.checks.avg.summary');
+        Route::post('checks/export', 'PingdomController@exportChecks')
+          ->name('pingdom.checks.export');
+        Route::post('checks', 'PingdomController@getChecks')
+          ->name('pingdom.checks');
+        Route::post('checks/avg-summary', 'PingdomController@getAverageSummary')
+          ->name('pingdom.checks.avg.summary');
+        Route::get('get-avg-summary-ui-for-check', 'PingdomController@getAverageSummaryUI')
+          ->name('pingdom.avg.summary.ui');
+        Route::post('availability/test', 'PingdomController@testAvailability')
+          ->name('pingdom.availability.test');
     }
 );
 

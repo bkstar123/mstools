@@ -470,16 +470,16 @@
         },
         {
             "name": "bkstar123/laravel-pingdom-buddy",
-            "version": "1.3.1",
+            "version": "1.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/bkstar123/laravel-pingdom-buddy.git",
-                "reference": "824bc11e21989607d4e49f401ac214de67a6a31b"
+                "reference": "9a0b2b738f996a26e07214c2df25e030ffd0bcca"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/bkstar123/laravel-pingdom-buddy/zipball/824bc11e21989607d4e49f401ac214de67a6a31b",
-                "reference": "824bc11e21989607d4e49f401ac214de67a6a31b",
+                "url": "https://api.github.com/repos/bkstar123/laravel-pingdom-buddy/zipball/9a0b2b738f996a26e07214c2df25e030ffd0bcca",
+                "reference": "9a0b2b738f996a26e07214c2df25e030ffd0bcca",
                 "shasum": ""
             },
             "require": {
@@ -518,9 +518,9 @@
             ],
             "support": {
                 "issues": "https://github.com/bkstar123/laravel-pingdom-buddy/issues",
-                "source": "https://github.com/bkstar123/laravel-pingdom-buddy/tree/1.3.1"
+                "source": "https://github.com/bkstar123/laravel-pingdom-buddy/tree/1.4.0"
             },
-            "time": "2022-07-18T15:54:51+00:00"
+            "time": "2024-05-10T09:45:35+00:00"
         },
         {
             "name": "bkstar123/laravel-recaptcha",

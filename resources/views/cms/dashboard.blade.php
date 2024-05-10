@@ -28,6 +28,96 @@
 </div>
 <hr>
 <div class="row">
+	<div class="col col-md-12">
+		<div class="card card-success">
+			<div class="card-header">
+				<h3 class="card-title">Pingdom Availability Test</h3>
+			</div>
+			<form id="pingdom-availability-test-form" role="form" action="{{ route('pingdom.availability.test') }}" method="post">
+				@csrf
+				<div class="card-body" id="pingdom-availability-test-hostnames">
+					<div class="form-group">
+						<label>List of hostnames for availability test <span style="color:red">&midast;</span></label>
+						@error('hostnames')
+		                    <div class="alert alert-danger">{{ $message }}</div>
+		                @enderror
+						<textarea class="form-control"
+						          required
+						          name="hostnames"
+				                  rows="5" 
+				                  placeholder="Paste the comma-seperated hostnames"></textarea>
+				    </div>
+				</div>
+				<div class="card-body" id="pingdom-availability-test-shouldcontain">
+		            <div class="form-group">
+		                <label>Should Contain </label>
+		                @error('shouldcontain')
+		                    <div class="alert alert-danger">{{ $message }}</div>
+		                @enderror
+		                <input class="form-control"
+		                          type="text"
+		                          name="shouldcontain"
+		                          value="{{ old('shouldcontain') ?? 'viewport' }}"/>
+		            </div>
+		        </div>
+		        <div class="card-body" id="pingdom-availability-test-shouldnotcontain">
+		            <div class="form-group">
+		                <label>Should Not Contain </label>
+		                @error('shouldnotcontain')
+		                    <div class="alert alert-danger">{{ $message }}</div>
+		                @enderror
+		                <input class="form-control"
+		                          type="text"
+		                          name="shouldnotcontain"
+		                          value="{{ old('shouldnotcontain') }}"/>
+		            </div>
+		        </div>	
+		        <div class="card-body" id="pingdom-availability-test-ssldowndaysbefore">
+		            <div class="form-group">
+		                <label>Consider down prior to certificate expiring (days, default: 1) </label>
+		                @error('ssldowndaysbefore')
+		                    <div class="alert alert-danger">{{ $message }}</div>
+		                @enderror
+		                <input class="form-control"
+		                          type="text"
+		                          name="ssldowndaysbefore"
+		                          value="{{ old('ssldowndaysbefore') ?? 1 }}"/>
+		            </div>
+		        </div>	
+		        <div class="card-body" id="pingdom-availability-test-targetpath">
+		            <div class="form-group">
+		                <label>Target Path (default: "/")</label>
+		                <input class="form-control"
+		                          type="text"
+		                          name="targetpath"
+		                          value="{{ old('targetpath') ?? '/' }}"/>
+		            </div>
+		        </div>	
+				<div class="card-body" id="pingdom-availability-test-prober">
+		            <div class="form-group">
+		                <label>Test from (default: any) </label>
+		                @error('prober')
+		                    <div class="alert alert-danger">{{ $message }}</div>
+		                @enderror
+		                <select class="form-control"
+		                        name="prober">
+		                    <option value="" selected>Any Location</option>
+		                    <option value="EU" {{ old('prober') == 'EU' ? 'selected' : '' }}>Europe</option>
+		                    <option value="NA" {{ old('prober') == 'NA' ? 'selected' : '' }}>North America</option> 
+		                    <option value="APAC" {{ old('prober') == 'APAC' ? 'selected' : '' }}>Asia Pacific</option>   
+		                    <option value="LATAM" {{ old('prober') == 'LATAM' ? 'selected' : '' }}>Latin America</option>  
+		                </select>
+		            </div>
+		        </div>	
+				<div class="card-footer">
+					<button id="submitBtnForPingdomAvailabilityTest" type="submit" class="btn btn-success">Test Availability</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+<hr>
+<div class="row">
 	<div class="col col-md-6">
 		<div class="card card-success">
 			<div class="card-header">
@@ -193,6 +283,9 @@
 <script src="https://code.highcharts.com/modules/variwide.js"></script>
 <script type="text/javascript">
 	$(document).ready(function () {
+		$("#pingdom-availability-test-form").submit(function () {
+			$("#submitBtnForPingdomAvailabilityTest").attr('disabled', true);
+		});
 		$("#check-dns-form").submit(function () {
 			$("#submitBtnForCheckDNS").attr('disabled', true);
 		});

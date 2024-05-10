@@ -203,6 +203,15 @@
                         autoHide: false,
                     })
                 });
+            Echo.private('user-' + {{ auth()->user()->id }})
+                .listen('.pingdom-hostname-availability-test.completed', (data) => {
+                    $.notify(`MSTool has completed hostname availability test as requested by ${data.requestor}`, {
+                        position: "right bottom",
+                        className: "success",
+                        clickToHide: true,
+                        autoHide: false,
+                    })
+                });
         </script>
         @stack('scriptBottom')
     </body>

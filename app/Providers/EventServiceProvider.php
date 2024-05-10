@@ -20,6 +20,7 @@ use App\Events\GetPingdomChecksAvgSummaryCompleted;
 use App\Listeners\SendNotificationCheckDNSCompleted;
 use App\Events\FetchCFDNSTargetsForHostnamesCompleted;
 use App\Events\FetchDNSHostnameRecordsForZonesCompleted;
+use App\Events\PingdomTestHostnameAvailabilityCompleted;
 use App\Listeners\SendNotificationChecksAvgSumCompleted;
 use App\Listeners\SendNotificationCreateCFFWRuleCompleted;
 use App\Listeners\SendNotificationDeleteCFFWRuleCompleted;
@@ -36,6 +37,7 @@ use App\Listeners\SendNotificationGetPingdomChecksDetailsCompleted;
 use App\Listeners\SendNotificationVerifyExistenceCFFWRuleCompleted;
 use App\Listeners\SendNotificationFetchCFDNSTargetsForHostnamesCompleted;
 use App\Listeners\SendNotificationFetchDNSHostnameRecordsForZonesCompleted;
+use App\Listeners\SendNotificationPingdomTestHostnameAvailabilityCompleted;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 
 class EventServiceProvider extends ServiceProvider
@@ -93,6 +95,9 @@ class EventServiceProvider extends ServiceProvider
         ],
         ExportCF4SaaSHostnamesCompleted::class => [
             SendNotificationExportCF4SaaSHostnamesCompleted::class
+        ],
+        PingdomTestHostnameAvailabilityCompleted::class => [
+            SendNotificationPingdomTestHostnameAvailabilityCompleted::class
         ]
     ];
 
