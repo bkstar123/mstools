@@ -63,7 +63,7 @@ if (! function_exists('getApexRootDomains')) {
     {
         $zones = [];
         if (count($domains) > 0) {
-            $TLDs = explode(',', file_get_contents(asset('/sources/tlds.txt')));
+            $TLDs = explode(',', file_get_contents(public_path('/sources/tlds.txt')));
             foreach ($domains as $domain) {
                 $domainParts = explode('.', trim($domain));
                 $i = count($domainParts) - 1;
