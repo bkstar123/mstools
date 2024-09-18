@@ -19,7 +19,7 @@ class UniversalSSLVerificationCheck extends Command
      *
      * @var string
      */
-    protected $signature = 'cloudflare:checkUniversalSSLVerification';
+    protected $signature = 'cloudflare:checkUniversalSSLVerification {account_id?} {--tag=}';
 
     /**
      * The console command description.
@@ -56,9 +56,11 @@ class UniversalSSLVerificationCheck extends Command
             'Hostnames with inactive universal certificate',
             'Note'
         ]);
+        $accountID = $this->argument('account_id');
+        $tag = $this->option('tag');
         $page = 1;
         do {
-            $zones = $zoneMgmt->getPaginatedZones($page, 100);
+            $zones = $zoneMgmt->getPaginatedZones($page, 100, '', $accountID);
             if (empty($zones)) {
                 break;
             }
@@ -115,7 +117,7 @@ class UniversalSSLVerificationCheck extends Command
         } while (!empty($zones));
         fclose($fop);
         Report::create([
-            'name'        => 'Check universal SSL verification status for all Cloudflare zones ' . Carbon::createFromTimestamp(time())->setTimezone('UTC')->toDateTimeString()."(UTC).csv",
+            'name'        => "Check universal SSL verification status for all Cloudflare zones $tag " . Carbon::createFromTimestamp(time())->setTimezone('UTC')->toDateTimeString()."(UTC).csv",
             'admin_id'    => 1, // Fake user with username of "superadmin"
             'disk'        => $outputFileLocation['disk'],
             'path'        => $outputFileLocation['path'],

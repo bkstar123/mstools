@@ -39,8 +39,12 @@ class Kernel extends ConsoleKernel
                      ->cron('0 0 * * 1-5')
                      ->runInBackground();
             // Run on 1st & 15th of every month at 00:00 AM
-            $schedule->command('cloudflare:checkUniversalSSLVerification')
-                     ->cron('0 0 1,15 * *');
+            $schedule->command('cloudflare:checkUniversalSSLVerification ' . env('CF_DXP_ACC_ID') . " --tag='DXP'")
+                     ->cron('0 0 1,15 * *'); // DXP account
+            $schedule->command('cloudflare:checkUniversalSSLVerification ' . env('CF_B2B_ACC_ID') . " --tag='B2B'")
+                     ->cron('0 0 1,15 * *'); // B2B account
+            $schedule->command('cloudflare:checkUniversalSSLVerification ' . env('CF_MS_ACC_ID') . " --tag='MS'")
+                     ->cron('0 0 1,15 * *'); // Managed Services account
             // Run on 14th & 28th of every month at 00:00 AM
             $schedule->command('cloudflare:scanUniversalSSLSettingsForZones')
                      ->cron('0 0 14,28 * *')
