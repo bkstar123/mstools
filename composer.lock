@@ -415,16 +415,16 @@
         },
         {
             "name": "bkstar123/laravel-cloudflare-buddy",
-            "version": "1.4.3",
+            "version": "1.4.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/bkstar123/laravel-cloudflare-buddy.git",
-                "reference": "1e76770785eaf7ab5af53852d38dbf2c158834e4"
+                "reference": "ad417b2fb5596c1206605103bf10251dc6c299aa"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/bkstar123/laravel-cloudflare-buddy/zipball/1e76770785eaf7ab5af53852d38dbf2c158834e4",
-                "reference": "1e76770785eaf7ab5af53852d38dbf2c158834e4",
+                "url": "https://api.github.com/repos/bkstar123/laravel-cloudflare-buddy/zipball/ad417b2fb5596c1206605103bf10251dc6c299aa",
+                "reference": "ad417b2fb5596c1206605103bf10251dc6c299aa",
                 "shasum": ""
             },
             "require": {
@@ -464,9 +464,9 @@
             ],
             "support": {
                 "issues": "https://github.com/bkstar123/laravel-cloudflare-buddy/issues",
-                "source": "https://github.com/bkstar123/laravel-cloudflare-buddy/tree/1.4.3"
+                "source": "https://github.com/bkstar123/laravel-cloudflare-buddy/tree/1.4.4"
             },
-            "time": "2024-09-17T10:28:46+00:00"
+            "time": "2024-09-19T07:30:38+00:00"
         },
         {
             "name": "bkstar123/laravel-pingdom-buddy",

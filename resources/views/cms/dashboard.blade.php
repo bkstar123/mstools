@@ -398,12 +398,12 @@
 			$.ajax(settings).done(function (res) {
 				if ($("#cf4SaasSearchDisplayTable").length <= 0) {
 					let html = `<hr/><div class="card-body table-responsive p-0"><table class="table table-hover table-bordered" id="cf4SaasSearchDisplayTable"
-					<thead><tr><th>Hostname</th><th>Custom Origin Server</th><th>Status</th><th>Created At</th></tr></thead>
+					<thead><tr><th>Hostname</th><th>Custom Origin Server</th><th>Status</th><th>Created At</th><th>CF SSL Status</th><th>CF SSL Type</th><th>CF SSL Method</th></tr></thead>
 					<tbody id="cf4SaasSearchDisplayBody"></tbody></table></div>`;
 					$(html).insertAfter('#submitBtnForSearchSaaSHostnames');
 				}
 				res.forEach(function (item) {
-					$("#cf4SaasSearchDisplayBody").append(`<tr><td>${item.hostname}</td><td>${item.custom_origin_server}</td><td>${item.status}</td><td>${item.created_at}</td></tr>`);
+					$("#cf4SaasSearchDisplayBody").append(`<tr><td>${item.hostname}</td><td>${item.custom_origin_server}</td><td>${item.status}</td><td>${item.created_at}</td><td>${item.ssl_status}</td><td>${item.ssl_type}</td><td>${item.ssl_method}</td></tr>`);
 				});
 			});
         });
