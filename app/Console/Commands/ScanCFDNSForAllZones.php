@@ -23,14 +23,15 @@ class ScanCFDNSForAllZones extends Command
      *
      * @var string
      */
-    protected $signature = 'cloudflare:scanCFDNSForAllZones';
+    protected $signature = 'cloudflare:scanCFDNSForAllZones 
+                            {--accountName= : Provide account name, accepted values: "B2B", "DXP Customers", "Managed Services" }';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Scan all Cloudflare zones for CNAME & A DNS records';
+    protected $description = 'Scan all Cloudflare zones for DNS settings';
 
     /**
      * Create a new command instance.
@@ -58,10 +59,11 @@ class ScanCFDNSForAllZones extends Command
         $filename = basename(Storage::disk($outputFileLocation['disk'])->path($outputFileLocation['path']));
         $apiToken= env('CF_API_TOKEN');
         $pythonExeEnv = env('MAINUL_PYTHON_EXE_ENV');
+        $accountName = $this->option('accountName');
         $cmd = "curl -O https://raw.githubusercontent.com/mainulhossain123/cf_dns_extract/refs/heads/main/CF_Zone_DNS_Extraction.py && python CF_Zone_DNS_Extraction.py && rm -rf CF_Zone_DNS_Extraction.py";
-        exec("docker run -it --rm -v $location:/app -e API_KEY='$apiToken' -e ACCOUNT_NAME='DXP Customers' -e OUTPUT_FILENAME_PREFIX=$filename $pythonExeEnv sh -c '$cmd'");
+        exec("docker run -it --rm -v $location:/app -e API_KEY='$apiToken' -e ACCOUNT_NAME='$accountName' -e OUTPUT_FILENAME_PREFIX=$filename $pythonExeEnv sh -c '$cmd'");
         $report = Report::create([
-            'name'     => 'List of CF DNS Records for all DXP zones ' . Carbon::createFromTimestamp(time())->setTimezone('UTC')->toDateTimeString()."(UTC).csv",
+            'name'     => "List of CF DNS Records for all $accountName zones " . Carbon::createFromTimestamp(time())->setTimezone('UTC')->toDateTimeString()."(UTC).csv",
             'admin_id' => 1, // Fake user with username of "superadmin"
             'disk'     => $outputFileLocation['disk'],
             'path'     => $outputFileLocation['path'],

@@ -50,7 +50,7 @@ class Kernel extends ConsoleKernel
                      ->cron('0 0 14,28 * *')
                      ->runInBackground();
             // Run quarterly on the midnight of the first day
-            $schedule->command('cloudflare:scanCFDNSForAllZones')
+            $schedule->command('cloudflare:scanCFDNSForAllZones --accountName="DXP Customers"')
                      ->cron('0 0 1 */3 *')
                      ->runInBackground();
             // Run at 18:00 on weekdays (MON->FRI)
